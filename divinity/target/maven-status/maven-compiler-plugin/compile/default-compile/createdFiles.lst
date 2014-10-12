@@ -1,0 +1,10 @@
+com\github\lyokofirelyte\Divinity\Events\PlayerMoneyChangeEvent.class
+com\github\lyokofirelyte\Divinity\Storage\DivinityPlayerModule.class
+com\github\lyokofirelyte\Divinity\Storage\DivinityGameModule.class
+com\github\lyokofirelyte\Divinity\Storage\DivinityStorageModule.class
+com\github\lyokofirelyte\Divinity\DivinityUtilsModule.class
+com\github\lyokofirelyte\Divinity\API.class
+com\github\lyokofirelyte\Divinity\Storage\DivinityRingModule.class
+com\github\lyokofirelyte\Divinity\Storage\DivinityAllianceModule.class
+com\github\lyokofirelyte\Divinity\Storage\DivinitySystemModule.class
+com\github\lyokofirelyte\Divinity\Storage\DivinityRegionModule.class

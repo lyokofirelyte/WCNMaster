@@ -1,0 +1,6 @@
+name: Divinity
+main: com.github.lyokofirelyte.Divinity.Divinity
+author: lyokofirelyte
+prefix: Divinity
+version: 1
+depend: [Spectral]

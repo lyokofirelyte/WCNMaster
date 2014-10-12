@@ -1,0 +1,8 @@
+WorldEdit:
+
+call cd <path to this resource folder> 
+call mvn install:install-file -Dfile=WorldEdit-5.6.3.jar -DgroupId=com.sk89q -DartifactId=WorldEdit -Dversion=5.6.3 -Dpackaging=jar
+
+Bukkit / CraftBukkit / Spigot:
+
+Move into the approperate folder as described in the POM and delete everything else in the folder if there are errors
