@@ -190,7 +190,7 @@ public class ElyChat implements Listener, AutoRegister {
 		
 		final DivinityPlayer p = main.api.getDivPlayer(e.getPlayer());
 		
-		if (!main.api.perms(e.getPlayer(), "wa.rank.settler", false)){
+		if (!main.api.perms(e.getPlayer(), "wa.rank.settler", true)){
 			e.setMessage(ChatColor.stripColor(main.AS(e.getMessage())));
 		}
 		

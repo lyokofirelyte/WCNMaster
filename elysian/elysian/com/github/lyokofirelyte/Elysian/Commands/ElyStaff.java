@@ -428,6 +428,18 @@ public class ElyStaff implements Listener, AutoRegister {
 		 }
 	 }
 	 
+	 @DivCommand(perm = "wa.staff.admin", aliases = {"spreadsheet"}, desc = "Enable / disable the spreadsheet", help = "/spreadsheet enable, /spreadsheet disable", min = 1)
+	 public void onSpreadSheet(CommandSender cs, String[] args){
+		 
+		 if (args[0].equals("enable") || args[0].equals("disable")){
+			 main.api.getDivSystem().set(DPI.ENABLE_SPREADSHEET, Boolean.valueOf(args[0].replace("enable", "true").replace("disable", "false")));
+			 main.s(cs, "The spreadsheet is now " + args[0] + "d.");
+			 ElyChannel.STAFF.send("&6System", "The markkit spreadsheet has been &6" + args[0] + "d &cby &6" + (cs instanceof Player ? ((Player) cs).getDisplayName() : "console") + "&c!", main.api);
+		 } else {
+			 main.help("spreadsheet", this);
+		 }
+	 }
+	 
 	 @DivCommand(perm = "wa.staff.mod2", aliases = {"setmarkkit"}, desc = "Set a market place", help = "/setmarkkit <sellprice> <buyprice> <markkit name>", player = true, min = 3)
 	 public void onSetMarket(CommandSender cs, String[] args){
 		 

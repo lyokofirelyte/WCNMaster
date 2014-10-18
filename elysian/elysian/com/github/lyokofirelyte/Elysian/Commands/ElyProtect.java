@@ -390,7 +390,7 @@ public class ElyProtect implements Listener, AutoRegister {
 	@DivCommand(aliases = {"protect", "pro"}, desc = "Elysian World Protection Command", help = "/pro help", player = true, min = 1)
 	public void onProtect(final Player p, String[] args){
 		
-		if (!args[0].equals("info")){
+		if (!args[0].equals("info") && !args[0].equals("view")){
 			if (!main.api.perms(p, "wa.staff.mod2", false)){
 				return;
 			}

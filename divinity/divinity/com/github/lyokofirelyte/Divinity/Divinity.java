@@ -24,6 +24,7 @@ public class Divinity extends JavaPlugin {
 	public void onDisable(){
 		
 		try {
+			api.sheets.fetch(true, false);
 			api.getDivSystem().getMarkkit().save(new File(DivinityManager.sysDir + "markkit.yml"));
 			api.divManager.save();
 		} catch (Exception e) {

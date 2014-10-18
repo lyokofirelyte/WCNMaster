@@ -487,7 +487,7 @@ public class ElyAlliance implements AutoRegister {
 			default:
 				 
 				if (!dp.getStr(DPI.ALLIANCE_NAME).equals("none")){
-					ElyChannel.ALLIANCE.send(p.getDisplayName(), DivinityUtilsModule.createString(args, 0), main.api);
+					ElyChannel.ALLIANCE.send(p.getDisplayName(), DivinityUtilsModule.createString(args, 0), "wa.alliance." + dp.getStr(DPI.ALLIANCE_NAME), main.api);
 				} else {
 					main.s(p, "none", "You are not in an alliance :(");
 				}

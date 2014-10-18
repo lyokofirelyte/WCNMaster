@@ -26,6 +26,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.github.lyokofirelyte.Divinity.Manager.ElyMarkkitItem;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
@@ -144,7 +145,7 @@ public class ElyMarkkit implements Listener, AutoRegister {
 		}else if(e.getInventory().getName().contains("items stocked") || e.getInventory().getName().contains("Double price!")){
 			e.setCancelled(true);
 			String name = invName.get(e.getWhoClicked().getName());
-			ElyMarkkitItem mi = new ElyMarkkitItem(main, e.getInventory().getItem(4).getType(), e.getInventory().getItem(4).getDurability());
+			ElyMarkkitItem mi = new ElyMarkkitItem(main.divinity.api, e.getInventory().getItem(4).getType(), e.getInventory().getItem(4).getDurability());
 
 			if(e.getCurrentItem() != null){
 				if(!sellCart.contains(e.getRawSlot()) && !buyCart.contains(e.getRawSlot()) &&!itemSlot.contains(e.getRawSlot()) && e.getCurrentItem().getTypeId() == mi.getMaterialID() && e.getCurrentItem().getDurability() == mi.getDurability()){
@@ -279,6 +280,18 @@ public class ElyMarkkit implements Listener, AutoRegister {
 				if(totalAmount > 0){
 					Date d = new Date();
 					dp.getList(DPI.MARKKIT_LOG).add(d.getDate() + "/" + d.getMonth() + " " + d.getHours() + ":" + d.getMinutes() + " &bSold &6" + totalAmount + "&b of &6" + mat.name() + " &bworth &6" + totalPrice.get(e.getWhoClicked().getName()) + " &bshinies");
+					List<String> actions = main.api.getDivSystem().getList(DPI.LAST_ACTION);
+					String toRemove = "";
+					for (String a : actions){
+						if (a.startsWith(mat.getId() + ":" + mi.getDurability())){
+							toRemove = a;
+							break;
+						}
+					}
+					if (!toRemove.equals("")){
+						actions.remove(toRemove);
+					}
+					actions.add(mat.getId() + ":" + mi.getDurability() + " " + ChatColor.stripColor(main.AS(dp.getStr(DPI.DISPLAY_NAME))) + " sold " + totalAmount);
 				}
 				
 				dp.set(DPI.BALANCE, dp.getInt(DPI.BALANCE) + totalPrice.get(e.getWhoClicked().getName()));
@@ -498,7 +511,7 @@ public class ElyMarkkit implements Listener, AutoRegister {
 				return;
 			}
 			
-			ElyMarkkitItem im = new ElyMarkkitItem(main, name);
+			ElyMarkkitItem im = new ElyMarkkitItem(main.divinity.api, name);
 			Material mat = im.getMaterial();
 			short damage = (short) im.getDurability();
 			
@@ -552,7 +565,7 @@ public class ElyMarkkit implements Listener, AutoRegister {
 			inv.setItem(53, calculateRight);
 			inv.setItem(45, calculateLeft);
 
-			for(int i : ((system.getMarkkit().get("Items." + name + ".64") == null) ? new int[]{1} : new int[]{64, 32, 16, 8, 1})){
+			for(int i : (system.getMarkkit().get("Items." + name + ".64") == null ? new int[]{1} : new int[]{64, 32, 16, 8, 1})){
 				if(system.getMarkkit().contains("Items." + name + "." + i)){
 					if(im.getBuyPrice(i) > 0){
 						ItemStack item = new ItemStack(mat, i, damage);

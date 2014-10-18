@@ -162,7 +162,7 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 			List<String> failedNames = new ArrayList<String>();
 			String failLine = "";
 			
-			if (!dp.getList(DPI.OWNED_CHESTS).contains(loc) && !main.api.perms(e.getPlayer(), "wa.staff.mod2", false) && !dp.getStr(DPI.CHEST_MODE).equals("view") && !dp.getStr(DPI.CHEST_MODE).equals("release")){
+			if (!dp.getList(DPI.OWNED_CHESTS).contains(loc) && !main.api.perms(e.getPlayer(), "wa.staff.mod2", true) && !dp.getStr(DPI.CHEST_MODE).equals("view") && !dp.getStr(DPI.CHEST_MODE).equals("release")){
 				main.s(e.getPlayer(), "none", "&c&oThat is not yours to modify!");
 				return;
 			}
@@ -248,7 +248,7 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 				
 			} else {
 				
-				if (!dp.getList(DPI.OWNED_CHESTS).contains(loc) && !main.api.perms(e.getPlayer(), "wa.staff.mod2", false)){
+				if (!dp.getList(DPI.OWNED_CHESTS).contains(loc) && !main.api.perms(e.getPlayer(), "wa.staff.mod2", true)){
 					for (DivinityStorage DP : main.divinity.api.getAllPlayers()){
 						if (DP.getList(DPI.OWNED_CHESTS).contains(loc)){
 							e.setCancelled(true);

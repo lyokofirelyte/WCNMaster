@@ -26,13 +26,10 @@
        			<artifactId>maven-shade-plugin</artifactId>
        			<version>2.3</version>
        			<configuration>
-       				<artifactSet>
-						<excludes>
-    						<exclude>org.bukkit:*</exclude>
-    						<exclude>com.google:*</exclude>
-    						<exclude>com.dom4j:*</exclude>
-    						<exclude>com.dsh105:*</exclude>
-    						<exclude>xml-apis.xml-apis:*</exclude>
+       			 	<artifactSet>
+  						<excludes>
+  							<exclude>me.confuser:*</exclude>
+  							<exclude>com.github.lyokofirelyte:Spectral:*</exclude>
   						</excludes>
 					</artifactSet>
 				</configuration>
@@ -42,6 +39,29 @@
             			<goals>
               				<goal>shade</goal>
            	 			</goals>
+           	 			<configuration>
+           	 				<filters>
+           	 					<filter>
+           	 						<artifact>com.github.lyokofirelyte:UberJar</artifact>
+           	 						<excludes>
+    									<exclude>org/bukkit/**</exclude>
+    									<exclude>org/yaml/**</exclude>
+    									<exclude>org/sqlite/**</exclude>
+    									<exclude>org/json/**</exclude>
+    									<exclude>javax/persistence/**</exclude>
+    									<exclude>com/dom4j/**</exclude>
+    									<exclude>com/dsh105/**</exclude>
+    									<exclude>com/sk89q/**</exclude>
+    									<exclude>com/mysql/**</exclude>
+    									<exclude>com/avaje/**</exclude>
+    									<exclude>com/github/lyokofirelyte/Spectral/**</exclude>
+    									<exclude>xml-apis/xml-apis/**</exclude>
+    									<exclude>net/minecraft/**</exclude>
+    									<exclude>me/confuser/**</exclude>
+  									</excludes>
+  								</filter>
+  							</filters>
+  						</configuration>
           			</execution>
        	 		</executions>
     		</plugin>

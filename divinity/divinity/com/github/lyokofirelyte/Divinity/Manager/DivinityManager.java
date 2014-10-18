@@ -202,11 +202,20 @@ public class DivinityManager {
 			save.save();
 		}
 		
-		for (String objectType : data.keySet()){
-			for (String objectName : data.get(objectType).keySet()){
+ 		for (String objectType : data.keySet()){
+ 			for (String objectName : data.get(objectType).keySet()){
 				modifyObject(objectType, objectName, false, false);
-			}
-		}
+				if (!objectName.contains("markkit")){
+					modifyObject(objectType, objectName, false, false);
+				} else {
+					try{
+						api.getDivSystem().getMarkkit().save(new File(DivinityManager.sysDir, "markkit.yml"));
+					} catch (Exception e){
+						e.printStackTrace();
+					}
+				}
+ 			}
+ 		}
 	}
 	
 	public void backup(){

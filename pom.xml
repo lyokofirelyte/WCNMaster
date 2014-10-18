@@ -40,45 +40,15 @@
 	</distributionManagement>
 	<dependencies>
 		<dependency>
-			<groupId>com.maxmind.geoip2</groupId>
-			<artifactId>geoip2</artifactId>
-			<version>0.8.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-math3</artifactId>
-			<version>3.0</version>
-		</dependency>
-	    <dependency>
-         	<groupId>org.reflections</groupId>
-         	<artifactId>reflections</artifactId>
-        	<version>0.9.9-RC1</version>
-    	</dependency>
-		<dependency>
 			<groupId>me.confuser</groupId>
 			<artifactId>BarAPI</artifactId>
 			<version>3.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>${bukkit}</version>
+			<groupId>com.github.lyokofirelyte</groupId>
+			<artifactId>UberJar</artifactId>
+			<version>1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>${craftbukkit}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sk89q</groupId>
-			<artifactId>WorldEdit</artifactId>
-			<version>5.6.3</version>
-		</dependency>
- 		<dependency>
-            <groupId>com.github.theholywaffle</groupId>
-            <artifactId>teamspeak3-api</artifactId>
-            <version>[1.0.0,2.0.0)</version>
-        </dependency> 
 	</dependencies>
 	<repositories>
 		<repository>

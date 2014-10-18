@@ -30,6 +30,8 @@ import com.github.lyokofirelyte.Divinity.JSON.JSONChatHoverEventType;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
 import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
+import com.github.lyokofirelyte.Divinity.Storage.DivinityPlayerModule;
+import com.github.lyokofirelyte.Divinity.Storage.DivinityStorageModule;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRoot;
 import com.github.lyokofirelyte.Spectral.DataTypes.DAI;
@@ -47,7 +49,6 @@ public class ElyCommand implements AutoRegister {
 	
 	public ElyCommand(Elysian i){
 		main = i;
-		fillMap();
 	}
 	
 	String[] divLogo = new String[]{
@@ -61,23 +62,25 @@ public class ElyCommand implements AutoRegister {
 		"&b. . . . .&f(  &3E  l  y  s  i  a  n &f  )&b. . . . .",	
 		"",
 		"&7&oA MC Operating System by Hugs",
-		"&6&o/ely help"
+		"&6&o/ely help or /ely help full"
 	};
 	
 	Map<String, String[]> help = new THashMap<String, String[]>();
 	
-	private void fillMap(){
+	private void fillMap(List<String> perms, boolean all){
 		for (Object o : main.divinity.commandMap.values()){
 			for (Method m : o.getClass().getMethods()){
 				if (m.getAnnotation(DivCommand.class) != null){
 					DivCommand anno = m.getAnnotation(DivCommand.class);
-					String name = anno.aliases()[0];
-					for (int i = 1; i < anno.aliases().length; i++){
-						name = anno.aliases().length > i ? name + "&7, &3" + anno.aliases()[i] : name;
+					if (perms.contains(anno.perm()) || all){
+						String name = anno.aliases()[0];
+						for (int i = 1; i < anno.aliases().length; i++){
+							name = anno.aliases().length > i ? name + "&7, &3" + anno.aliases()[i] : name;
+						}
+						String[] perm = anno.perm().split("\\.");
+						String p = perm[perm.length-1];
+						help.put("/" + name, s(p.substring(0, 1).toUpperCase() + p.substring(1) + "+", anno.desc() + "\n&6" + anno.help()));
 					}
-					String[] perm = anno.perm().split("\\.");
-					String p = perm[perm.length-1];
-					help.put("/" + name, s(p.substring(0, 1).toUpperCase() + p.substring(1) + "+", anno.desc() + "\n&6" + anno.help()));
 				}
 			}
 		}
@@ -675,7 +678,7 @@ public class ElyCommand implements AutoRegister {
 		}
 	}
 	
-	@DivCommand(aliases = {"ely", "elysian", "?"}, desc = "Elysian Main Command", help = "/ely help", player = false)
+	@DivCommand(aliases = {"ely", "elysian", "?"}, desc = "Elysian Main Command", help = "/ely help, /ely help all", player = false)
 	public void onElysian(CommandSender p, String[] args){
 		
 		if (args.length == 0){
@@ -690,7 +693,11 @@ public class ElyCommand implements AutoRegister {
 			
 				case "help": case "helpmepleaseidontknowwhatimdoing":
 					
-					fillMap();
+					if (p instanceof Player){
+						fillMap(main.api.getDivPlayer((Player)p).getList(DPI.PERMS), args.length == 2 && args[1].equals("all"));
+					} else {
+						fillMap(new ArrayList<String>(), true);
+					}
 					
 					List<String> sortedHelp = new ArrayList<String>();
 					
@@ -709,6 +716,13 @@ public class ElyCommand implements AutoRegister {
 							message.sendToPlayer(((Player)p));
 						}
 						p.sendMessage(main.AS("&7&oHover to display the description of each command"));
+						
+						if (args.length == 2 && args[1].equals("all")){
+							p.sendMessage(main.AS("&7&oShowing all commands, including those you can't yet use."));
+						} else {
+							p.sendMessage(main.AS("&7&oOnly showing commands you have permission for. See &6&o/ely help all &7&ofor all commands."));
+						}
+						
 					} else {
 						main.s(p, "&c&oConsole can't run this!");
 					}

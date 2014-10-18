@@ -60,6 +60,7 @@ public class ElyWatch implements Runnable, AutoRegister {
 		}
 		
 		sleeping();
+		markkit();
 		system.set(DPI.ROLLBACK_IN_PROGRESS, false);
 	}
 	
@@ -239,5 +240,9 @@ public class ElyWatch implements Runnable, AutoRegister {
 			Bukkit.getWorld("world").setTime(0);
 			DivinityUtilsModule.bc("Over half of the server is sleeping - setting to day.");
 		}
+	}
+	
+	private void markkit(){
+		main.divinity.api.sheets.fetch(false, false);
 	}
 }

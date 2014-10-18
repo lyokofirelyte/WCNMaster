@@ -3,6 +3,28 @@ package com.github.lyokofirelyte.Spectral.DataTypes;
 public enum DPI {
 	
 	/**
+	 * Boolean that determines if we should send packets to google spreadsheets
+	 * @dataType boolean
+	 * @specificTo DivinitySystem
+	 */
+	ENABLE_SPREADSHEET("ENABLE_SPREADSHEET"),
+	
+	/**
+	 * The last marrkit action to take place per item
+	 * @dataType String List
+	 * @specificTo DivinitySystem
+	 */
+	LAST_ACTION("LAST_ACTION"),
+	
+	/**
+	 * The username & password for the WCN Google Account
+	 * @dataType String
+	 * @outputExample user pass
+	 * @specificTo DivinitySystem
+	 */
+	SPREADSHEET_LOGIN("SPREADSHEET_LOGIN"),
+	
+	/**
 	 * The shiny balance of the player
 	 * @dataType integer
 	 */

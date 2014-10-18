@@ -30,6 +30,7 @@ import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
 import com.github.lyokofirelyte.Divinity.Manager.JSONManager;
 import com.github.lyokofirelyte.Divinity.Manager.PlayerLocation;
+import com.github.lyokofirelyte.Divinity.Manager.SpreadSheetReader;
 import com.github.lyokofirelyte.Divinity.Manager.TeamspeakManager;
 import com.github.lyokofirelyte.Divinity.Manager.WebsiteManager;
 import com.github.lyokofirelyte.Divinity.Manager.JSONManager.JSONClickType;
@@ -61,6 +62,7 @@ public class API implements SpectralAPI {
 	public DivinityManager divManager;
 	public DivinityRegistry divReg;
 	
+	public SpreadSheetReader sheets;
 	public JSONManager json;
 	public WebsiteManager web;
 	public TeamspeakManager ts3;
@@ -85,6 +87,7 @@ public class API implements SpectralAPI {
 		fw = new FW(this);
 		json = new JSONManager(this);
 		web = new WebsiteManager(this);
+		sheets = new SpreadSheetReader(this);
 		
 		clazzez.put(DivInvManager.class.toString(), new DivInvManager(this));
 		clazzez.put(WebsiteManager.class.toString(), web);

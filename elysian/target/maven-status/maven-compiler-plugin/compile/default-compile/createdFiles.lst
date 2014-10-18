@@ -9,7 +9,6 @@ com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefActive.class
 com\github\lyokofirelyte\Elysian\Gui\GuiLunarSpells.class
 com\github\lyokofirelyte\Elysian\ElyMarkkit$2.class
 com\github\lyokofirelyte\Elysian\MMO\ElyPatrol$Patrol.class
-com\github\lyokofirelyte\Elysian\ElyPlayerItem.class
 com\github\lyokofirelyte\Elysian\Games\Blink\BlinkCommand$BlinkInfo.class
 com\github\lyokofirelyte\Elysian\Commands\ElySpaceship.class
 com\github\lyokofirelyte\Elysian\Games\Cranked\Cranked.class
@@ -55,7 +54,6 @@ com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVP$2.class
 com\github\lyokofirelyte\Elysian\Games\Blink\BlinkCommand.class
 com\github\lyokofirelyte\Elysian\ElyMarkkit$1.class
 com\github\lyokofirelyte\Elysian\Gui\GuiRoot.class
-com\github\lyokofirelyte\Elysian\ElyMarkkitItem.class
 com\github\lyokofirelyte\Elysian\Events\ElyLogger$4.class
 com\github\lyokofirelyte\Elysian\MMO\Abilities\SkyBlade.class
 com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVPData$TeamPVPPlayer.class

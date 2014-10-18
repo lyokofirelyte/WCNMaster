@@ -52,6 +52,8 @@ public class ElySetup {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		main.divinity.api.sheets.fetch(false, true);
 	}
 	
 	private void tasks(){

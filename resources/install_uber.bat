@@ -1,0 +1,1 @@
+call mvn install:install-file -Dfile=UberJar.jar -DgroupId=com.github.lyokofirelyte -DartifactId=UberJar -Dversion=1.0 -Dpackaging=jar
