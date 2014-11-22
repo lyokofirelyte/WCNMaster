@@ -19,6 +19,12 @@ public class DivinityRegionModule extends DivinityStorageModule implements Divin
 	public DivinityRegionModule(String n, API i) {
 		super(n, i);
 	}
+	
+	public void quickSet(boolean enable, DRF... flags){
+		for (DRF flag : flags){
+			set(flag, enable);
+		}
+	}
 
 	public int getPriority(){
 		return getInt(DRI.PRIORITY);

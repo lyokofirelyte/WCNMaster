@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -96,6 +95,23 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 			warnings = new THashMap<Player, Map<String, Integer>>();
 			lightLevels = new THashMap<Player, Map<String, Integer>>();
 		}
+	}
+	
+	public boolean isNatural(Location l){
+		
+		String loc = l.toVector().getBlockX() + "," + l.toVector().getBlockZ();
+		float x = Precision.round(l.toVector().getBlockX(), -3);
+		float z = Precision.round(l.toVector().getBlockZ(), -3);
+		int y = l.toVector().getBlockY();
+		File file = new File("./plugins/Divinity/logger/" + x + "," + z + "/" + loc + ".yml");
+		List<String> results = new ArrayList<String>();
+		
+		if (file.exists()){
+			YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
+			results = new ArrayList<String>(yaml.getStringList("History." + l.getWorld().getName() + "." + y));
+		}
+
+		return results.size() == 0;
 	}
 	
 	public void addToQue(Location l, String player, String action, String eventName, String whatItWas, String whatItIs){
@@ -457,10 +473,6 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 		
 		Entity e = event.getEntity();
 		int amt = 0;
-	    
-	    if (e.getType().equals(EntityType.ENDER_CRYSTAL) && e.getWorld().equals(Bukkit.getWorld("world"))){
-	    	event.setCancelled(true);
-	    }
 
 	    for (Entity entity : e.getNearbyEntities(7.0D, 7.0D, 7.0D)) {
 	    	if ((entity.getType().equals(EntityType.MINECART_TNT)) || (entity.getType().equals(EntityType.PRIMED_TNT))){

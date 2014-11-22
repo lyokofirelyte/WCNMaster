@@ -19,6 +19,11 @@ import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
 public interface SpectralAPI {
 	
 	/**
+	 * @return A boolean determining if the API has an instance of the provided class
+	 */
+	public boolean hasInstance(Class<?> clazz);
+	
+	/**
 	 * @return Retreive a registered class instance that was registered using the registerAll()
 	 */
 	public Object getInstance(Class<?> clazz);
@@ -35,12 +40,12 @@ public interface SpectralAPI {
 	public DivinityAlliance getDivAlliance(String name);
 	
 	/**
-	 * @return The divinity game in the folder with the given name
+	 * @return The divinity game in the folder with the given name.
 	 */
 	public DivinityGame getDivGame(String folder, String name);
 	
 	/**
-	 * @return The divinity region with the specified name
+	 * @return The divinity region with the specified name.
 	 */
 	public DivinityRegion getDivRegion(String region);
 	
@@ -55,7 +60,7 @@ public interface SpectralAPI {
 	public DivinityRing getDivRing(String name);
 	
 	/**
-	 * Returns the Bukkit player object for the partial name supplied
+	 * Returns the Bukkit player object for the partial name supplied.
 	 */
 	public Player getPlayer(String name);
 	

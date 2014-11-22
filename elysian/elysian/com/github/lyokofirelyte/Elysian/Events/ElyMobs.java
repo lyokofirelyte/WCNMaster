@@ -34,6 +34,8 @@ import org.bukkit.util.Vector;
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
+import com.github.lyokofirelyte.Divinity.Events.PatrolEntityDeathEvent;
+import com.github.lyokofirelyte.Divinity.Events.PatrolPlayerDeathEvent;
 import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.MMO.Magics.SpellTasks;
@@ -70,7 +72,8 @@ public class ElyMobs implements Listener, AutoRegister {
 			
 		} else if (e.getEntity() instanceof Player){
 			
-			Player p = (Player)e.getEntity();
+			Player p = (Player) e.getEntity();
+			LivingEntity attacker = null;
 			
 			if (main.api.getDivPlayer(p).getBool(DPI.IN_GAME)){
 				return;
@@ -89,12 +92,23 @@ public class ElyMobs implements Listener, AutoRegister {
 				Projectile proj = (Projectile) e.getDamager();
 				
 				if (proj.getShooter() instanceof Player){
+					
 					Player damager = (Player) proj.getShooter();
+					
 					if (!main.api.getDivPlayer(damager).getStr(DPI.DUEL_PARTNER).equals(p.getName())){
 						e.setCancelled(true);
 					}
 					
+				} else if (proj.getShooter() instanceof LivingEntity){
+					attacker = (LivingEntity) proj.getShooter();
 				}
+				
+			} else if (e.getDamager() instanceof LivingEntity){
+				attacker = (LivingEntity) e.getDamager();
+			}
+			
+			if (attacker.hasMetadata("PatrolID") && (p.getHealth() - e.getDamage()) <= 0){
+				main.api.event(new PatrolPlayerDeathEvent(p, attacker.getMetadata("PatrolID").get(0).asString()));
 			}
 			
 			main.api.getDivPlayer(p).set(DPI.IN_COMBAT, true);
@@ -232,6 +246,10 @@ public class ElyMobs implements Listener, AutoRegister {
 				deadDP.set(DPI.DUEL_PARTNER, "killed");
 				
 				DivinityUtilsModule.bc(dead.getDisplayName() + " &e&owas brutally murdered in a duel with " + killer.getStr(DPI.DISPLAY_NAME));
+			}
+			
+			if (e.getEntity().hasMetadata("PatrolID")){
+				main.api.event(new PatrolEntityDeathEvent(e));
 			}
 		}
 	}

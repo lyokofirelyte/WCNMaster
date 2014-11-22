@@ -54,8 +54,8 @@ public enum Spell {
 		
 		if (dp.hasLevel(skill, level) || force){
 			
-			if (dp.getLong(skill.s() + "_COOLDOWN") > System.currentTimeMillis() && !force){
-				dp.err((dp.getLong(skill.s() + "_COOLDOWN") - System.currentTimeMillis())/1000 + " seconds cooldown!");
+			if (dp.getLong(type + "_COOLDOWN") > System.currentTimeMillis() && !force){
+				dp.err((dp.getLong(type + "_COOLDOWN") - System.currentTimeMillis())/1000 + " seconds cooldown!");
 				return;
 			}
 			
@@ -92,7 +92,7 @@ public enum Spell {
 				Location from = shooter.getLocation();
 				from.setY(from.getY() + 1.5);
 				final Location frontLocation = from.add(from.getDirection());
-				dp.set(skill.s() + "_COOLDOWN", System.currentTimeMillis() + cooldown);
+				dp.set(type + "_COOLDOWN", System.currentTimeMillis() + cooldown);
 				
 				switch (type){
 				

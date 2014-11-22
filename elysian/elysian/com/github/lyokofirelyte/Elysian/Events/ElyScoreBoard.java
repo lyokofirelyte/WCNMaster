@@ -88,7 +88,7 @@ public class ElyScoreBoard implements Listener, AutoRegister {
 			" ",
 			"&b" + getLoc(p),
 			"  ",
-			"&bS: &c" + rounds[0],
+			"&5S: &c" + rounds[0],
 			"&eE: &c" + rounds[1],
 			"&4B: &c" + dp.getInt(MMO.VAMP_BAR) + "%",
 			"&9P: &c" + dp.getInt(DPI.PARAGONS),

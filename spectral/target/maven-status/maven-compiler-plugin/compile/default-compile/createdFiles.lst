@@ -8,6 +8,7 @@ com\github\lyokofirelyte\Spectral\DataTypes\DRI.class
 com\github\lyokofirelyte\Spectral\StorageSystems\DivinityPlayer.class
 com\github\lyokofirelyte\Spectral\Spectral.class
 com\github\lyokofirelyte\Spectral\Public\RefUtils$DataType.class
+com\github\lyokofirelyte\Spectral\Identifiers\PatrolTask.class
 com\github\lyokofirelyte\Spectral\DataTypes\DRF.class
 com\github\lyokofirelyte\Spectral\Public\ParticleEffect$ParticleEffectPacket$PacketSendingException.class
 com\github\lyokofirelyte\Spectral\DataTypes\ElyTask.class
@@ -21,6 +22,7 @@ com\github\lyokofirelyte\Spectral\Public\ParticleEffect$ParticleEffectPacket$Pac
 com\github\lyokofirelyte\Spectral\DataTypes\DAI.class
 com\github\lyokofirelyte\Spectral\StorageSystems\DivinitySystem.class
 com\github\lyokofirelyte\Spectral\Public\RefUtils$PacketType.class
+com\github\lyokofirelyte\Spectral\DataTypes\DPS.class
 com\github\lyokofirelyte\Spectral\DataTypes\DRS.class
 com\github\lyokofirelyte\Spectral\DataTypes\ElyChannel.class
 com\github\lyokofirelyte\Spectral\StorageSystems\DivinityRing.class
@@ -30,3 +32,4 @@ com\github\lyokofirelyte\Spectral\Public\Direction.class
 com\github\lyokofirelyte\Spectral\StorageSystems\DivinityAlliance.class
 com\github\lyokofirelyte\Spectral\Events\DivinityEventHandler.class
 com\github\lyokofirelyte\Spectral\DataTypes\ElySkill.class
+com\github\lyokofirelyte\Spectral\DataTypes\DivHashMap.class

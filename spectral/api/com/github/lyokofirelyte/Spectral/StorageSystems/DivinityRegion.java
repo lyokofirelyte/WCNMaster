@@ -6,8 +6,14 @@ import java.util.Map;
 import org.bukkit.World;
 
 import com.github.lyokofirelyte.Spectral.DataTypes.DRF;
+import com.github.lyokofirelyte.Spectral.DataTypes.DRI;
 
 public interface DivinityRegion extends DivinityStorage { 
+	
+	/**
+	 * Quickly enables or disables a list of flags.
+	 */
+	public void quickSet(boolean enable, DRF... flags);
 	
 	/**
 	 * @return The priority of the region. If two regions overlap, the one with the higher priority is chosen. <br />
