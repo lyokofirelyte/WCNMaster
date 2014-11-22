@@ -824,7 +824,14 @@ public enum DPI {
 	 * The amount of paragon points for the player
 	 * @dataType int
 	 */
-	PARAGONS("PARAGONS");
+	PARAGONS("PARAGONS"),
+	
+	/**
+	 * The time when the player last performed the /rainoff command.
+	 * @dataType long
+	 */
+	
+	RAIN_TOGGLE("RAIN_TOGGLE");
 
 	DPI(String info){
 		this.info = info;

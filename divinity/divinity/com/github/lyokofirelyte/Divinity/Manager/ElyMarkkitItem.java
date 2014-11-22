@@ -47,9 +47,9 @@ public class ElyMarkkitItem {
 	}
 	
 	public int getSellPrice(int i){
-		try {
-			return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + "." + i + ".sellprice");
-		} catch (Exception e){
+		if(api.getDivSystem().getMarkkit().get("Items." + getSignName() + ".64") == null){
+			return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + "." + 1 + ".sellprice") * i;
+		}else{
 			return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + "." + 64 + ".sellprice") * i / 64;
 		}
 	}
