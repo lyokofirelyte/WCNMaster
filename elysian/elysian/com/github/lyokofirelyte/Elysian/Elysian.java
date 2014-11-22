@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.util.gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
@@ -29,6 +30,7 @@ import com.github.lyokofirelyte.Spectral.SpectralAPI;
 import com.github.lyokofirelyte.Spectral.DataTypes.DAI;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.DataTypes.ElyTask;
+import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
@@ -100,7 +102,7 @@ public class Elysian extends JavaPlugin {
 	public void s(CommandSender s, String type){
 		api.event(new DivinityPluginMessageEvent(s, type));
 	}
-	
+
 	public void s(CommandSender s, List<String> type){
 		for(String str : type){
 			api.event(new DivinityPluginMessageEvent(s, str));

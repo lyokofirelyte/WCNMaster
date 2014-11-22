@@ -1,5 +1,6 @@
 package com.github.lyokofirelyte.Elysian;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -48,6 +49,8 @@ public class ElyMarkkit implements Listener, AutoRegister {
 	private Map<String, Integer> totalPrice = new THashMap<String, Integer>();
 	private Map<String, Integer> showPrice = new THashMap<String, Integer>();
 	private Map<String, Location> chestLocation = new THashMap<String, Location>();
+	private Map<ItemStack, Integer> toRemove = new THashMap<ItemStack, Integer>();
+	
 	public ElyMarkkit(Elysian i){
 		main = i;
 		system = main.api.getDivSystem();
@@ -94,6 +97,9 @@ public class ElyMarkkit implements Listener, AutoRegister {
 		
 		
 		if(e.getInventory().getName().contains("Playershop")){
+			
+			Chest c = (Chest) e.getWhoClicked().getLocation().getWorld().getBlockAt(chestLocation.get(e.getInventory().getItem(44).getItemMeta().getDisplayName().split(" ")[0])).getState();
+			
 			e.setCancelled(true);
 			String clicker = e.getWhoClicked().getName();
 			
@@ -101,17 +107,13 @@ public class ElyMarkkit implements Listener, AutoRegister {
 				for(int i : buyCartPlayerShop){
 					if(e.getInventory().getItem(i) == null){
 						ItemStack clicked = new ItemStack(e.getCurrentItem().getType());
+						clicked.setDurability(e.getCurrentItem().getDurability());
 						clicked.setAmount(1);
 						e.getInventory().setItem(i, clicked);
 						return;
-					}else if(e.getInventory().getItem(i).getType() == e.getCurrentItem().getType() && e.getInventory().getItem(i).getAmount() == 64 && i + 1 < 44){
+					}else if(e.getInventory().getItem(i).getType() == e.getCurrentItem().getType() && e.getInventory().getItem(i).getDurability() == e.getCurrentItem().getDurability() && (e.getInventory().getItem(i).getAmount() < 64 || e.getInventory().getItem(i).getAmount() == 1)){
 						ItemStack clicked = new ItemStack(e.getCurrentItem().getType());
-						clicked.setAmount(1);
-						e.getInventory().setItem(i + 1, clicked);
-						return;
-					}else if(e.getInventory().getItem(i).getType() == e.getCurrentItem().getType()){
-					
-						ItemStack clicked = new ItemStack(e.getCurrentItem().getType());
+						clicked.setDurability(e.getCurrentItem().getDurability());
 						clicked.setAmount(e.getInventory().getItem(i).getAmount() + 1);
 						e.getInventory().setItem(i, clicked);
 						return;
@@ -123,25 +125,62 @@ public class ElyMarkkit implements Listener, AutoRegister {
 					if(e.getInventory().getItem(i) != null && e.getInventory().getItem(i).getType() != Material.AIR){
 						int money = system.getMarkkit().getInt("playershop." + e.getInventory().getItem(44).getItemMeta().getDisplayName().split(" ")[0] + "." + e.getInventory().getItem(i).getTypeId() + "." + e.getInventory().getItem(i).getDurability());
 						total = total + money;
-						Chest c = (Chest) e.getWhoClicked().getLocation().getWorld().getBlockAt(chestLocation.get(e.getInventory().getItem(44).getItemMeta().getDisplayName().split(" ")[0])).getState();
-						c.getInventory().removeItem(new ItemStack(e.getInventory().getItem(i).getType(), 1));
-						
+						if(toRemove.containsKey(e.getInventory().getItem(i).getType())){
+							toRemove.put(e.getInventory().getItem(i), toRemove.get(e.getInventory().getItem(i).getType()) + e.getInventory().getItem(i).getAmount());
+						}else{
+							toRemove.put(e.getInventory().getItem(i), e.getInventory().getItem(i).getAmount());
+						}
 					}
 				}
-				//check if he has enough money todo!
+
 				DivinityPlayer dp = main.api.getDivPlayer(p);
-				dp.set(DPI.BALANCE, dp.getInt(DPI.BALANCE) - total);
-				
-				if(main.api.doesPartialPlayerExist(e.getInventory().getItem(44).getItemMeta().getDisplayName().split(" ")[0])){
-					DivinityPlayer dp2 = main.api.getDivPlayer(e.getInventory().getItem(44).getItemMeta().getDisplayName().split(" ")[0]);
-					dp.set(DPI.BALANCE, dp.getInt(DPI.BALANCE) + total);
+				if(dp.getInt(DPI.BALANCE) >= total){
+					dp.set(DPI.BALANCE, dp.getInt(DPI.BALANCE) - total);
+
+					List<ItemStack> l = new ArrayList<ItemStack>();
+					for(ItemStack m : toRemove.keySet()){
+						ItemStack item = new ItemStack(m);
+						item.setAmount(toRemove.get(m));
+						l.add(item);
+					}
+					
+					for(ItemStack s : l){
+			//			if(!c.getInventory().containsAtLeast(arg0, arg1))
+						ItemStack is = new ItemStack(s.getType());
+						is.setDurability(s.getDurability());
+						is.setAmount(s.getAmount());
+						
+						c.getInventory().removeItem(is);
+						
+						
+						if(p.getInventory().firstEmpty() ==  -1){
+							p.getWorld().dropItem(p.getLocation(), is);
+						}else{
+							p.getInventory().addItem(is);
+						}
+					}
+					
+					if(main.api.doesPartialPlayerExist(e.getInventory().getItem(44).getItemMeta().getDisplayName().split(" ")[0])){
+						DivinityPlayer dp2 = main.api.getDivPlayer(e.getInventory().getItem(44).getItemMeta().getDisplayName().split(" ")[0]);
+						dp2.set(DPI.BALANCE, dp.getInt(DPI.BALANCE) + total);
+						if(dp2.isOnline()){
+							dp2.s(dp.getStr(DPI.DISPLAY_NAME) + "&b has bought something from you for " + total + " shinies!");
+						}
+					}
+					
+					main.s(p, total + " shinies were taken from your account!");
+				}else{
+					dp.s("You don't have enough money!");
 				}
-				
-				main.s(p, total + " shinies were taken from your account!");
-				
-			}else if(e.getInventory().getItem(e.getRawSlot()) != null && buyCartPlayerShop.contains(e.getRawSlot())){
+			}else if(buyCartPlayerShop.contains(e.getRawSlot())){
 				e.getInventory().setItem(e.getRawSlot(), new ItemStack(Material.AIR));
 			}
+			
+			
+			
+			
+			
+			
 		}else if(e.getInventory().getName().contains("items stocked") || e.getInventory().getName().contains("Double price!")){
 			e.setCancelled(true);
 			String name = invName.get(e.getWhoClicked().getName());
@@ -221,13 +260,12 @@ public class ElyMarkkit implements Listener, AutoRegister {
 				
 				
 			case 45:
-				
 				showPrice.put(e.getWhoClicked().getName(), 0);
 
 				for(Integer i : sellCart){
 					if(e.getInventory().getItem(i) != null){
 						int fullPrice = mi.getStackBuyPrice();
-						int currentPrice = mi.getBuyPrice(e.getInventory().getItem(i).getAmount());
+						int currentPrice = mi.getSellPrice(e.getInventory().getItem(i).getAmount());
 						showPrice.put(e.getWhoClicked().getName(), showPrice.get(e.getWhoClicked().getName()) + currentPrice);
 					}
 				}
@@ -235,7 +273,7 @@ public class ElyMarkkit implements Listener, AutoRegister {
 				ItemStack calculateLeft = new ItemStack(Material.MUSHROOM_SOUP, 1);
 				ItemMeta leftMeta = calculateLeft.getItemMeta();
 				leftMeta.setDisplayName(ChatColor.RED + "Click here to calculate the price!");
-				leftMeta.setLore(Arrays.asList(ChatColor.GREEN + "Price: " + showPrice.get(e.getWhoClicked().getName())/2));
+				leftMeta.setLore(Arrays.asList(ChatColor.GREEN + "Price: " + showPrice.get(e.getWhoClicked().getName())));
 				calculateLeft.setItemMeta(leftMeta);
 					
 				e.getInventory().setItem(45, calculateLeft);
@@ -482,7 +520,9 @@ public class ElyMarkkit implements Listener, AutoRegister {
 							i.setLore(Arrays.asList("Price not found"));
 						}
 						itemstack.setItemMeta(i);
-						temp.addItem(itemstack);
+						if(!temp.contains(itemstack)){
+							temp.addItem(itemstack);
+						}
 					}
 				}
 			}

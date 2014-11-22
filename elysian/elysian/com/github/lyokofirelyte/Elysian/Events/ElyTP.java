@@ -44,7 +44,7 @@ public class ElyTP implements Listener, AutoRegister {
 			return;
 		}
 		
-		if (!main.api.perms(p, "wa.staff.mod2", false)){
+		if (!main.api.perms(p, "wa.staff.mod2", true)){
 			for (Player player : Bukkit.getOnlinePlayers()){
 				if (main.api.getDivPlayer(player).getBool(DPI.TP_BLOCK)){
 					Location vv = player.getLocation();
