@@ -7,6 +7,8 @@ import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -64,7 +66,7 @@ public class ElyWarps implements AutoRegister {
 			}
 		}
 	}
-	
+
 	@DivCommand(perm = "wa.staff.mod2", name = "SW", aliases = {"setwarp", "remwarp", "delwarp"}, desc = "Elysian Set/Rem Warp Command", help = "/setwarp <name>, /remwarp <name>", player = true, min = 1)
 	public void onSetWarp(Player p, String[] args, String cmd){
 		

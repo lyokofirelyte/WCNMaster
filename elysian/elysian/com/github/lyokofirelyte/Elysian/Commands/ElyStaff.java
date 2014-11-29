@@ -580,13 +580,23 @@ public class ElyStaff implements Listener, AutoRegister {
 		 main.s(p, "Yum! Pixel food!");
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"tp", "teleport"}, desc = "Staff Telport Command", help = "/tp <player, alliance, coords> [player]", player = false, min = 1)
+	 @DivCommand(aliases = {"tp", "teleport"}, desc = "Staff Telport Command", help = "/tp <player, alliance, coords> [player]", player = false, min = 1)
 	 public void onTP(CommandSender p, String[] args){
 		 
 		 if (args.length == 1 && p instanceof Player && main.api.doesPartialPlayerExist(args[0])){
 
 			 if (main.api.isOnline(args[0])){
-					main.api.event(new DivinityTeleportEvent((Player)p, main.api.getPlayer(args[0]).getLocation()));
+				 if(!main.api.perms(p, "wa.staff.mod2", true)){
+					 
+					 if(Bukkit.getServer().getPlayer(args[0]).getLocation().getWorld().getName().equals("WACP") && ((Player)p).getLocation().getWorld().getName().equals("WACP")){
+						main.api.event(new DivinityTeleportEvent((Player)p, main.api.getPlayer(args[0]).getLocation()));
+					 }else{
+							p.sendMessage(main.AS("&c&oYou don't have enough permissions! :( Or you are not in the creative world with the other player."));
+					 }
+						
+				 }else{
+						main.api.event(new DivinityTeleportEvent((Player)p, main.api.getPlayer(args[0]).getLocation()));
+				 }
 			 }
 
 		 } else if (!(p instanceof Player)){
@@ -594,6 +604,7 @@ public class ElyStaff implements Listener, AutoRegister {
 			 main.s(p, "&c&oConsole can not tp to anyone!");
 			 
 		 } else if (main.api.doesPartialPlayerExist(args[0]) && main.api.doesPartialPlayerExist(args[1])){
+			 if(!main.api.perms(p, "wa.staff.mod2", false)) return;
 			 
 			 if (main.api.isOnline(args[0]) && main.api.isOnline(args[1])){
 				 main.api.event(new DivinityTeleportEvent(main.api.getPlayer(args[0]), main.api.getPlayer(args[1]).getLocation()));
@@ -602,7 +613,8 @@ public class ElyStaff implements Listener, AutoRegister {
 			 }
 			 
 		 } else if (main.divinity.api.divManager.getMap(DivinityManager.allianceDir).containsKey(args[0])){
-			 
+			 if(!main.api.perms(p, "wa.staff.mod2", false)) return;
+
 			 String[] coords = main.api.getDivAlliance(args[0]).getStr(DAI.CENTER).split(" ");
 			 
 			 if (args.length > 1 && main.api.doesPartialPlayerExist(args[1])){
@@ -612,7 +624,8 @@ public class ElyStaff implements Listener, AutoRegister {
 			 }
 			 
 		 } else if (args.length >= 3){
-			 
+			 if(!main.api.perms(p, "wa.staff.mod2", false)) return;
+
 			 if (DivinityUtilsModule.isInteger(args[0]) && DivinityUtilsModule.isInteger(args[1]) && DivinityUtilsModule.isInteger(args[2])){
 			
 				 if (args.length == 4 && main.api.doesPartialPlayerExist(args[3])){

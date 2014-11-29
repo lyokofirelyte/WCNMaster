@@ -293,13 +293,18 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 		switch (args[0]){
 		
 			case "add": case "remove":
+				
+				if(!p.getGameMode().equals(GameMode.SURVIVAL)){
+					main.s(p, "You must be in survival mode to perform this command!");
+					return;
+				}
+				
 				dp.set(DPI.CHEST_MODE, args[0]);
 				for (int i = 1; i < args.length; i++){
 					names.add(args[i]);
 				}
 				dp.set(DPI.CHEST_NAMES, names);
 				main.s(p, "none", "Left-click on a storage unit to " + args[0] + " the names.");
-				p.setGameMode(GameMode.SURVIVAL);
 			break;
 			
 			case "help":
@@ -311,10 +316,15 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 			break;
 			
 			case "view":
+				
+				if(!p.getGameMode().equals(GameMode.SURVIVAL)){
+					main.s(p, "You must be in survival mode to perform this command!");
+					return;
+				}
+				
 				dp.set(DPI.CHEST_MODE, args[0]);
 				dp.set(DPI.CHEST_NAMES, "view");
 				main.s(p, "none", "Left-click on a storage unit to view the owners.");
-				p.setGameMode(GameMode.SURVIVAL);
 			break;
 			
 			case "release":
