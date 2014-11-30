@@ -142,6 +142,14 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 		}
 	}
 	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onDuplicateDoublePlant(PlayerInteractEvent e){
+		ItemStack i = e.getPlayer().getItemInHand();
+		if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.DOUBLE_PLANT && i != null && i.getType() == Material.INK_SACK && i.getDurability() == 15){
+			e.setCancelled(true);
+		}
+	}
+	
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e){
