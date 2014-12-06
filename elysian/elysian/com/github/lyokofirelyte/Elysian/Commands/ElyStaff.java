@@ -850,9 +850,14 @@ public class ElyStaff implements Listener, AutoRegister {
 		 }
 	 }
 	 
-	@DivCommand(perm = "wa.staff.intern", aliases = {"o"}, desc = "Staff chat command", help = "/o <message>", player = true, min = 1)
-	public void onO(Player p, String[] args){
-		ElyChannel.STAFF.send(p.getDisplayName(), DivinityUtilsModule.createString(args, 0), main.api);
+	@DivCommand(perm = "wa.staff.intern", aliases = {"o"}, desc = "Staff chat command", help = "/o <message>", player = false, min = 1)
+	public void onO(CommandSender sender, String[] args){
+		if(sender instanceof Player){
+			Player p = (Player) sender;
+			ElyChannel.STAFF.send(p.getDisplayName(), DivinityUtilsModule.createString(args, 0), main.api);
+		}else{
+			ElyChannel.STAFF.send("&4[&cS&6e&er&2v&ae&br&3]", DivinityUtilsModule.createString(args, 0), main.api);
+		}
 	}
 	 
 	@DivCommand(aliases = {"skull"}, min = 1, max = 1, player = true, perm = "wa.staff.intern")

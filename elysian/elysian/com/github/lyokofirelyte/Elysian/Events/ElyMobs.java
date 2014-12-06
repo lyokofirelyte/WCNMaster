@@ -107,7 +107,7 @@ public class ElyMobs implements Listener, AutoRegister {
 				attacker = (LivingEntity) e.getDamager();
 			}
 			
-			if (attacker.hasMetadata("PatrolID") && (p.getHealth() - e.getDamage()) <= 0){
+			if (attacker != null && attacker.hasMetadata("PatrolID") && (p.getHealth() - e.getDamage()) <= 0){
 				main.api.event(new PatrolPlayerDeathEvent(p, attacker.getMetadata("PatrolID").get(0).asString()));
 			}
 			
