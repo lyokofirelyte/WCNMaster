@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.MMO;
+package com.github.lyokofirelyte.Elysian.Patrols;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,19 +17,20 @@ import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
 import com.github.lyokofirelyte.Divinity.Manager.JSONManager.JSONClickType;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
+import com.github.lyokofirelyte.Spectral.DataTypes.DPS;
 import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
 import com.google.common.collect.ImmutableMap;
 
-public class ElyPatrol {
+public class ElyPatrolChat {
 	
 	private Elysian main;
 
-	public ElyPatrol(Elysian i) {
+	public ElyPatrolChat(Elysian i) {
 		main = i;
 	}
 
-	Map<String, Patrol> patrols = new THashMap<>();
+	Map<String, Patrol> patrols = new THashMap<String, Patrol>();
 	
 	public void createPatrol(final String name){
 		
@@ -114,7 +115,7 @@ public class ElyPatrol {
 	}
 	
 	public Collection<Patrol> getAllPatrols(){
-		return patrols.values();
+		return patrols.size() > 0 ? patrols.values() : new ArrayList<Patrol>();
 	}
 
 	public interface Patrol {
@@ -337,7 +338,10 @@ public class ElyPatrol {
 				)));
 			}
 			
+			Location l = ((ElyPatrol) main.api.getInstance(ElyPatrol.class)).getLoc(DPS.CENTER);
+			
 			p.sendMessage("");
+			p.sendMessage(main.AS("&6&oThe current patrol battle is at " + l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ() + "."));
 		}
 	}
 }

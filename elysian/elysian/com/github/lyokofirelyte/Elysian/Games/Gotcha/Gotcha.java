@@ -160,6 +160,8 @@ public class Gotcha extends THashMap<String, GotchaGame> implements AutoSave, Au
 					if (players.size() >= 3){
 						start();
 					}
+					
+					main.api.event(new ScoreboardUpdateEvent(Bukkit.getPlayer(dp.uuid()), "filler"));
 				}
 				
 				public void remPlayer(DivinityPlayer dp){
@@ -253,6 +255,7 @@ public class Gotcha extends THashMap<String, GotchaGame> implements AutoSave, Au
 					}
 					
 					DivinityUtilsModule.bc(winner + " &bhas won a game of Gotcha!");	
+					main.api.cancelTask("gotchaCounter" + name);
 					remove(name);
 				}
 				
@@ -287,6 +290,7 @@ public class Gotcha extends THashMap<String, GotchaGame> implements AutoSave, Au
 						
 					} else {
 						inProgress = false;
+						remove(name);
 					}
 				}
 				

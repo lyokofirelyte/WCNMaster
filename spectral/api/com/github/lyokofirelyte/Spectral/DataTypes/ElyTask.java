@@ -35,7 +35,12 @@ public enum ElyTask {
 	/**
 	 * Pulls data from the website chat to the server chat and updates everyone
 	 */
-	WEBSITE("WEBSITE");
+	WEBSITE("WEBSITE"),
+	
+	/**
+	 * The main patrol task which finds a suitable location for the new patrol
+	 */
+	PATROL("PATROL");
 	
 	ElyTask(String type){
 		taskType = type;

@@ -59,6 +59,7 @@ import com.github.lyokofirelyte.Elysian.MMO.Abilities.SuperBreaker;
 import com.github.lyokofirelyte.Elysian.MMO.Abilities.TreeFeller;
 import com.github.lyokofirelyte.Elysian.MMO.Magics.SpellEvents;
 import com.github.lyokofirelyte.Elysian.MMO.Magics.SpellTasks;
+import com.github.lyokofirelyte.Elysian.Patrols.ElyPatrolChat;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
@@ -77,7 +78,7 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 	public SuperBreaker superBreaker;
 	public SkyBlade skyBlade;
 	public LifeForce life;
-	public ElyPatrol patrols;
+	public ElyPatrolChat patrols;
 	public ElyAutoRepair repair;
 	public SoulSplit soulSplit;
 	public SpellEvents spellEvents;
@@ -92,29 +93,23 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		superBreaker = new SuperBreaker(main);
 		skyBlade = new SkyBlade(main);
 		life = new LifeForce(main);
+		patrols = new ElyPatrolChat(main);
+		repair = new ElyAutoRepair(main);
+		spellEvents = new SpellEvents(main);
+		spellTasks = new SpellTasks(main);
 		fillMap();
 	}
 	
 	@Override
 	public Object[] registerSubClasses(){
 		
-		main.api.schedule(this, "clazzez", 60L, "clazzezmmo");
-		
 		return new Object[]{
-			new ElyPatrol(main),
-			new ElyAutoRepair(main),
-			new SpellEvents(main),
-			new SpellTasks(main)
+			patrols,
+			repair,
+			spellEvents,
+			spellTasks
 		};
 	}
-	
-	public void clazzez(){
-		patrols = (ElyPatrol) main.api.getInstance(ElyPatrol.class);
-		repair = (ElyAutoRepair) main.api.getInstance(ElyAutoRepair.class);
-		spellEvents = (SpellEvents) main.api.getInstance(SpellEvents.class);
-		spellTasks = (SpellTasks) main.api.getInstance(SpellTasks.class);
-	}
-	
 	//Material -> Skill -> [XP, LevelRequirement]
 	public void fillMap(){
 		sm(Material.LOG, ElySkill.WOODCUTTING, 125, 0);

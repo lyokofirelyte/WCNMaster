@@ -6,20 +6,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 import com.github.lyokofirelyte.Divinity.Divinity;
-import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Divinity.Manager.RecipeHandler;
 import com.github.lyokofirelyte.Elysian.Events.ElyLogger;
 import com.github.lyokofirelyte.Elysian.Gui.GuiCloset;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRoot;
 import com.github.lyokofirelyte.Elysian.MMO.ElyMMO;
+import com.github.lyokofirelyte.Elysian.Patrols.ElyPatrol;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.DataTypes.ElyTask;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -39,7 +38,6 @@ public class ElySetup {
 		main.api = main.divinity.api;
 		
 		main.api.registerAll(main);
-		main.divinity.api.clazzez.put(ElyMMO.class.toString(), new ElyMMO(main));
 		
 		closet();
 		tasks();
@@ -63,6 +61,7 @@ public class ElySetup {
 		main.tasks.put(ElyTask.WATCHER, Bukkit.getScheduler().scheduleSyncRepeatingTask(main, (ElyWatch) main.api.getInstance(ElyWatch.class), 500L, 500L));
 		main.tasks.put(ElyTask.WEBSITE, Bukkit.getScheduler().scheduleSyncRepeatingTask(main, main.divinity.api.web, 100L, 100L));
 		main.tasks.put(ElyTask.AUTO_SAVE, Bukkit.getScheduler().scheduleSyncRepeatingTask(main, (ElyAutoSave) main.api.getInstance(ElyAutoSave.class), 24000L, 24000L));
+		main.tasks.put(ElyTask.PATROL,  Bukkit.getScheduler().scheduleSyncRepeatingTask(main, (ElyPatrol) main.api.getInstance(ElyPatrol.class), 40L, 144000L));
 	}
 	
 	private void closet(){

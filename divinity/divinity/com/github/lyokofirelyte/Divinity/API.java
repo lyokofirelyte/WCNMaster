@@ -99,6 +99,10 @@ public class API implements SpectralAPI {
 		}
 	}
 	
+	public boolean hasInstance(Class<?> clazz){
+		return clazzez.containsKey(clazz.toString());
+	}
+	
 	public Object getInstance(Class<?> clazz){
 		return clazzez.get(clazz.toString());
 	}

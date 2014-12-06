@@ -37,6 +37,13 @@ public class ElyScoreBoard implements Listener, AutoRegister {
 		DivinityPlayer dp = main.api.getDivPlayer(p);
 		DivinitySystem system = main.api.getDivSystem();
 		
+		if (e.getReason().equals("filler")){
+			if (p.getScoreboard().getObjective(DisplaySlot.SIDEBAR) != null){
+				p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
+			}
+			return;
+		}
+		
 		if (dp.getBool(DPI.IN_GAME)){
 			return;
 		}
@@ -88,7 +95,7 @@ public class ElyScoreBoard implements Listener, AutoRegister {
 			" ",
 			"&b" + getLoc(p),
 			"  ",
-			"&bS: &c" + rounds[0],
+			"&5S: &c" + rounds[0],
 			"&eE: &c" + rounds[1],
 			"&4B: &c" + dp.getInt(MMO.VAMP_BAR) + "%",
 			"&9P: &c" + dp.getInt(DPI.PARAGONS),

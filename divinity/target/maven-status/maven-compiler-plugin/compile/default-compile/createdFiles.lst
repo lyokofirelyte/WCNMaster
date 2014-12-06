@@ -3,6 +3,8 @@ com\github\lyokofirelyte\Divinity\Storage\DivinityPlayerModule.class
 com\github\lyokofirelyte\Divinity\Storage\DivinityGameModule.class
 com\github\lyokofirelyte\Divinity\Manager\SpreadSheetReader$2.class
 com\github\lyokofirelyte\Divinity\Storage\DivinityStorageModule.class
+com\github\lyokofirelyte\Divinity\Events\PatrolEntityDeathEvent.class
+com\github\lyokofirelyte\Divinity\Events\PatrolPlayerDeathEvent.class
 com\github\lyokofirelyte\Divinity\Manager\SpreadSheetReader.class
 com\github\lyokofirelyte\Divinity\DivinityUtilsModule.class
 com\github\lyokofirelyte\Divinity\API.class

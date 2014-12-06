@@ -67,7 +67,7 @@ public class ElyCommand implements AutoRegister {
 	};
 	
 	Map<String, String[]> help = new THashMap<String, String[]>();
-	
+
 	private void fillMap(List<String> perms, boolean all){
 		for (Object o : main.divinity.commandMap.values()){
 			for (Method m : o.getClass().getMethods()){
