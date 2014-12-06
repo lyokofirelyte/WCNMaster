@@ -29,7 +29,7 @@ public class GotchaCommand {
 		DivinityPlayer dp = main.api.getDivPlayer(p);
 		DivinityGame dg = root.toDivGame();
 		
-		if (!args[0].equals("join") || !args[0].equals("leave")){
+		if (!args[0].equals("join") && !args[0].equals("leave")){
 			if (!main.api.perms(p, "wa.staff.mod2", false)){
 				return;
 			}
