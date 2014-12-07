@@ -70,12 +70,12 @@ public class ElyChat implements Listener, AutoRegister {
 		}
 		
 		if (main.api.doesPartialPlayerExist(sendTo) || sendTo.equals("console")){
-			if (sendTo.equals("console") || main.api.isOnline(sendTo)){
-				
-				String sendToMessage = main.AS("&3<- " + dp.getStr(DPI.DISPLAY_NAME) + "&f: " + main.api.getDivPlayer(sendTo).getStr(DPI.PM_COLOR) + message);
-				String sendMeMessage = main.AS(("&3-> " + main.api.getDivPlayer(sendTo).getStr(DPI.DISPLAY_NAME)) + "&f: " + dp.getStr(DPI.PM_COLOR) + message);
-				
+			if (sendTo.toLowerCase().equals("console") || main.api.isOnline(sendTo)){
+
 				if (!sendTo.equals("console")){	
+					
+					String sendToMessage = main.AS("&3<- " + dp.getStr(DPI.DISPLAY_NAME) + "&f: " + main.api.getDivPlayer(sendTo).getStr(DPI.PM_COLOR) + message);
+					String sendMeMessage = main.AS(("&3-> " + main.api.getDivPlayer(sendTo).getStr(DPI.DISPLAY_NAME)) + "&f: " + dp.getStr(DPI.PM_COLOR) + message);
 					
 					main.divinity.api.createJSON("", ImmutableMap.of(		
 						sendToMessage, ImmutableMap.of(
@@ -86,14 +86,20 @@ public class ElyChat implements Listener, AutoRegister {
 						)
 					)).sendToPlayer(main.api.getPlayer(sendTo));
 					
-					main.divinity.api.createJSON("", ImmutableMap.of(		
-							sendMeMessage, ImmutableMap.of(
-								JSONClickType.CLICK_SUGGEST, new String[]{
-									"/tell " + main.api.getPlayer(sendTo).getName() + " ",
-									"&7&oClick to message this person back!"
-								}
-							)
-						)).sendToPlayer((Player)cs);
+					if(cs instanceof Player){
+						main.divinity.api.createJSON("", ImmutableMap.of(		
+								sendMeMessage, ImmutableMap.of(
+									JSONClickType.CLICK_SUGGEST, new String[]{
+										"/tell " + main.api.getPlayer(sendTo).getName() + " ",
+										"&7&oClick to message this person back!"
+									}
+								)
+							)).sendToPlayer((Player)cs);
+						
+					}else{
+						cs.sendMessage(sendMeMessage);
+					}
+
 					
 					main.api.getDivPlayer(sendTo).set(DPI.PREVIOUS_PM, dp.name());
 					
