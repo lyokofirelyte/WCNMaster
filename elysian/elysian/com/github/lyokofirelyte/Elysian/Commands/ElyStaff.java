@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+
 import net.minecraft.util.com.google.common.collect.Lists;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -24,10 +27,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
@@ -45,11 +50,12 @@ import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
 public class ElyStaff implements Listener, AutoRegister {
 
 	 Elysian main;
+	 int id;
 	 
 	 public ElyStaff(Elysian i){
 		 main = i;
 	 }
-	 
+
 	 @DivCommand(perm = "wa.staff.admin", aliases = {"backup"}, desc = "File Backup Command", help = "/backup", player = false)
 	 public void onBackup(CommandSender cs, String[] args){
 		 main.api.backup();
@@ -129,6 +135,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		 }
 	 }*/
 	 
+
 	 @DivCommand(perm = "wa.staff.mod2", aliases = {"invsee"}, desc = "Inventory Spy Command", help = "/invsee <player>", player = true, min = 1)
 	 public void onInvSee(Player p, String[] args){
 		 
@@ -138,7 +145,7 @@ public class ElyStaff implements Listener, AutoRegister {
 			 main.s(p, "playerNotFound");
 		 }
 	 }
-
+	 
 	 @DivCommand(perm = "wa.staff.admin", aliases = {"ip"}, desc = "IP & Location Information", help = "/ip <player>", min = 1)
 	 public void onIP(CommandSender cs, String[] args){
 		 

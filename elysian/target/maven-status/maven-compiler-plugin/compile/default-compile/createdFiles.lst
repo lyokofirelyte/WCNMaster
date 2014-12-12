@@ -30,6 +30,7 @@ com\github\lyokofirelyte\Elysian\Commands\ElySpaceship$2.class
 com\github\lyokofirelyte\Elysian\Commands\ElyWealth.class
 com\github\lyokofirelyte\Elysian\Events\ElyMobs.class
 com\github\lyokofirelyte\Elysian\Games\Blink\Blink$1$1.class
+com\github\lyokofirelyte\Elysian\Games\Booth\Booth.class
 com\github\lyokofirelyte\Elysian\Games\Cranked\CrankedData.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefStorage$2.class
 com\github\lyokofirelyte\Elysian\Commands\ElyEconomy.class
@@ -67,6 +68,7 @@ com\github\lyokofirelyte\Elysian\Games\Gotcha\GotchaData.class
 com\github\lyokofirelyte\Elysian\Events\ElyFriendlyReminder.class
 com\github\lyokofirelyte\Elysian\Events\ElyGameMode.class
 com\github\lyokofirelyte\Elysian\Commands\ElyProtect$1.class
+com\github\lyokofirelyte\Elysian\Games\Booth\BoothCommand.class
 com\github\lyokofirelyte\Elysian\MMO\Magics\Spell.class
 com\github\lyokofirelyte\Elysian\Commands\ElyStaff.class
 com\github\lyokofirelyte\Elysian\Gui\GuiColourSelection.class

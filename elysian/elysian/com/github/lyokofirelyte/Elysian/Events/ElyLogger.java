@@ -50,7 +50,7 @@ import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
 public class ElyLogger implements Listener, Runnable, AutoRegister {
 	
 	private Elysian main;
-	
+
 	public ElyLogger(Elysian i){
 		main = i;
 	}

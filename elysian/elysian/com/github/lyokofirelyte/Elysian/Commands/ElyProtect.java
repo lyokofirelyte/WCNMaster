@@ -29,6 +29,7 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -307,7 +308,7 @@ public class ElyProtect implements Listener, AutoRegister {
 	@EventHandler
 	public void onMobSpawn(CreatureSpawnEvent e){
 		
-		if (hasFlag(isInAnyRegion(e.getEntity().getLocation()), DRF.MOB_SPAWN)){
+		if (hasFlag(isInAnyRegion(e.getEntity().getLocation()), DRF.MOB_SPAWN) && e.getSpawnReason() != SpawnReason.BREEDING){
 			e.setCancelled(true);
 		}
 	}
