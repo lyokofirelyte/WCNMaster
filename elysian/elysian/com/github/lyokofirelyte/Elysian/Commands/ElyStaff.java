@@ -283,7 +283,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.admin", aliases = {"placesign"}, desc = "Place a market sign down", help = "/placesign <down/side>", player = true, min = 1)
+	 @DivCommand(perm = "wa.staff.mod", aliases = {"placesign"}, desc = "Place a market sign down", help = "/placesign <down/side>", player = true, min = 1)
 	 public void onPlaceDown(Player p, String[] args){
 		 
 		 Block newSign = p.getWorld().getBlockAt(new Location(p.getWorld(), p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ()));
