@@ -15,6 +15,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,6 +25,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -89,9 +91,9 @@ public class GotchaActive implements Listener {
 			DivinityPlayer victim = null;
 			GotchaGame game = null;
 			
-			if (ball.getShooter() instanceof Player){
+			if (((Projectile) ball).getShooter() instanceof Player){
 				
-				shooter = main.api.getDivPlayer((Player) ball.getShooter());
+				shooter = main.api.getDivPlayer((Player) ((Projectile)ball).getShooter());
 				game = root.getGameWithPlayer(shooter);
 
 				if (game != null){

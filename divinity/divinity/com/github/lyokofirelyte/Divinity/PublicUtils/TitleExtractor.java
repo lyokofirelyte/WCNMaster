@@ -34,7 +34,7 @@ public class TitleExtractor {
     	try {
 			return gpt(url);
 		} catch (IOException e) {
-			return "URL";
+			return "URL (no title)";
 		}
     }
  
@@ -47,7 +47,7 @@ public class TitleExtractor {
         
         if (!contentType.contentType.equals("text/html")){
         	
-            return "URL NOT FOUND";
+            return "URL (no title)";
             
         }  else {
 

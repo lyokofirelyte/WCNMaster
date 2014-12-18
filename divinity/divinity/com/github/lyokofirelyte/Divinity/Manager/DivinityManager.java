@@ -73,7 +73,11 @@ public class DivinityManager {
 	}
 	
 	public YamlConfiguration lc(File file){
-		return YamlConfiguration.loadConfiguration(file); 
+		try {
+			return YamlConfiguration.loadConfiguration(file); 
+		} catch (Exception e){
+			return new YamlConfiguration();
+		}
 	}
 	
 	@SuppressWarnings("deprecation")

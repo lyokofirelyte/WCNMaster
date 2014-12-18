@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import net.minecraft.util.com.google.common.collect.Lists;
+import java.util.Random;
+
+import com.google.common.collect.Lists;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -14,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -24,10 +28,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
@@ -45,11 +51,12 @@ import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
 public class ElyStaff implements Listener, AutoRegister {
 
 	 Elysian main;
+	 int id;
 	 
 	 public ElyStaff(Elysian i){
 		 main = i;
 	 }
-	 
+
 	 @DivCommand(perm = "wa.staff.admin", aliases = {"backup"}, desc = "File Backup Command", help = "/backup", player = false)
 	 public void onBackup(CommandSender cs, String[] args){
 		 main.api.backup();
@@ -129,6 +136,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		 }
 	 }*/
 	 
+
 	 @DivCommand(perm = "wa.staff.mod2", aliases = {"invsee"}, desc = "Inventory Spy Command", help = "/invsee <player>", player = true, min = 1)
 	 public void onInvSee(Player p, String[] args){
 		 
@@ -138,7 +146,7 @@ public class ElyStaff implements Listener, AutoRegister {
 			 main.s(p, "playerNotFound");
 		 }
 	 }
-
+	 
 	 @DivCommand(perm = "wa.staff.admin", aliases = {"ip"}, desc = "IP & Location Information", help = "/ip <player>", min = 1)
 	 public void onIP(CommandSender cs, String[] args){
 		 
@@ -276,7 +284,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.admin", aliases = {"placesign"}, desc = "Place a market sign down", help = "/placesign <down/side>", player = true, min = 1)
+	 @DivCommand(perm = "wa.staff.mod", aliases = {"placesign"}, desc = "Place a market sign down", help = "/placesign <down/side>", player = true, min = 1)
 	 public void onPlaceDown(Player p, String[] args){
 		 
 		 Block newSign = p.getWorld().getBlockAt(new Location(p.getWorld(), p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ()));
@@ -567,7 +575,7 @@ public class ElyStaff implements Listener, AutoRegister {
 	 
 	 @DivCommand(perm = "wa.staff.mod2", aliases = {"heal"}, desc = "Heal Command", help = "/heal", player = true)
 	 public void onHeal(Player p, String[] args){
-		 p.setHealth(p.getMaxHealth());
+		 p.setHealth(((Damageable)p).getMaxHealth());
 		 p.setFoodLevel(20);
 		 p.setSaturation(20);
 		 main.s(p, "Restored to full health!");
@@ -850,9 +858,14 @@ public class ElyStaff implements Listener, AutoRegister {
 		 }
 	 }
 	 
-	@DivCommand(perm = "wa.staff.intern", aliases = {"o"}, desc = "Staff chat command", help = "/o <message>", player = true, min = 1)
-	public void onO(Player p, String[] args){
-		ElyChannel.STAFF.send(p.getDisplayName(), DivinityUtilsModule.createString(args, 0), main.api);
+	@DivCommand(perm = "wa.staff.intern", aliases = {"o"}, desc = "Staff chat command", help = "/o <message>", player = false, min = 1)
+	public void onO(CommandSender sender, String[] args){
+		if (sender instanceof Player){
+			Player p = (Player) sender;
+			ElyChannel.STAFF.send(p.getDisplayName(), DivinityUtilsModule.createString(args, 0), main.api);
+		} else {
+			ElyChannel.STAFF.send("&4[&cS&6e&er&2v&ae&br&3]", DivinityUtilsModule.createString(args, 0), main.api);
+		}
 	}
 	 
 	@DivCommand(aliases = {"skull"}, min = 1, max = 1, player = true, perm = "wa.staff.intern")

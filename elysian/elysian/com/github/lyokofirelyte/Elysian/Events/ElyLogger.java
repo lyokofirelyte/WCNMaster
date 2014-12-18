@@ -17,6 +17,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -49,7 +50,7 @@ import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
 public class ElyLogger implements Listener, Runnable, AutoRegister {
 	
 	private Elysian main;
-	
+
 	public ElyLogger(Elysian i){
 		main = i;
 	}
@@ -442,6 +443,8 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 	@EventHandler
 	public void onPlace(BlockPlaceEvent e){
 		
+		DivinityPlayer dp = main.api.getDivPlayer(e.getPlayer());
+		
 		if (!main.api.getDivPlayer(e.getPlayer()).getList(DPI.PERMS).contains("wa.member")){
 			e.setCancelled(true);
 			return;
@@ -449,14 +452,37 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 		
 		String matName = e.getBlock().getType().toString().toLowerCase();
 		
-		if (e.getBlock() != null && main.api.getDivPlayer(e.getPlayer()).getBool(DPI.LOGGER) && e.getPlayer().getItemInHand().getType().equals(Material.ENDER_PORTAL_FRAME)){
+		
+		
+		if(e.getBlock().getType() == Material.CHEST || e.getBlock().getType() == Material.HOPPER){
+			
+			List<BlockFace> faces = new ArrayList<BlockFace>(Arrays.asList(BlockFace.WEST, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.UP, BlockFace.DOWN));
+
+			for(BlockFace bf : faces){
+				if(e.getBlock().getRelative(bf) != null){
+					Block opposite = e.getBlock().getRelative(bf);
+					
+					if(opposite.getType() == Material.CHEST){
+						if(!dp.getList(DPI.OWNED_CHESTS).contains(opposite.getWorld().getName() + " " + opposite.getX() + " " + opposite.getY() + " " + opposite.getZ())){
+							e.setCancelled(true);
+							dp.s("You can't place your " + e.getBlock().getType().toString().toLowerCase() + " next to a chest that you don't own!");
+							return;
+						}
+						
+					}
+					
+				}
+			}
+		}		
+		
+		if (e.getBlock() != null && dp.getBool(DPI.LOGGER) && e.getPlayer().getItemInHand().getType().equals(Material.ENDER_PORTAL_FRAME)){
 			lookup(e.getPlayer(), e.getBlock().getLocation());
 			e.setCancelled(true);
 		} else if (e.getBlock().getWorld().getName().equals("world")){
 			addToQue(e.getBlock().getLocation(), "&b" + e.getPlayer().getName(), "&aplaced &b" + e.getBlock().getType().toString().toLowerCase(), "place", "AIRsplit0", matName + "split" + e.getBlock().getData());
 		}
 		
-		if (main.api.getDivPlayer(e.getPlayer()).getBool(DPI.IS_STAFF_TP)){
+		if (dp.getBool(DPI.IS_STAFF_TP)){
 			e.setCancelled(true);
 			return;
 		}
@@ -465,7 +491,7 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 			main.s(e.getPlayer(), "none", "This storage unit is now protected. Allow friend access with /chest add <player>.");
 			Location l = e.getBlock().getLocation();
 			String loc = l.getWorld().getName() + " " + l.toVector().getBlockX() + " " + l.toVector().getBlockY() + " " + l.toVector().getBlockZ();
-			main.api.getDivPlayer(e.getPlayer()).getList(DPI.OWNED_CHESTS).add(loc);
+			dp.getList(DPI.OWNED_CHESTS).add(loc);
 		}
 	}
 	

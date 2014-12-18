@@ -13,7 +13,6 @@ import net.minecraft.util.gnu.trove.map.hash.THashMap;
 import org.bukkit.Material;
 
 import com.github.lyokofirelyte.Divinity.API;
-import com.github.lyokofirelyte.Divinity.Divinity;
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;

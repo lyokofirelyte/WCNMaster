@@ -124,7 +124,7 @@ public class PatrolEvents implements Listener {
 		root.set("PatrolEntity" + patrolId, new ArrayList<LivingEntity>());
 	}
 	
-	public void modHealth(Player lifeGuardian){
+	/*public void modHealth(Player lifeGuardian){
 		
 		for (Player p : root.getPlayerList(DPS.PLAYERS)){
 			p.setHealth(p.getMaxHealth() - 2);
@@ -133,7 +133,7 @@ public class PatrolEvents implements Listener {
 		
 		lifeGuardian.setMaxHealth(lifeGuardian.getMaxHealth() + 6);
 		lifeGuardian.setHealth(lifeGuardian.getMaxHealth());
-	}
+	}*/
 	
 	@EventHandler(ignoreCancelled = false)
 	public void onExplode(EntityExplodeEvent e){
@@ -271,7 +271,7 @@ public class PatrolEvents implements Listener {
 		patrolMsg("The LG gains extra health each &3round!", "one");
 		patrolMsg("&c&oHowever, the health comes from the &c&orest of you!", "one");
 		patrolMsg("&aGood news though, the LG can heal &aothers!", "one");
-		modHealth(selected);
+		//modHealth(selected);
 		
 		region.set(DRF.TAKE_DAMAGE, false);
 		mobs.clearCurrEffect();

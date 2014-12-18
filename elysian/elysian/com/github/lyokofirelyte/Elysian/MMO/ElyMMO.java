@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.util.gnu.trove.map.hash.THashMap;
-import net.minecraft.util.org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
@@ -20,6 +20,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -283,7 +284,7 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 	public void onFall(EntityDamageEvent e){
 		
 		if (e.getCause() == DamageCause.FALL && e.getEntity() instanceof Player){
-			if (((Player)e.getEntity()).getHealth() > 0){
+			if (((Damageable)e.getEntity()).getHealth() > 0){
 				main.api.event(new SkillExpGainEvent((Player)e.getEntity(), ElySkill.ENDURANCE, Integer.parseInt(Math.round(e.getDamage()*5) + "")));
 				e.setDamage(e.getDamage() - (e.getDamage()*((main.api.getDivPlayer((Player)e.getEntity()).getLevel(ElySkill.ENDURANCE)*.4)/100)));
 			}
@@ -337,11 +338,11 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 				}
 			} else {
 				if (new Random().nextInt(100) <= dp.getLevel(ElySkill.VAMPYRISM)*0.2){
-					if (p.getHealth() < 20){
-						if (e.getDamage() + p.getHealth() > 20){
+					if (((Damageable) p).getHealth() < 20){
+						if (e.getDamage() + ((Damageable) p).getHealth() > 20){
 							p.setHealth(20);
 						} else {
-							p.setHealth(p.getHealth() + (e.getDamage()/2));
+							p.setHealth(((Damageable) p).getHealth() + (e.getDamage()/2));
 						}
 					}
 				}

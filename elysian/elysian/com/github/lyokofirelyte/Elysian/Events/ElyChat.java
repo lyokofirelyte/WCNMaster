@@ -72,12 +72,12 @@ public class ElyChat implements Listener, AutoRegister {
 		}
 		
 		if (main.api.doesPartialPlayerExist(sendTo) || sendTo.equals("console")){
-			if (sendTo.equals("console") || main.api.isOnline(sendTo)){
-				
-				String sendToMessage = main.AS("&3<- " + dp.getStr(DPI.DISPLAY_NAME) + "&f: " + main.api.getDivPlayer(sendTo).getStr(DPI.PM_COLOR) + message);
-				String sendMeMessage = main.AS(("&3-> " + main.api.getDivPlayer(sendTo).getStr(DPI.DISPLAY_NAME)) + "&f: " + dp.getStr(DPI.PM_COLOR) + message);
-				
+			if (sendTo.toLowerCase().equals("console") || main.api.isOnline(sendTo)){
+
 				if (!sendTo.equals("console")){	
+					
+					String sendToMessage = main.AS("&3<- " + dp.getStr(DPI.DISPLAY_NAME) + "&f: " + main.api.getDivPlayer(sendTo).getStr(DPI.PM_COLOR) + message);
+					String sendMeMessage = main.AS(("&3-> " + main.api.getDivPlayer(sendTo).getStr(DPI.DISPLAY_NAME)) + "&f: " + dp.getStr(DPI.PM_COLOR) + message);
 					
 					main.divinity.api.createJSON("", ImmutableMap.of(		
 						sendToMessage, ImmutableMap.of(
@@ -88,14 +88,20 @@ public class ElyChat implements Listener, AutoRegister {
 						)
 					)).sendToPlayer(main.api.getPlayer(sendTo));
 					
-					main.divinity.api.createJSON("", ImmutableMap.of(		
-							sendMeMessage, ImmutableMap.of(
-								JSONClickType.CLICK_SUGGEST, new String[]{
-									"/tell " + main.api.getPlayer(sendTo).getName() + " ",
-									"&7&oClick to message this person back!"
-								}
-							)
-						)).sendToPlayer((Player)cs);
+					if(cs instanceof Player){
+						main.divinity.api.createJSON("", ImmutableMap.of(		
+								sendMeMessage, ImmutableMap.of(
+									JSONClickType.CLICK_SUGGEST, new String[]{
+										"/tell " + main.api.getPlayer(sendTo).getName() + " ",
+										"&7&oClick to message this person back!"
+									}
+								)
+							)).sendToPlayer((Player)cs);
+						
+					}else{
+						cs.sendMessage(sendMeMessage);
+					}
+
 					
 					main.api.getDivPlayer(sendTo).set(DPI.PREVIOUS_PM, dp.name());
 					
@@ -274,7 +280,7 @@ public class ElyChat implements Listener, AutoRegister {
 					};
 					
 					String rankColor = new Random().nextInt(2) == 0 ? "&6" : "&e";
-					String rankName = sentFrom.getStr(DPI.RANK_NAME);
+					String rankName = ChatColor.stripColor(sentFrom.getStr(DPI.RANK_NAME));
 					String rankDesc = sentFrom.getStr(DPI.RANK_DESC);
 					String staffDesc = sentFrom.getStr(DPI.STAFF_DESC);
 					String staffColor = clr;
@@ -288,6 +294,8 @@ public class ElyChat implements Listener, AutoRegister {
 						}
 					}
 					
+					// END CHRISTMAS STUFF
+					
 					JSONChatMessage msg = new JSONChatMessage("", null, null);
 					
 					JSONChatExtra extra = new JSONChatExtra(main.AS(staffColor + rankName + " "), null, null);
@@ -298,7 +306,7 @@ public class ElyChat implements Listener, AutoRegister {
 					extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&6" + rankDesc));
 					msg.addExtra(extra);
 					
-					extra = new JSONChatExtra(main.AS(e.getPlayer().getDisplayName() + "&f:" + globalColor), null, null);
+					extra = new JSONChatExtra(main.AS(clr + ChatColor.stripColor(main.AS(e.getPlayer().getDisplayName())) + "&f:" + globalColor), null, null);
 					extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS(playerDesc));
 					extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, "/tell " + e.getPlayer().getName() + " ");
 					msg.addExtra(extra);

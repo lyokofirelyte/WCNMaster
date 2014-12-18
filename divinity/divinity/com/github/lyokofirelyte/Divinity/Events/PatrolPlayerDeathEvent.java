@@ -20,7 +20,7 @@ public class PatrolPlayerDeathEvent extends Event implements DivinityEventHandle
     	patrolId = id;
     	player = p;
     	setLoc(player.getLocation());
-    	p.setHealth(p.getMaxHealth());
+    	//p.setHealth((Damagable)p).getMaxHealth());
     }
     
     public void setPlayer(Player p){
