@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.Games.Blink;
+/*package com.github.lyokofirelyte.Elysian.Games.Blink;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -312,4 +312,4 @@ public class BlinkCommand implements Listener {
 			main.s(p, "&c&oSign not found!");
 		}
 	}
-}
+}*/

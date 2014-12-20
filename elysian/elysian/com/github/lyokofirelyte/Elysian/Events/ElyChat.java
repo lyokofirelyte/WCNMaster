@@ -266,18 +266,12 @@ public class ElyChat implements Listener, AutoRegister {
 					String rankDesc = sentFrom.getStr(DPI.RANK_DESC);
 					String staffDesc = sentFrom.getStr(DPI.STAFF_DESC);
 					String staffColor = sentFrom.getStr(DPI.STAFF_COLOR);
-					String playerDesc = sentFrom.getStr(DPI.PLAYER_DESC);
-					String globalColor = sendTo.getStr(DPI.GLOBAL_COLOR);*/
+					String playerDesc = sentFrom.getStr(DPI.PLAYER_DESC);*/
+					String globalColor = sendTo.getStr(DPI.GLOBAL_COLOR);
 					
 					// CHRISTMAS STUFF
 					
 					String clr = Arrays.asList("&c", "&2", "&4", "&a").get(new Random().nextInt(4));
-					String[][] clrr = new String[][]{
-						new String[]{ "&4", "&c" },
-						new String[]{ "&c", "&4" },
-						new String[]{ "&2", "&a" },
-						new String[]{ "&a", "&2" }
-					};
 					
 					String rankColor = new Random().nextInt(2) == 0 ? "&6" : "&e";
 					String rankName = ChatColor.stripColor(sentFrom.getStr(DPI.RANK_NAME));
@@ -285,14 +279,6 @@ public class ElyChat implements Listener, AutoRegister {
 					String staffDesc = sentFrom.getStr(DPI.STAFF_DESC);
 					String staffColor = clr;
 					String playerDesc = sentFrom.getStr(DPI.PLAYER_DESC);
-					String globalColor = "";
-					
-					for (String[] str : clrr){
-						if (str[0].equals(clr)){
-							globalColor = str[1];
-							break;
-						}
-					}
 					
 					// END CHRISTMAS STUFF
 					

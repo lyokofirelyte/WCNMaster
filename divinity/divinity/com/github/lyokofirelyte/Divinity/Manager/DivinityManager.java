@@ -203,7 +203,11 @@ public class DivinityManager {
 	public void save() throws IOException {
 		
 		for (AutoSave save : api.saveClasses.values()){
-			save.save();
+			try {
+				save.save();
+			} catch (Exception e){
+				System.out.println(save.toString() + " failed to save.");
+			}
 		}
 		
  		for (String objectType : data.keySet()){

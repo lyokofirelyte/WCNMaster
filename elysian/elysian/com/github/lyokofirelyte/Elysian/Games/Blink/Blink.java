@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.Games.Blink;
+/*package com.github.lyokofirelyte.Elysian.Games.Blink;
 
 import java.util.Map;
 
@@ -184,4 +184,4 @@ public class Blink implements AutoSave, AutoRegister {
 			}
 		}
 	}
-}
+}*/
