@@ -23,7 +23,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-import org.reflections.Reflections;
 import com.github.lyokofirelyte.Divinity.Commands.DivinityRegistry;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
 import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
@@ -68,7 +67,6 @@ public class API implements SpectralAPI {
 	public TeamspeakManager ts3;
 	public PlayerLocation playerLocation;
 	public TitleExtractor title;
-	public Reflections ref;
 	public FW fw;
 	
     public Map<String, Integer> activeTasks = new HashMap<String, Integer>();

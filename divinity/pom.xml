@@ -42,7 +42,7 @@
            	 			<configuration>
            	 				<filters>
            	 					<filter>
-           	 						<artifact>com.github.lyokofirelyte:UberJar</artifact>
+           	 						<artifact>com.github.lyokofirelyte:CB</artifact>
            	 						<excludes>
     									<exclude>org/bukkit/**</exclude>
     									<exclude>org/yaml/**</exclude>

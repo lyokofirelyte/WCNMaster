@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Monster;
@@ -95,12 +96,12 @@ public class SpellTasks {
 			for (Entity e : ents){
 				if (e instanceof Player){
 					Player them = (Player) e;
-					if (them.getHealth() < them.getMaxHealth()){
+					if (((Damageable) them).getHealth() < ((Damageable) them).getMaxHealth()){
 						main.api.event(new SkillExpGainEvent(p, ElySkill.LUNAR, 50));
-						if (them.getHealth() < them.getMaxHealth() - 2){
-							them.setHealth(them.getHealth() + 2);
+						if (((Damageable) them).getHealth() < ((Damageable) them).getMaxHealth() - 2){
+							them.setHealth(((Damageable) them).getHealth() + 2);
 						} else {
-							them.setHealth(them.getMaxHealth());
+							them.setHealth(((Damageable) them).getMaxHealth());
 						}
 					}
 				}

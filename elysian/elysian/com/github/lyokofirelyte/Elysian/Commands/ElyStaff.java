@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.util.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -574,7 +575,7 @@ public class ElyStaff implements Listener, AutoRegister {
 	 
 	 @DivCommand(perm = "wa.staff.mod2", aliases = {"heal"}, desc = "Heal Command", help = "/heal", player = true)
 	 public void onHeal(Player p, String[] args){
-		 p.setHealth(p.getMaxHealth());
+		 p.setHealth(((Damageable)p).getMaxHealth());
 		 p.setFoodLevel(20);
 		 p.setSaturation(20);
 		 main.s(p, "Restored to full health!");
@@ -859,10 +860,10 @@ public class ElyStaff implements Listener, AutoRegister {
 	 
 	@DivCommand(perm = "wa.staff.intern", aliases = {"o"}, desc = "Staff chat command", help = "/o <message>", player = false, min = 1)
 	public void onO(CommandSender sender, String[] args){
-		if(sender instanceof Player){
+		if (sender instanceof Player){
 			Player p = (Player) sender;
 			ElyChannel.STAFF.send(p.getDisplayName(), DivinityUtilsModule.createString(args, 0), main.api);
-		}else{
+		} else {
 			ElyChannel.STAFF.send("&4[&cS&6e&er&2v&ae&br&3]", DivinityUtilsModule.createString(args, 0), main.api);
 		}
 	}

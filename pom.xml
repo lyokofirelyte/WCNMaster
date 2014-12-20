@@ -46,7 +46,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.lyokofirelyte</groupId>
-			<artifactId>UberJar</artifactId>
+			<artifactId>CB</artifactId>
 			<version>1.0</version>
 		</dependency>
 	</dependencies>

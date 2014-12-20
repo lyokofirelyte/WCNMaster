@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.util.gnu.trove.map.hash.THashMap;
-import net.minecraft.util.org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,6 +18,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -63,8 +64,8 @@ public class ElyMobs implements Listener, AutoRegister {
 		if (e.getEntity() instanceof LivingEntity && e.getEntity() instanceof Player == false){
 			
 			LivingEntity entity =  ((LivingEntity)e.getEntity());
-			double hp = entity.getHealth();
-			double percent = (hp/entity.getMaxHealth())*100;
+			double hp = ((Damageable) entity).getHealth();
+			double percent = (hp/((Damageable) entity).getMaxHealth())*100;
 			String[] mult = percent >= 80 ? s("&a", "5") : percent >= 60 ? s("&a", "4") : percent >= 40 ? s("&e", "3") : percent >= 20 ? s("&c", "2") : s("&4", "1");
 			entity.setCustomName(main.AS(mult[0] + StringUtils.repeat("\u2744", Integer.parseInt(mult[1]))));
 			entity.setCustomNameVisible(true);
@@ -107,7 +108,7 @@ public class ElyMobs implements Listener, AutoRegister {
 				attacker = (LivingEntity) e.getDamager();
 			}
 			
-			if (attacker != null && attacker.hasMetadata("PatrolID") && (p.getHealth() - e.getDamage()) <= 0){
+			if (attacker != null && attacker.hasMetadata("PatrolID") && (((Damageable) p).getHealth() - e.getDamage()) <= 0){
 				main.api.event(new PatrolPlayerDeathEvent(p, attacker.getMetadata("PatrolID").get(0).asString()));
 			}
 			
