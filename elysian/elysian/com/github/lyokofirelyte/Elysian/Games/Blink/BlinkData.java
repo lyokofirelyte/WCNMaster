@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.Games.Blink;
+/*package com.github.lyokofirelyte.Elysian.Games.Blink;
 
 public enum BlinkData {
 
@@ -13,4 +13,4 @@ public enum BlinkData {
 	public String s(){
 		return type;
 	}
-}
+}*/

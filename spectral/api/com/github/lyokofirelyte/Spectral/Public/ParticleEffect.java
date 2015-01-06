@@ -608,7 +608,7 @@ public enum ParticleEffect {
 		 * @see #initialize()
 		 */
 		public ParticleEffectPacket(String name, float offsetX, float offsetY, float offsetZ, float speed, int amount) throws IllegalArgumentException {
-			initialize();
+			//initialize();
 			if (speed < 0) {
 				throw new IllegalArgumentException("The speed is lower than 0");
 			}
@@ -630,7 +630,7 @@ public enum ParticleEffect {
 		 * 
 		 * @throws VersionIncompatibleException if accessed packets, fields or methods differ in your bukkit version
 		 */
-		public static void initialize() throws VersionIncompatibleException {
+		/*public static void initialize() throws VersionIncompatibleException {
 			if (initialized) {
 				return;
 			}
@@ -645,7 +645,7 @@ public enum ParticleEffect {
 				throw new VersionIncompatibleException("Your current bukkit version seems to be incompatible with this library", exception);
 			}
 			initialized = true;
-		}
+		}*/
  
 		/**
 		 * Determine if {@link #packetConstructor}, {@link #getHandle}, {@link #playerConnection} and {@link #sendPacket} are initialized
@@ -656,6 +656,13 @@ public enum ParticleEffect {
 		public static boolean isInitialized() {
 			return initialized;
 		}
+		
+		public void sendTo(Location center){
+			try {
+				Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "particle " + name + " " + center.getBlockX() + " " + center.getBlockY() + " " + center.getBlockZ() + " " + offsetX + " " + offsetY + " " + offsetZ + " " + speed + " " + amount + " 0");
+			} catch (Exception e){}
+		}
+		
  
 		/**
 		 * Sends the packet to a single player and caches it
@@ -665,28 +672,8 @@ public enum ParticleEffect {
 		 * @throws PacketInstantiationException if instantion fails due to an unknown error
 		 * @throws PacketSendingException if sending fails due to an unknown error
 		 */
-		public void sendTo(Location center, Player player) throws PacketInstantiationException, PacketSendingException {
-			if (packet == null) {
-				try {
-					packet = packetConstructor.newInstance();
-					RefUtils.setValue(packet, true, "a", name);
-					RefUtils.setValue(packet, true, "b", (float) center.getX());
-					RefUtils.setValue(packet, true, "c", (float) center.getY());
-					RefUtils.setValue(packet, true, "d", (float) center.getZ());
-					RefUtils.setValue(packet, true, "e", offsetX);
-					RefUtils.setValue(packet, true, "f", offsetY);
-					RefUtils.setValue(packet, true, "g", offsetZ);
-					RefUtils.setValue(packet, true, "h", speed);
-					RefUtils.setValue(packet, true, "i", amount);
-				} catch (Exception exception) {
-					throw new PacketInstantiationException("Packet instantiation failed", exception);
-				}
-			}
-			try {
-				sendPacket.invoke(playerConnection.get(getHandle.invoke(player)), packet);
-			} catch (Exception exception) {
-				throw new PacketSendingException("Failed to send the packet to player '" + player.getName() + "'", exception);
-			}
+		public void sendTo(Location center, Player player) {
+			sendTo(center);
 		}
  
 		/**
@@ -702,7 +689,7 @@ public enum ParticleEffect {
 				throw new IllegalArgumentException("The player list is empty");
 			}
 			for (Player player : players) {
-				sendTo(center, player);
+				sendTo(center);
 			}
 		}
  
