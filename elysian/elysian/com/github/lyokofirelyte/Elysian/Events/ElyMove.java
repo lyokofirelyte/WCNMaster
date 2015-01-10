@@ -61,7 +61,7 @@ public class ElyMove implements Listener, AutoRegister {
 	
 	private boolean borderCheck(Player p, Vector v){
 		
-		if (p.getWorld().getName().equals("world") && (v.getBlockX() > 6000 || v.getBlockX() < -6000 || v.getBlockZ() > 6000 || v.getBlockZ() < -6000)){
+		if (p.getWorld().getName().equals("world") && (v.getBlockX() > 20000 || v.getBlockX() < -20000 || v.getBlockZ() > 20000 || v.getBlockZ() < -20000)){
 			main.s(p, "&c&oBorder reached!");
 			return true;
 		}

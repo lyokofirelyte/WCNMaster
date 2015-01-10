@@ -261,16 +261,16 @@ public class ElyChat implements Listener, AutoRegister {
 						rawMsg = (filter(rawMsg));
 					}
 					
-					/*String rankColor = sentFrom.getStr(DPI.RANK_COLOR);
+					String rankColor = sentFrom.getStr(DPI.RANK_COLOR);
 					String rankName = sentFrom.getStr(DPI.RANK_NAME);
 					String rankDesc = sentFrom.getStr(DPI.RANK_DESC);
 					String staffDesc = sentFrom.getStr(DPI.STAFF_DESC);
 					String staffColor = sentFrom.getStr(DPI.STAFF_COLOR);
-					String playerDesc = sentFrom.getStr(DPI.PLAYER_DESC);*/
+					String playerDesc = sentFrom.getStr(DPI.PLAYER_DESC);
 					String globalColor = sendTo.getStr(DPI.GLOBAL_COLOR);
 					
 					// CHRISTMAS STUFF
-					
+					/*
 					String clr = Arrays.asList("&c", "&2", "&4", "&a").get(new Random().nextInt(4));
 					
 					String rankColor = new Random().nextInt(2) == 0 ? "&6" : "&e";
@@ -279,7 +279,7 @@ public class ElyChat implements Listener, AutoRegister {
 					String staffDesc = sentFrom.getStr(DPI.STAFF_DESC);
 					String staffColor = clr;
 					String playerDesc = sentFrom.getStr(DPI.PLAYER_DESC);
-					
+					*/
 					// END CHRISTMAS STUFF
 					
 					JSONChatMessage msg = new JSONChatMessage("", null, null);
@@ -292,7 +292,7 @@ public class ElyChat implements Listener, AutoRegister {
 					extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&6" + rankDesc));
 					msg.addExtra(extra);
 					
-					extra = new JSONChatExtra(main.AS(clr + ChatColor.stripColor(main.AS(e.getPlayer().getDisplayName())) + "&f:" + globalColor), null, null);
+					extra = new JSONChatExtra(main.AS(e.getPlayer().getDisplayName() + "&f:" + globalColor), null, null);
 					extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS(playerDesc));
 					extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, "/tell " + e.getPlayer().getName() + " ");
 					msg.addExtra(extra);

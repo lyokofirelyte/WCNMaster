@@ -1,5 +1,9 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -53,6 +57,19 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 		if (p.getBool(MMO.IS_SOUL_SPLITTING)){
 			((ElyMMO) main.api.getInstance(ElyMMO.class)).soulSplit.stop(pl, p);
 		}
+		
+		 List<String> users = new ArrayList<String>(main.api.getDivSystem().getStringList("PRE_APPROVED"));
+		 if(users.contains(pl.getName())){
+			 System.out.println(users.contains(pl.getName()));
+			 main.api.getDivPlayer(pl.getName()).getList(DPI.PERMS).add("wa.member");
+			 main.api.getPlayer(pl.getName()).performCommand("rankup");
+
+			 p.s("You have been pre-approved by WA Staff! Enjoy!");
+			 
+			 users.remove(pl.getName());
+			 main.api.getDivSystem().set("PRE_APPROVED", users);
+			 
+		 }
 	}
 	
 	@EventHandler

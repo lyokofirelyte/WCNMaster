@@ -573,7 +573,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		 main.s(p, "You are now " + hidden[dp.getBool(DPI.VANISHED) ? 1 : 0]);
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"heal"}, desc = "Heal Command", help = "/heal", player = true)
+	 @DivCommand(perm = "wa.rank.continental", aliases = {"heal"}, desc = "Heal Command", help = "/heal", player = true)
 	 public void onHeal(Player p, String[] args){
 		 p.setHealth(((Damageable)p).getMaxHealth());
 		 p.setFoodLevel(20);

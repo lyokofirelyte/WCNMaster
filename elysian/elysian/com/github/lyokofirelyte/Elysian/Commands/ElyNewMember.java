@@ -1,5 +1,8 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
@@ -31,7 +34,11 @@ public class ElyNewMember implements AutoRegister {
 			 }
 			 
 		 } else {
-			 main.s(p, "playerNotFound");
+			 List<String> users = new ArrayList<String>(main.api.getDivSystem().getStringList("PRE_APPROVED"));
+			 users.add(args[0]);
+			 main.api.getDivSystem().set("PRE_APPROVED", users);
+			 
+			 main.s(p, "The player hasn't logged in yet, therefore he's added to the pre-approved list. He will automatically become member if he logs in.");
 		 }
 	 }
 	 
