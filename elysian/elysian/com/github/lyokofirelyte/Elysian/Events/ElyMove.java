@@ -28,7 +28,7 @@ public class ElyMove implements Listener, AutoRegister {
 		
 		DivinityPlayer dp = main.api.getDivPlayer(e.getPlayer());
 		
-		if (dp.getBool(DPI.DISABLED) || borderCheck(e.getPlayer(), e.getTo().toVector())){
+		if (dp.getBool(DPI.DISABLED)){
 			e.getPlayer().teleport(e.getFrom());
 		}
 		
@@ -57,15 +57,5 @@ public class ElyMove implements Listener, AutoRegister {
 				((LivingEntity)dp.getRawInfo(DPI.DIS_ENTITY)).setVelocity(new Vector(0, 1, 0));
 			}
 		}
-	}
-	
-	private boolean borderCheck(Player p, Vector v){
-		
-		if (p.getWorld().getName().equals("world") && (v.getBlockX() > 6000 || v.getBlockX() < -6000 || v.getBlockZ() > 6000 || v.getBlockZ() < -6000)){
-			main.s(p, "&c&oBorder reached!");
-			return true;
-		}
-		
-		return false;
 	}
 }

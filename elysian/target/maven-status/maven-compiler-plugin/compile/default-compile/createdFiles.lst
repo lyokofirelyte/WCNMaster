@@ -36,8 +36,8 @@ com\github\lyokofirelyte\Elysian\Commands\ElyRanks.class
 com\github\lyokofirelyte\Elysian\Patrols\ElyPatrol.class
 com\github\lyokofirelyte\Elysian\ElySetup.class
 com\github\lyokofirelyte\Elysian\Games\Cranked\CrankedCommand.class
-com\github\lyokofirelyte\Elysian\Commands\ElyModeration.class
 com\github\lyokofirelyte\Elysian\Gui\GuiSolarSpells.class
+com\github\lyokofirelyte\Elysian\Commands\ElyModeration.class
 com\github\lyokofirelyte\Elysian\MMO\ElyMMO$1.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData$SpleefDataType.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefStorage$1.class
@@ -63,6 +63,7 @@ com\github\lyokofirelyte\Elysian\Events\ElyFriendlyReminder.class
 com\github\lyokofirelyte\Elysian\Events\ElyGameMode.class
 com\github\lyokofirelyte\Elysian\Commands\ElyProtect$1.class
 com\github\lyokofirelyte\Elysian\Games\Booth\BoothCommand.class
+com\github\lyokofirelyte\Elysian\Events\HolidayStuff.class
 com\github\lyokofirelyte\Elysian\MMO\Magics\Spell.class
 com\github\lyokofirelyte\Elysian\Commands\ElyStaff.class
 com\github\lyokofirelyte\Elysian\Events\ElyMessages.class

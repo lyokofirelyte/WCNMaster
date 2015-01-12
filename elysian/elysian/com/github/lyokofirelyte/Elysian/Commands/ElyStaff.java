@@ -30,8 +30,10 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
@@ -61,6 +63,24 @@ public class ElyStaff implements Listener, AutoRegister {
 	 public void onBackup(CommandSender cs, String[] args){
 		 main.api.backup();
 		 main.s(cs, "Backup Complete!");
+	 }
+	 
+	 @DivCommand(perm = "wa.staff.admin", aliases = {"bomb"}, desc = "Holiday Bomb 9-11", help = "/bomb <player>", player = true, min = 1)
+	 public void onBomb(Player p, String[] args){
+		 
+		Potion splash = new Potion(PotionType.INSTANT_HEAL, 1);
+		splash.setSplash(true);
+			 
+		ItemStack i = splash.toItemStack(1);
+		i.setAmount(10);
+		ItemMeta meta = i.getItemMeta();
+		meta.setDisplayName(main.AS("&3&oHO HO *explodes*"));
+		meta.setLore(Arrays.asList(main.AS("&b&oHOLIDAY BOMB"), main.AS("&6&o" + p.getName()), main.AS("&7&oThrow at other players for gifts!")));
+		i.setItemMeta(meta);
+		
+		if (main.api.isOnline(args[0])){
+			main.api.getPlayer(args[0]).getInventory().addItem(i);
+		}
 	 }
 	 
 	 @DivCommand(perm = "wa.staff.mod", aliases = {"markkit"}, desc = "Lookup command", help = "/markkit <player> <page>", player = false, min = 2)
@@ -1044,12 +1064,8 @@ public class ElyStaff implements Listener, AutoRegister {
 	@DivCommand(perm = "wa.rank.townsman", aliases = {"ci"}, desc = "Clear Inventory (or restore inventory. Results may vary. TM)", help = "/ci [confirm]", player = true)
 	public void onCI(Player p, String[] args){
 		
-		if (args.length == 0){
-			main.s(p, "&cType /ci confirm to clear your inventory. &4This can't be reversed. We will not refund you.");
-		} else {
-			p.getInventory().clear();
-			main.s(p, "&oInventory inceneration activated.");
-		}
+		p.getInventory().clear();
+		main.s(p, "&oInventory inceneration activated.");
 	}
 	
 	@SuppressWarnings("deprecation")
