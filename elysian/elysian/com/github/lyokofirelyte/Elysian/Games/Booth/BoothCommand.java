@@ -160,14 +160,17 @@ public class BoothCommand {
 			
 		   Collections.sort(temp);
 		   Collections.reverse(temp);
-
+		   
+		   Integer maxCount = 0;
+		   
 		   for(Integer i : temp){
 			   for (Map.Entry<String, Integer> entry : votes.entrySet()) {
 				    String key = entry.getKey();
 				    Object value = entry.getValue();
 				    
-				    if(value == i){
+				    if(value == i && maxCount < 3){
 					   DivinityUtilsModule.bc(key + ": " + i + " points!");
+					   maxCount++;
 				   }
 			   }
 		   }
