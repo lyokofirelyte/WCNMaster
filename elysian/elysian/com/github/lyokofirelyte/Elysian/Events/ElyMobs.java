@@ -400,7 +400,7 @@ public class ElyMobs implements Listener, AutoRegister {
 		dp.set(DPI.MOB_MONEY, dp.getInt(DPI.MOB_MONEY) + (superRandom == 500 ? 1000 : 0));
 	}
 	
-	@DivCommand(aliases = {"exp", "xp"}, help = "/exp <take, store> <amount>", desc = "Elysian EXP Storing System", player = true)
+	@DivCommand(aliases = {"exp", "xp"}, help = "/exp <take, store, send> <amount> <player (optional)>", desc = "Elysian EXP Storing System", player = true)
 	public void onExp(Player p, String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -422,6 +422,9 @@ public class ElyMobs implements Listener, AutoRegister {
 					main.s(p, "&c&oNot enough stored xp!");
 				}
 				
+			
+				
+				
 			/*} else if (args[0].equals("store")){
 				
 				if (p.getTotalExperience() >= amt){
@@ -433,11 +436,50 @@ public class ElyMobs implements Listener, AutoRegister {
 					dp.err("Not enough xp!");
 				}*/
 				
-			} else {
+				
+			}else {
 				main.s(p, main.help("exp", this));
 			}
 			
-		} else {
+		}else if(args.length == 3){
+			
+			if(args[0].equals("send")){
+				if(main.api.doesPartialPlayerExist(args[2])){
+					if(DivinityUtilsModule.isInteger(args[1])){
+						int exp = Integer.parseInt(args[1]);
+						
+						if(exp < 0){
+							main.s(p, "That number is negative!");
+							return;
+						}
+						
+						if(dp.getInt(DPI.EXP) >= exp){
+							DivinityPlayer p2 = main.api.getDivPlayer(args[2]);
+							dp.set(DPI.EXP, dp.getInt(DPI.EXP) - exp);
+							p2.set(DPI.EXP, p2.getInt(DPI.EXP) + exp);
+	
+							main.s(p, "&6" + exp + " &bexperience sent to " + p2.getStr(DPI.DISPLAY_NAME));
+							if(p2.isOnline()){
+								p2.s("&6" + exp + " &bexperience received from " + dp.getStr(DPI.DISPLAY_NAME));
+							}
+						}else{
+							main.s(p, "You do not have enough experience");
+						}
+						
+						
+						
+					}else{
+						main.s(p, "That is not a number!");
+					}
+					
+				}else{
+					main.s(p, "Player not found!");
+				}
+				
+				
+			}
+			
+		}else {
 			main.s(p, main.help("exp", this));
 		}
 	}
