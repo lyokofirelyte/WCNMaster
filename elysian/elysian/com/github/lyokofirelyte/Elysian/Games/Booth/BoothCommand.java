@@ -7,14 +7,17 @@ import java.util.Map;
 
 import net.minecraft.util.gnu.trove.map.hash.THashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
 
 public class BoothCommand {
 
@@ -48,7 +51,8 @@ public class BoothCommand {
 					"vote <player1> <player2> <player3>",
 					"boothlist",
 					"result (shows the result of the vote)",
-					"toggle (toggles the game enabled or disabled)"
+					"toggle (toggles the game enabled or disabled)",
+					"buildcontest <theme> <judge date> You can do spaces with an underscore"
 					
 			}){
 				dp.s("/booth " + s);
@@ -190,7 +194,36 @@ public class BoothCommand {
 			break;
 		
 		
-		
+		case "buildcontest":
+			if(!main.api.perms(p, "wa.staff.mod2", true)){
+				dp.s("You don't have enough permissions!");
+				return;
+			}
+				
+			if(args.length == 3){
+				
+				String perm = "wa.member";
+				String msg = "A new build contest has started! The theme is &6" + args[1].replace("_", " ") + " &7and the judge date is &6" + args[2].replace("_", " ") + "&7. Use /booth home to claim your booth and start building!";
+				for (DivinityStorage ds : main.divinity.api.getAllPlayers()){
+					if (ds.getList(DPI.PERMS).contains(perm)){
+						ds.getList(DPI.MAIL).add(perm + "%SPLIT%" + p.getName() + "%SPLIT%" + msg);
+						if (Bukkit.getPlayer(ds.uuid()) != null){
+							main.s(Bukkit.getPlayer(ds.uuid()), "none", "You've recieved a mail! /mail read");
+						}
+					}
+				}
+				
+				main.s(p, "Mail sent!");
+				  
+				if(dg.getString("active").contains("false")){
+					dp.s("&4Building is currently disabled, type /booth toggle to enable building!");
+				}
+				  				
+			}else{
+				dp.s("Not enough arguments!");
+			}
+			
+			break;
 		
 		}
 		
