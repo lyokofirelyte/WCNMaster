@@ -96,6 +96,7 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		life = new LifeForce(main);
 		patrols = new ElyPatrolChat(main);
 		repair = new ElyAutoRepair(main);
+		soulSplit = new SoulSplit(main);
 		spellEvents = new SpellEvents(main);
 		spellTasks = new SpellTasks(main);
 		fillMap();
