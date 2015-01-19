@@ -546,7 +546,7 @@ public class ElyMarkkit implements Listener, AutoRegister {
 		
 		public void loadMarkkitInventory(Player p, String name){
 
-			if(system.getMarkkit().get("Items." + name) == null){
+			if(!system.getMarkkit().contains("Items." + name)){
 				main.s(p, "Cannot find this markkit, please contact staff.");
 				return;
 			}
