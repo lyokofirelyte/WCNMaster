@@ -3,6 +3,12 @@ package com.github.lyokofirelyte.Spectral.DataTypes;
 public enum DPI {
 	
 	/**
+	 * Auths the website with Elysian.
+	 * @dataType String
+	 */
+	WEB_CHECK("WEB_CHECK"),
+	
+	/**
 	 * Website Auth Code
 	 * @dataType String
 	 */
