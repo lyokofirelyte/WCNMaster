@@ -37,17 +37,23 @@ public class ElyEconomy implements AutoRegister {
 		 if (main.api.doesPartialPlayerExist(args[0])){
 			 
 			 if (DivinityUtilsModule.isInteger(args[1]) && dp.getInt(DPI.BALANCE) > (bal = Integer.parseInt(args[1]))){
-				 
-				 who = main.api.getDivPlayer(args[0]);
-				 who.set(DPI.BALANCE, who.getInt(DPI.BALANCE)+bal);
-				 dp.set(DPI.BALANCE, dp.getInt(DPI.BALANCE)-bal);
-				 
-				 main.s(p, "none", "You sent &6" + bal + " &bto " + who.getStr(DPI.DISPLAY_NAME) + "&b.");
-				 
-				 if (Bukkit.getPlayer(who.uuid()) != null){
-		 			main.s(Bukkit.getPlayer(who.uuid()), "none", "You were paid &6" + bal + " &bby " + p.getDisplayName() + "&b.");
+					 
+				if(bal > 0){
+						
+					 who = main.api.getDivPlayer(args[0]);
+					 who.set(DPI.BALANCE, who.getInt(DPI.BALANCE)+bal);
+					 dp.set(DPI.BALANCE, dp.getInt(DPI.BALANCE)-bal);
+					 
+					 main.s(p, "none", "You sent &6" + bal + " &bto " + who.getStr(DPI.DISPLAY_NAME) + "&b.");
+					 
+					 if (Bukkit.getPlayer(who.uuid()) != null){
+			 			main.s(Bukkit.getPlayer(who.uuid()), "none", "You were paid &6" + bal + " &bby " + p.getDisplayName() + "&b.");
+					 }
+					 
+				 }else{
+					 main.s(p, "That number is negative!");
 				 }
-				 
+					
 			 } else {
 				 main.s(p, "invalidNumber");
 			 }

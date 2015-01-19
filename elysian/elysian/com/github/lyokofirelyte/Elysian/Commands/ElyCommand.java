@@ -24,6 +24,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.json.simple.JSONObject;
 
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
@@ -103,6 +104,33 @@ public class ElyCommand implements AutoRegister {
 		}
 		
 		return false;
+	}
+	
+	@DivCommand(aliases = {"website"}, desc = "Obtain a registration code for the website", help = "/website", player = true)
+	public void onWebsite(Player p, String[] args){
+		
+		DivinityPlayer dp = main.api.getDivPlayer(p);
+		boolean result = true;
+		
+		if (dp.getStr(DPI.WEBSITE_CODE).equals("none")){
+			String upper = new Random().nextInt(2) == 1 ? p.getName().substring(0, 1) : p.getName().substring(0, 1).toUpperCase();
+			String enc = DivinityUtilsModule.encrypt(upper + p.getUniqueId().toString().substring(3, 8) + new Random().nextInt(10), "MD5");
+			if (enc.length() > 6){
+				enc = enc.substring(0, 6);
+			}
+			dp.set(DPI.WEBSITE_CODE, enc);
+			JSONObject sendMap = new JSONObject();
+			sendMap.put("uuid", p.getUniqueId().toString());
+			sendMap.put("id", enc);
+			sendMap.put("staff", dp.getList(DPI.PERMS).contains("wa.staff.intern"));
+			result = (boolean) main.divinity.api.web.sendPost("/api/register_code", sendMap).get("success");
+		}
+		
+		if (result){
+			main.s(p, "Your code is " + dp.getStr(DPI.WEBSITE_CODE) + ".");
+		} else {
+			main.s(p, "Error contacting website...");
+		}
 	}
 	
 	@DivCommand(aliases = {"sell"}, desc = "Add an item to the trading house in /root!", help = "/sell <price>", player = true, min = 1)

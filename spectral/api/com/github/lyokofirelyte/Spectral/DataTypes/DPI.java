@@ -3,6 +3,12 @@ package com.github.lyokofirelyte.Spectral.DataTypes;
 public enum DPI {
 	
 	/**
+	 * Website Auth Code
+	 * @dataType String
+	 */
+	WEBSITE_CODE("WEBSITE_CODE"),
+	
+	/**
 	 * Boolean that determines if we should send packets to google spreadsheets
 	 * @dataType boolean
 	 * @specificTo DivinitySystem
