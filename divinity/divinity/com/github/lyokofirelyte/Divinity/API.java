@@ -14,8 +14,6 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -70,8 +68,8 @@ public class API implements SpectralAPI {
 	public FW fw;
 	
     public Map<String, Integer> activeTasks = new HashMap<String, Integer>();
-	public Map<String, Object> clazzez = new THashMap<String, Object>();
-	public Map<String, AutoSave> saveClasses = new THashMap<String, AutoSave>();
+	public Map<String, Object> clazzez = new HashMap<String, Object>();
+	public Map<String, AutoSave> saveClasses = new HashMap<String, AutoSave>();
 	
 	public API(Divinity i){
 		

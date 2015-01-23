@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
+import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.MMO.ElyMMO;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
@@ -32,44 +33,54 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 	public void onJoin(PlayerJoinEvent e){
 		
 		e.setJoinMessage(null);
+		final Player pl = e.getPlayer();
 		
-		Player pl = e.getPlayer();
-		DivinityPlayer p = main.api.getDivPlayer(pl);
-		p.set(DPI.AFK_TIME_INIT, 0);
-		
-		if (main.api.getDivSystem().getList(DPI.AFK_PLAYERS).contains(pl.getName())){
-			main.api.getDivSystem().getList(DPI.AFK_PLAYERS).remove(pl.getName());
-		}
-		
-		p.set(DPI.LAST_LOGIN, DivinityUtilsModule.getTimeFull());
-		pl.setPlayerListName(main.AS(p.getStr(DPI.DISPLAY_NAME)));
-		pl.setDisplayName(p.getStr(DPI.DISPLAY_NAME));
-		
-		DivinityUtilsModule.customBC("&2(\\__/) " + pl.getDisplayName());
-		DivinityUtilsModule.customBC("&2(=^.^=)" + " &e&o" + p.getStr(DPI.JOIN_MESSAGE) + "&e&o");
-		pl.sendMessage("");
-		
-		p.s("&3Welcome back! We're running Elysian & Divinity v2.0");
-		p.s(p.getList(DPI.MAIL).size() > 0 ? "Mail time! /mail read or /mail clear." : "&7&oNo new messages.");
-		
-		defaultCheck(p);
-		
-		if (p.getBool(MMO.IS_SOUL_SPLITTING)){
-			((ElyMMO) main.api.getInstance(ElyMMO.class)).soulSplit.stop(pl, p);
-		}
-		
-		 List<String> users = new ArrayList<String>(main.api.getDivSystem().getStringList("PRE_APPROVED"));
-		 if(users.contains(pl.getName())){
-			 System.out.println(users.contains(pl.getName()));
-			 main.api.getDivPlayer(pl.getName()).getList(DPI.PERMS).add("wa.member");
-			 main.api.getPlayer(pl.getName()).performCommand("rankup");
+		Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
+			
+			public void run(){
+				DivinityPlayer p = main.api.getDivPlayer(pl);
+				p.set(DPI.AFK_TIME_INIT, 0);
+				
+				if (main.api.getDivSystem().getList(DPI.AFK_PLAYERS).contains(pl.getName())){
+					main.api.getDivSystem().getList(DPI.AFK_PLAYERS).remove(pl.getName());
+				}
+				
+				p.set(DPI.LAST_LOGIN, DivinityUtilsModule.getTimeFull());
+				pl.setPlayerListName(main.AS(p.getStr(DPI.DISPLAY_NAME)));
+				pl.setDisplayName(p.getStr(DPI.DISPLAY_NAME));
+				
+				DivinityUtilsModule.customBC("&2(\\__/) " + pl.getDisplayName());
+				DivinityUtilsModule.customBC("&2(=^.^=)" + " &e&o" + p.getStr(DPI.JOIN_MESSAGE) + "&e&o");
+				pl.sendMessage("");
+				
+				p.s("&3Welcome back! We're running Elysian & Divinity v2.0");
+				p.s(p.getList(DPI.MAIL).size() > 0 ? "Mail time! /mail read or /mail clear." : "&7&oNo new messages.");
+				
+				defaultCheck(p);
+				
+				if (p.getBool(MMO.IS_SOUL_SPLITTING)){
+					((ElyMMO) main.api.getInstance(ElyMMO.class)).soulSplit.stop(pl, p);
+				}
+				
+				List<String> users = new ArrayList<String>(main.api.getDivSystem().getStringList("PRE_APPROVED"));
+				if(users.contains(pl.getName())){
+					System.out.println(users.contains(pl.getName()));
+					main.api.getDivPlayer(pl.getName()).getList(DPI.PERMS).add("wa.member");
+					main.api.getPlayer(pl.getName()).performCommand("rankup");
 
-			 p.s("You have been pre-approved by WA Staff! Enjoy!");
-			 
-			 users.remove(pl.getName());
-			 main.api.getDivSystem().set("PRE_APPROVED", users);
-			 
-		 }
+					p.s("You have been pre-approved by WA Staff! Enjoy!");
+					 
+					users.remove(pl.getName());
+					main.api.getDivSystem().set("PRE_APPROVED", users);
+				 }
+				 
+				 if (!p.getStr(DPI.RING_LOC).equals("none")){
+					 main.api.event(new DivinityTeleportEvent(pl, p.getLoc(DPI.RING_LOC)));
+					 p.set(DPI.RING_LOC, "none");
+					 p.err("You logged out during flight. *slaps*");
+				 }
+				 
+			}}, 5L);
 	}
 	
 	@EventHandler
@@ -84,6 +95,8 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 		p.set(DPI.LOGOUT_LOCATION, pl.getLocation());
 		p.set(DPI.DISPLAY_NAME,  pl.getDisplayName());
 		p.set(DPI.SPECTATING, false);
+		
+		main.api.cancelTask("rings_task_" + e.getPlayer().getName());
 		
 		if (!p.getStr(DPI.SPECTATE_TARGET).equals("none")){
 			main.api.getDivPlayer(p.getStr(DPI.SPECTATE_TARGET)).set(DPI.SPECTATE_TARGET, "none");

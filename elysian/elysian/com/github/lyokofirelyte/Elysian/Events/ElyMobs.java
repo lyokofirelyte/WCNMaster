@@ -7,8 +7,10 @@ import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.util.gnu.trove.map.hash.THashMap;
-import org.apache.commons.lang3.StringUtils;
 
+
+
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

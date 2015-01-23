@@ -2,6 +2,7 @@ package com.github.lyokofirelyte.Elysian.Commands;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -11,6 +12,7 @@ import net.minecraft.util.gnu.trove.map.hash.THashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -23,6 +25,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -31,9 +34,13 @@ import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.Gui.GuiRingFuel;
+import com.github.lyokofirelyte.Elysian.Gui.GuiRingFuelSafe;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRings;
+import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.DataTypes.DRS;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
+import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityRing;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
 
@@ -48,6 +55,8 @@ public class ElyRings implements Listener, AutoRegister {
 	@SuppressWarnings("deprecation")
 	@DivCommand(aliases = {"rings"}, desc = "Elysian Ring Transport System Command", help = "/rings help", player = true, min = 1)
 	public void onRings(Player p, String[] args){
+		
+		args[1] = args[1].toLowerCase();
 		
 		switch (args[0]){
 		
@@ -64,6 +73,8 @@ public class ElyRings implements Listener, AutoRegister {
 					ring.set(DRS.MAT_ID, i.getType().getId());
 					ring.set(DRS.BYTE_ID, i.getData().getData());
 					ring.set(DRS.DEST, "none");
+					ring.set(DRS.IS_ALLIANCE_OWNED, args.length >= 3);
+					ring.set(DRS.ALLIANCE, (args.length >= 3 && main.api.doesRegionExist(args[2].toLowerCase()) ? args[2].toLowerCase() : "none"));
 					
 					main.s(p, "Added!");
 					
@@ -84,6 +95,114 @@ public class ElyRings implements Listener, AutoRegister {
 				}
 				
 			break;
+			
+			case "help":
+				
+				main.s(p, "/rings add <name>, /rings remove <name>, /rings add <alliance> <alliance>.");
+				
+			break;
+		}
+	}
+	
+	private void calculateAlliance(final Player p, final DivinityRing currentRing, final DivinityRing destRing, Location destLoc){
+		
+		final DivinityPlayer dp = main.api.getDivPlayer(p);
+		List<Material> mats = new ArrayList<Material>(Arrays.asList(Material.COAL, Material.COAL_BLOCK, Material.COAL_ORE));
+		List<ItemStack> toRemove = new ArrayList<ItemStack>();
+		int amt = 0;
+		
+		if (destRing.isAllianceOwned()){
+			for (ItemStack i : destRing.getStack(DRS.FUEL)){
+				if (i != null && mats.contains(i.getType())){
+					amt += i.getAmount()*(i.getType().equals(Material.COAL_BLOCK) ? 9 : 1);
+					toRemove.add(i);
+					if (amt >= 64){
+						break;
+					}
+					if (i.getAmount() <= 0){
+						i.setType(Material.AIR);
+					}
+				}
+			}
+		} else {
+			amt = 64;
+		}
+		
+		if (amt < 64){
+			main.s(p, "&c&oInsufficient fuel in the destination ring (" + amt + "/64)!");
+		} else {
+			
+			itemloop:
+			for (ItemStack i : toRemove){
+				for (int x = 0; x < new Integer(i.getAmount()); x++){
+					amt--;
+					i.setAmount(i.getAmount() - 1);
+					if (amt == 0){
+						break itemloop;
+					}
+				}
+			}
+
+			final Vector v = destRing.getCenterLoc().toVector().subtract(currentRing.getCenterLoc().toVector());
+			Location pLoc = p.getLocation();
+			final int destX = destRing.getCenterLoc().getBlockX();
+			final int destY = destRing.getCenterLoc().getBlockY();
+			final int destZ = destRing.getCenterLoc().getBlockZ();
+			final boolean greaterX = pLoc.getBlockX() < destX;
+			final boolean greaterZ = pLoc.getBlockZ() < destZ;
+			List<Entity> ents = p.getNearbyEntities(5D,  5D, 5D);
+			ents.add(p);
+			
+			for (Entity e : ents){
+				if (e instanceof Player){
+					Player player = (Player) e;
+					DivinityPlayer divPlayer = main.api.getDivPlayer(player);
+					divPlayer.set(DPI.RING_LOC, p.getLocation());
+					divPlayer.set(DPI.DISABLED, true);
+					player.setFlySpeed(0);
+					player.setGameMode(GameMode.SPECTATOR);
+					main.api.repeat(this, "fly", 0L, 5L, "ring_task_" + player.getName(), player, divPlayer, v, destX, destY, destZ, greaterX, greaterZ);
+				}
+			}
+		}
+	}
+	
+	public void fly(Player p, DivinityPlayer dp, Vector v, int destX, int destY, int destZ, boolean greaterX, boolean greaterZ){
+		
+		boolean cont1 = false;
+		boolean cont2 = false;
+		
+		p.setVelocity(v.clone().multiply(0.001));
+		
+		if (greaterX){
+			if (p.getLocation().getBlockX() >= destX || destX - p.getLocation().getBlockX() <= 5){
+				cont1 = true;
+			}
+		} else {
+			if (p.getLocation().getBlockX() <= destX || p.getLocation().getBlockX() - destX <= 5){
+				cont1 = true;
+			}
+		}
+		
+		if (greaterZ){
+			if (p.getLocation().getBlockX() >= destZ || destZ - p.getLocation().getBlockZ() <= 5){
+				cont2 = true;
+			}
+		} else {
+			if (p.getLocation().getBlockX() <= destZ || p.getLocation().getBlockX() - destZ <= 5){
+				cont2 = true;
+			}
+		}
+		
+		if (cont1 && cont2){
+			main.api.cancelTask("ring_task_" + p.getName());
+			main.s(p, "Destination reached! (ish)");
+			p.setGameMode(GameMode.SURVIVAL);
+			p.teleport(new Location(p.getWorld(), destX, destY, destZ, p.getLocation().getYaw(), p.getLocation().getPitch()));
+			p.setVelocity(new Vector(0, 0, 0));
+			p.setFlySpeed(0.2f);
+			dp.set(DPI.DISABLED, false);
+			dp.set(DPI.RING_LOC, "none");
 		}
 	}
 	
@@ -103,6 +222,11 @@ public class ElyRings implements Listener, AutoRegister {
 		String startWorld = p.getWorld().getName();
 		Location destLoc = new Location(Bukkit.getWorld(destString[0]), d(destString[1]), d(destString[2]), d(destString[3]), f(destString[4]), f(destString[5]));
 		
+		if (currentRing.getCenterLoc().getWorld().getName().equals(dest.getCenterLoc().getWorld().getName()) && tp && (dest.isAllianceOwned() || currentRing.isAllianceOwned())){
+			calculateAlliance(p, currentRing, dest, destLoc);
+			return;
+		}
+		
 		currentRing.setInOperation(true);
 		dest.setInOperation(true);
 		
@@ -112,8 +236,6 @@ public class ElyRings implements Listener, AutoRegister {
 	
 		Map<Integer, List<Location>> locs = new THashMap<Integer, List<Location>>();
 		Map<Integer, List<FallingBlock>> blocks = new THashMap<Integer, List<FallingBlock>>();
-		
-		dest.setInOperation(true);
 		
 		for (int i = 0; i < 3; i++){
 			locs.put(i, new ArrayList<Location>());
@@ -244,6 +366,36 @@ public class ElyRings implements Listener, AutoRegister {
 		calculate(p, r2.getCenterLoc().toVector(), r1.name(), r2.name(), false);
 	}
 	
+	@EventHandler
+	public void onClose(InventoryCloseEvent e){
+		
+		if (e.getView().getTitle().contains(" Fuel")){
+			DivinityRing ring = main.api.getDivRing(e.getView().getTitle().split(" ")[0]);
+			List<ItemStack> items = new ArrayList<ItemStack>();
+			for (ItemStack i : e.getInventory().getContents()){
+				if (i != null && (i.getType().equals(Material.COAL) || i.getType().equals(Material.COAL_BLOCK) || i.getType().equals(Material.COAL_ORE))){
+					items.add(i);
+				} else if (i != null){
+					e.getPlayer().getWorld().dropItem(e.getPlayer().getLocation(), i);
+				}
+			}
+			ring.set(DRS.FUEL, items);
+		}
+		
+		if (e.getView().getTitle().contains("Deposit to")){
+			DivinityRing ring = main.api.getDivRing(e.getView().getTitle().split(" ")[2]);
+			List<ItemStack> items = ring.getStack(DRS.FUEL);
+			for (ItemStack i : e.getInventory().getContents()){
+				if (i != null && (i.getType().equals(Material.COAL) || i.getType().equals(Material.COAL_BLOCK) || i.getType().equals(Material.COAL_ORE))){
+					items.add(i);
+				} else if (i != null){
+					e.getPlayer().getWorld().dropItem(e.getPlayer().getLocation(), i);
+				}
+			}
+			ring.set(DRS.FUEL, items);
+		}
+	}
+	
 	@EventHandler (priority = EventPriority.LOWEST)
 	public void onInteract(PlayerInteractEvent e){
 		
@@ -256,8 +408,17 @@ public class ElyRings implements Listener, AutoRegister {
 				DivinityRing ring = (DivinityRing) r;
 				if (ring.getCenter()[0].equals(clickedLoc[0]) && ring.getCenter()[1].equals(clickedLoc[1]) && ring.getCenter()[2].equals(clickedLoc[2]) && ring.getCenter()[3].equals(clickedLoc[3])){
 					if (!ring.isInOperation()){
-						main.s(e.getPlayer(), "Select!");
-						((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRings(main, v, ring.name()));
+						if (e.getPlayer().isSneaking() && ring.isAllianceOwned()){
+							DivinityPlayer dp = main.api.getDivPlayer(e.getPlayer());
+							if (dp.getStr(DPI.ALLIANCE_NAME).equals(ring.getStr(DRS.ALLIANCE))){
+								((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRingFuel(main, ring));
+							} else {
+								((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRingFuelSafe(main, ring));
+							}
+						} else {
+							main.s(e.getPlayer(), "Select!");
+							((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRings(main, v, ring.name()));
+						}
 					} else {
 						main.s(e.getPlayer(), "&c&oRing already in operation!");
 					}

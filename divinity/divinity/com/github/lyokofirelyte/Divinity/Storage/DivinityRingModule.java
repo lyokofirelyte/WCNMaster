@@ -34,6 +34,10 @@ public class DivinityRingModule extends DivinityStorageModule implements Divinit
 		return inOperation;
 	}
 	
+	public boolean isAllianceOwned(){
+		return getBool(DRS.IS_ALLIANCE_OWNED);
+	}
+
 	public int getMatId(){
 		return getInt(DRS.MAT_ID);
 	}

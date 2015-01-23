@@ -134,28 +134,6 @@ public class ElyStaff implements Listener, AutoRegister {
 			 main.s(p, "Updated.");
 		 }
 	 }*/
-	 
-	 /*@DivCommand(aliases = {"register"}, desc = "Register on the website!", help = "/register <pass>", player = true, min = 1)
-	 public void onRegister(Player p, String[] args){
-		 
-		 DivinityPlayer dp = main.api.getDivPlayer(p);
-		 Map<String, Object> input = new THashMap<String, Object>();
-		 input.put("username", p.getName());
-		 input.put("password", args[0]);
-		 
-		 JSONObject result;
-		 
-		 if (!dp.getBool(DPI.REGISTERED)){
-			 result = main.getWeb().sendPost("/api/register", input);
-			 main.s(p, result.get("success").toString().replace("true", "&aSuccess!").replace("false", "&cFailed to create account!"));
-			 if ((boolean) result.get("success")){
-				 dp.set(DPI.REGISTERED, true);
-			 }
-		 } else {
-			 dp.err("You're already registered.");
-		 }
-	 }*/
-	 
 
 	 @DivCommand(perm = "wa.staff.mod2", aliases = {"invsee"}, desc = "Inventory Spy Command", help = "/invsee <player>", player = true, min = 1)
 	 public void onInvSee(Player p, String[] args){
@@ -811,7 +789,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		 main.s(p, "&7tdstaz69");
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"gm"}, desc = "GameMode Command", help = "/gm <c, s, a> [player]", player = true, min = 1)
+	 @DivCommand(perm = "wa.staff.mod2", aliases = {"gamemode", "gm"}, desc = "GameMode Command", help = "/gm <c, s, a, sp> [player]", player = true, min = 1)
 	 public void onGM(Player p, String[] args){
 		 
 		 Player toSet = null;
@@ -831,6 +809,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		 switch (args[0]){
 		 	case "c": gm = GameMode.CREATIVE; break;
 		 	case "a": gm = GameMode.ADVENTURE; break;
+		 	case "sp": gm = GameMode.SPECTATOR; break;
 		 	case "s": default: gm = GameMode.SURVIVAL; break;
 		 }
 		 
@@ -842,7 +821,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		 }
 	 }
 	 
-	 @DivCommand(aliases = {"more"}, desc = "Give yourself 64 of the item in your hand", help = "/more", perm = "wa.staff.mod2", player = true)
+	 @DivCommand(aliases = {"more", "moar"}, desc = "Give yourself 64 of the item in your hand", help = "/more", perm = "wa.staff.mod2", player = true)
 	 public void onMore(Player p, String[] args){
 
 		if (p.getInventory().getItemInHand() != null){
@@ -1030,6 +1009,21 @@ public class ElyStaff implements Listener, AutoRegister {
 		}		
 	}
 	
+	@DivCommand(aliases = {"op"}, desc = "OP", help = "/op <player>", perm = "wa.staff.admin", min = 1)
+	public void onOP(CommandSender cs, String[] args){
+		
+		if (main.api.doesPartialPlayerExist(args[0])){
+			if (main.api.isOnline(args[0])){
+				main.api.getPlayer(args[0]).setOp(true);
+				ElyChannel.STAFF.send("&6System", cs.getName() + " has OPPED " + args[0] + "!", main.api);
+			} else {
+				main.s(cs, "Player not online.");
+			}
+		} else {
+			main.s(cs, "Player not found! They must be registered with Elysian.");
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	@DivCommand(aliases = {"i"}, desc = "Give an item to yourself", help = "/i <item>", max = 1, perm = "wa.staff.mod2", player = true)
 	public void onI(Player p, String[] args){

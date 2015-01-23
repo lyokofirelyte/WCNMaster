@@ -20,6 +20,7 @@ import com.github.lyokofirelyte.Elysian.Commands.ElyPerms;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
 import com.github.lyokofirelyte.Elysian.Patrols.ElyPatrol;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
+import com.github.lyokofirelyte.Spectral.DataTypes.ElyChannel;
 import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
 import com.github.lyokofirelyte.Spectral.Identifiers.PatrolTask;
@@ -59,6 +60,7 @@ public class ElyWatch implements Runnable, AutoRegister {
 			rankCheck(dp);
 			moneyCheck(p, dp);
 			invCheck(p, dp);
+			opCheck(p);
 			main.api.event(new ScoreboardUpdateEvent(p));
 		}
 		
@@ -87,6 +89,17 @@ public class ElyWatch implements Runnable, AutoRegister {
 		}
 	}
 	
+	private void opCheck(Player p){
+		if (p.isOp() && !main.api.getDivSystem().getList(DPI.OP_CHECK).contains(p.getName())){
+			p.setOp(false);
+			main.s(p, "&c&oYour OP has been removed by the system.");
+			main.s(p, "&c&oYou were not on Elysian's approved OP list.");
+			main.s(p, "&c&oIf this is an error, contact an admin.");
+			ElyChannel.STAFF.send("&6System", "OP auto-removed from " + p.getDisplayName() + ".", main.api);
+			ElyChannel.STAFF.send("&6System", "User not found in /divinity/system/system.yml.", main.api);
+		}
+	}
+	
 	private void unMuteCheck(Player p, DivinityPlayer dp){
 		
 		if (dp.getBool(DPI.MUTED)){
@@ -96,7 +109,7 @@ public class ElyWatch implements Runnable, AutoRegister {
 			}
 		}
 		
-		if (dp.getBool(DPI.DISABLED)){
+		if (dp.getBool(DPI.DISABLED) && dp.getStr(DPI.RING_LOC).equals("none")){
 			if (System.currentTimeMillis() >= dp.getLong(DPI.DISABLE_TIME)){
 				dp.set(DPI.DISABLED, false);
 				DivinityUtilsModule.bc("&4&oThe disable placed on " + p.getDisplayName() + " &4&ohas expired.");
@@ -171,7 +184,7 @@ public class ElyWatch implements Runnable, AutoRegister {
 		
 		if (dp.getInt(DPI.MOB_MONEY) > 0){
 			dp.set(DPI.BALANCE, dp.getInt(DPI.BALANCE) + dp.getInt(DPI.MOB_MONEY));
-			main.s(p, dp.getInt(DPI.MOB_MONEY) + " &oshinies earned from various mobs.");
+			main.s(p, dp.getInt(DPI.MOB_MONEY) + " &oshinies earned in the last 20 seconds.");
 			dp.set(DPI.MOB_MONEY, 0);
 		}
 	}
@@ -239,7 +252,7 @@ public class ElyWatch implements Runnable, AutoRegister {
 			}
 		}
 		
-		if (sleeping > (Bukkit.getOnlinePlayers().length/2)){
+		if (sleeping > (Bukkit.getOnlinePlayers().size()/2)){
 			Bukkit.getWorld("world").setTime(0);
 			DivinityUtilsModule.bc("Over half of the server is sleeping - setting to day.");
 		}

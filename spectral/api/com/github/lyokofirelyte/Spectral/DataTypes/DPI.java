@@ -3,6 +3,19 @@ package com.github.lyokofirelyte.Spectral.DataTypes;
 public enum DPI {
 	
 	/**
+	 * Saves the last ring location used in the event that the player disconnects.
+	 * @dataType Location
+	 */
+	RING_LOC("RING_LOC"),
+	
+	/**
+	 * Detects invalid OP users - must be added to /divinity/system/system.yml -> OP_CHECK
+	 * @dataType String List
+	 * @specificTo DivinitySystem
+	 */
+	OP_CHECK("OP_CHECK"),
+	
+	/**
 	 * Auths the website with Elysian.
 	 * @dataType String
 	 */
@@ -22,7 +35,7 @@ public enum DPI {
 	ENABLE_SPREADSHEET("ENABLE_SPREADSHEET"),
 	
 	/**
-	 * The last marrkit action to take place per item
+	 * The last markkit action to take place per item
 	 * @dataType String List
 	 * @specificTo DivinitySystem
 	 */

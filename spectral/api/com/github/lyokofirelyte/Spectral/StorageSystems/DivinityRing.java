@@ -8,6 +8,11 @@ import org.bukkit.entity.Player;
 public interface DivinityRing extends DivinityStorage  {
 	
 	/**
+	 * @return Alliance owned or system
+	 */
+	public boolean isAllianceOwned();
+	
+	/**
 	 * @return The center of the ring, already split up for you
 	 */
 	public String[] getCenter();
