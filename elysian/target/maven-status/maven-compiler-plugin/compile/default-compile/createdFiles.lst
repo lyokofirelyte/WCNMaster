@@ -16,6 +16,7 @@ com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVPActive.class
 com\github\lyokofirelyte\Elysian\Commands\ElyWarps.class
 com\github\lyokofirelyte\Elysian\Gui\GuiRoot.class
 com\github\lyokofirelyte\Elysian\Events\ElyMove.class
+com\github\lyokofirelyte\Elysian\Commands\ElyRings$1.class
 com\github\lyokofirelyte\Elysian\Events\ElyTP.class
 com\github\lyokofirelyte\Elysian\Events\ElyJoinQuit.class
 com\github\lyokofirelyte\Elysian\MMO\Abilities\TreeFeller.class

@@ -69,7 +69,7 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 					main.api.getPlayer(pl.getName()).performCommand("rankup");
 
 					p.s("You have been pre-approved by WA Staff! Enjoy!");
-					 
+					
 					users.remove(pl.getName());
 					main.api.getDivSystem().set("PRE_APPROVED", users);
 				 }
@@ -77,6 +77,8 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 				 if (!p.getStr(DPI.RING_LOC).equals("none")){
 					 main.api.event(new DivinityTeleportEvent(pl, p.getLoc(DPI.RING_LOC)));
 					 p.set(DPI.RING_LOC, "none");
+					 p.set(DPI.DISABLED, false);
+					 pl.setFlySpeed(0.2f);
 					 p.err("You logged out during flight. *slaps*");
 				 }
 				 
