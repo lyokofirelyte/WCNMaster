@@ -38,18 +38,27 @@ public class ElyWarps implements AutoRegister {
 		warps = new File(dir).list();
 	}
 	
-	@DivCommand(name = "Warp", aliases = {"warp", "w", "s", "spawn", "creative"}, desc = "Elysian Warp Command", help = "/warp <name>", player = true)
+	
+	@DivCommand(aliases = {"s", "spawn"}, desc = "Elysian Spawn Command", help = "/s>", player = true)
+	public void onSpawn(Player p, String[] args, String cmd){
+		String[] loc = main.api.getDivSystem().getString("SPAWN_POINT").split("%SPLIT%");
+		Location spawn = new Location(Bukkit.getWorld(loc[0]), Float.parseFloat(loc[1]), Float.parseFloat(loc[2]), Float.parseFloat(loc[3]), Float.parseFloat(loc[4]), Float.parseFloat(loc[5]));
+		p.teleport(spawn);
+		main.s(p, "You have arrived at spawn!");
+	}
+	
+	@DivCommand(perm = "wa.staff.admin", aliases = {"setspawn"}, desc = "Elysian Spawn Set Command", help = "/setspawn", player = true)
+	public void onSpawnSet(Player p, String[] args, String cmd){
+		Location loc = p.getLocation();
+		main.api.getDivSystem().set("SPAWN_POINT", loc.getWorld() + "%SPLIT%" + loc.getX() + "%SPLIT%" + loc.getY() + "%SPLIT%" + loc.getZ() + "%SPLIT%" + loc.getYaw() + "%SPLIT%" + loc.getPitch());
+		main.s(p, "Spawn point set!");
+	}
+	
+	
+	@DivCommand(name = "Warp", aliases = {"warp", "w", "creative"}, desc = "Elysian Warp Command", help = "/warp <name>", player = true)
 	public void onWarp(Player p, String[] args, String cmd){
 		
-		if (cmd.equals("s") || cmd.equals("spawn")){
-			
-			if (new ArrayList<String>(Arrays.asList(warps)).contains("spawn.yml")){
-				main.api.event(new DivinityTeleportEvent(p, extractLoc("spawn")));
-			} else {
-				main.s(p, "&c&oNo spawn found!");
-			}
-			
-		} else if (cmd.equals("creative")){
+		if (cmd.equals("creative")){
 			
 			main.api.event(new DivinityTeleportEvent(p, extractLoc("wacp")));
 			

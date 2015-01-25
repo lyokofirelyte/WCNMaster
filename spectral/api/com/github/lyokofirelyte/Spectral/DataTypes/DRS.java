@@ -2,6 +2,10 @@ package com.github.lyokofirelyte.Spectral.DataTypes;
 
 
 public enum DRS {
+	
+	IS_ALLIANCE_OWNED("IS_ALLIANCE_OWNED"),
+	ALLIANCE("ALLIANCE"),
+	FUEL("FUEL"),
 
 	/**
 	 * The center of the ring location (world x y z)

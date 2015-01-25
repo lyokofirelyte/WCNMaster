@@ -4,9 +4,11 @@ com\github\lyokofirelyte\Elysian\Events\ElyTP.class
 com\github\lyokofirelyte\Elysian\Gui\GuiFriendlyReminder.class
 com\github\lyokofirelyte\Elysian\MMO\Abilities\SuperBreaker.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\Spleef.class
+com\github\lyokofirelyte\Elysian\Gui\GuiRingFuel.class
 com\github\lyokofirelyte\Elysian\Games\Gotcha\Gotcha$1$1.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefActive.class
 com\github\lyokofirelyte\Elysian\Gui\GuiLunarSpells.class
+com\github\lyokofirelyte\Elysian\Gui\GuiRingFuelSafe.class
 com\github\lyokofirelyte\Elysian\ElyMarkkit$2.class
 com\github\lyokofirelyte\Elysian\Commands\ElySpaceship.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefStorage$2$1.class
@@ -47,6 +49,7 @@ com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefStorage$1.class
 com\github\lyokofirelyte\Elysian\Commands\ElyEffects.class
 com\github\lyokofirelyte\Elysian\Games\Gotcha\GotchaData$GotchaGame.class
 com\github\lyokofirelyte\Elysian\Commands\ElyProtect.class
+com\github\lyokofirelyte\Elysian\Games\MobMondays\MMEvents$1.class
 com\github\lyokofirelyte\Elysian\ElyWatch.class
 com\github\lyokofirelyte\Elysian\Commands\ElyRings.class
 com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVP$2.class
@@ -68,6 +71,7 @@ com\github\lyokofirelyte\Elysian\Events\ElyGameMode.class
 com\github\lyokofirelyte\Elysian\Events\ElyFriendlyReminder.class
 com\github\lyokofirelyte\Elysian\Commands\ElyProtect$1.class
 com\github\lyokofirelyte\Elysian\Games\Booth\BoothCommand.class
+com\github\lyokofirelyte\Elysian\Events\HolidayStuff.class
 com\github\lyokofirelyte\Elysian\MMO\Magics\Spell.class
 com\github\lyokofirelyte\Elysian\Commands\ElyStaff.class
 com\github\lyokofirelyte\Elysian\Gui\GuiColourSelection.class
@@ -76,6 +80,7 @@ com\github\lyokofirelyte\Elysian\Gui\GuiChest.class
 com\github\lyokofirelyte\Elysian\Events\ElyLogger$2.class
 com\github\lyokofirelyte\Elysian\Games\Cranked\CrankedActive.class
 com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVPActive.class
+com\github\lyokofirelyte\Elysian\Events\ElyJoinQuit$1.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData$SpleefPlayerData.class
 com\github\lyokofirelyte\Elysian\Patrols\PatrolEvents.class
 com\github\lyokofirelyte\Elysian\Games\MobMondays\MMMain.class
@@ -83,6 +88,7 @@ com\github\lyokofirelyte\Elysian\MMO\Magics\SpellTasks.class
 com\github\lyokofirelyte\Elysian\Commands\ElyAlliance.class
 com\github\lyokofirelyte\Elysian\ElyMarkkit.class
 com\github\lyokofirelyte\Elysian\Patrols\ElyPatrolChat$1.class
+com\github\lyokofirelyte\Elysian\Commands\ElyRings$1.class
 com\github\lyokofirelyte\Elysian\Games\Gotcha\GotchaActive.class
 com\github\lyokofirelyte\Elysian\Events\ElyLogger.class
 com\github\lyokofirelyte\Elysian\MMO\Magics\SpellCommand.class
@@ -112,6 +118,7 @@ com\github\lyokofirelyte\Elysian\Events\ElyMobs$1.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefModule.class
 com\github\lyokofirelyte\Elysian\Elysian.class
 com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVPData.class
+com\github\lyokofirelyte\Elysian\Commands\Elyvator.class
 com\github\lyokofirelyte\Elysian\Events\ElyChat.class
 com\github\lyokofirelyte\Elysian\Commands\ElySpaceship$1.class
 com\github\lyokofirelyte\Elysian\Games\MobMondays\MMMain$locationType.class

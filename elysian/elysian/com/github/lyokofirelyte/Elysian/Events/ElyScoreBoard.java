@@ -100,7 +100,7 @@ public class ElyScoreBoard implements Listener, AutoRegister {
 			"&4B: &c" + dp.getInt(MMO.VAMP_BAR) + "%",
 			"&9P: &c" + dp.getInt(DPI.PARAGONS),
 			"   ",
-			"&3Online: &c" + Bukkit.getOnlinePlayers().length,
+			"&3Online: &c" + Bukkit.getOnlinePlayers().size(),
 			"&3RG: &c" + ((ElyProtect) main.api.getInstance(ElyProtect.class)).isInAnyRegion(p.getLocation()),
 			"    ",
 			"&2TR: &c" + dp.getStr(DPI.LAST_ELYSS_SKILL),

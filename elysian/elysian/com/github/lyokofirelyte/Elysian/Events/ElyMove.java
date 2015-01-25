@@ -28,7 +28,7 @@ public class ElyMove implements Listener, AutoRegister {
 		
 		DivinityPlayer dp = main.api.getDivPlayer(e.getPlayer());
 		
-		if (dp.getBool(DPI.DISABLED)){
+		if (dp.getStr(DPI.RING_LOC).equals("none") && dp.getBool(DPI.DISABLED)){
 			e.getPlayer().teleport(e.getFrom());
 		}
 		

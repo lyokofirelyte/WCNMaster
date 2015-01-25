@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
 import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
@@ -24,6 +25,14 @@ public class ElyTP implements Listener, AutoRegister {
 	
 	public ElyTP(Elysian i){
 		main = i;
+	}
+	
+	@EventHandler
+	public void onActualTP(PlayerTeleportEvent e){
+		
+		if (!main.api.getDivPlayer(e.getPlayer()).getStr(DPI.RING_LOC).equals("none")){
+			e.setCancelled(true);
+		}
 	}
 	
 	@EventHandler (priority = EventPriority.HIGHEST)

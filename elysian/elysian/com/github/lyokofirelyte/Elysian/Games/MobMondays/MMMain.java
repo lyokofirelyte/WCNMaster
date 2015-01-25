@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.inventory.ItemStack;
 
+import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoSave;
@@ -61,7 +62,7 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 		for(int i = 0; i < toDivGame().getStringList("arenas." + current + ".monsterspawn").size(); i++){
 			Location loc = getLocation(locationType.RANDOMMOB);
 			
-			for(int j = 0; j < players.size() * 3 + round + 4; j++){
+			for(int j = 0; j < players.size() * 2 + round; j++){
 				EntityType random = mobs.get(new Random().nextInt(mobs.size()));
 
 				if(random.equals(EntityType.SKELETON)){
@@ -139,6 +140,13 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 		}
 		
 		msg("The game has started!");
+				
+		
+		for(String s : players){
+			DivinityPlayer dp = main.api.getDivPlayer(s);
+			main.api.repeat(main.api, "event", 20L, 0L, "mobMondaysScore" + dp.name(), new ScoreboardUpdateEvent(Bukkit.getPlayer(dp.uuid()), "mobMondaysGame"));
+
+		}
 		
 		
 		timer = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable(){ public void run(){

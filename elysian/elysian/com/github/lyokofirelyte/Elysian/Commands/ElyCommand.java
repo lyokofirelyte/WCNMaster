@@ -112,25 +112,30 @@ public class ElyCommand implements AutoRegister {
 		DivinityPlayer dp = main.api.getDivPlayer(p);
 		boolean result = true;
 		
-		if (dp.getStr(DPI.WEBSITE_CODE).equals("none")){
-			String upper = new Random().nextInt(2) == 1 ? p.getName().substring(0, 1) : p.getName().substring(0, 1).toUpperCase();
-			String enc = DivinityUtilsModule.encrypt(upper + p.getUniqueId().toString().substring(3, 8) + new Random().nextInt(10), "MD5");
-			if (enc.length() > 6){
-				enc = enc.substring(0, 6);
-			}
-			dp.set(DPI.WEBSITE_CODE, enc);
-			JSONObject sendMap = new JSONObject();
-			sendMap.put("uuid", p.getUniqueId().toString());
-			sendMap.put("id", enc);
-			sendMap.put("staff", dp.getList(DPI.PERMS).contains("wa.staff.intern"));
-			sendMap.put("check", main.api.getDivSystem().getStr(DPI.WEB_CHECK));
-			result = (boolean) main.divinity.api.web.sendPost("/api/register_code", sendMap).get("success");
+		String upper = new Random().nextInt(2) == 1 ? p.getName().substring(0, 1) : p.getName().substring(0, 1).toUpperCase();
+		String enc = DivinityUtilsModule.encrypt(upper + p.getUniqueId().toString().substring(3, 8) + new Random().nextInt(10), "MD5");
+		
+		if (enc.length() > 6){
+			enc = enc.substring(0, 6);
 		}
 		
+		dp.set(DPI.WEBSITE_CODE, enc);
+		JSONObject sendMap = new JSONObject();
+		sendMap.put("uuid", p.getUniqueId().toString());
+		sendMap.put("id", enc);
+		sendMap.put("staff", dp.getList(DPI.PERMS).contains("wa.staff.intern"));
+		sendMap.put("check", main.api.getDivSystem().getStr(DPI.WEB_CHECK));
+		result = (boolean) main.divinity.api.web.sendPost("/api/register_code", sendMap).get("success");
+		
 		if (result){
-			main.s(p, "Your code is " + dp.getStr(DPI.WEBSITE_CODE) + ".");
+			JSONChatMessage msg = new JSONChatMessage("");
+			JSONChatExtra extra = new JSONChatExtra(main.AS("&bSuccess & things! &6Click here &bto complete your account."));
+			extra.setClickEvent(JSONChatClickEventType.OPEN_URL, "http://worldscolli.de/register?code=" + enc);
+			extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&6Click here! :D"));
+			msg.addExtra(extra);
+			msg.sendToPlayer(p);
 		} else {
-			main.s(p, "Error contacting website...");
+			main.s(p, "Error contacting website... so... :3");
 		}
 	}
 	

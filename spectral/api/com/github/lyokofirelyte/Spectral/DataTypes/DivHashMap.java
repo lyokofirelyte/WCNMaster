@@ -1,10 +1,13 @@
 package com.github.lyokofirelyte.Spectral.DataTypes;
 
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import net.minecraft.util.gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,7 +16,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
 
 /**
  * "HASH MAPS HAVE NEVER BEEN SO EASY!" <br />

@@ -1,10 +1,10 @@
 package com.github.lyokofirelyte.Elysian.Games.MobMondays;
 
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Games.MobMondays.MMMain.locationType;
@@ -33,21 +33,28 @@ public class MMEvents implements Listener{
 	}
 	
 	@EventHandler
-	public void onDeath(PlayerDeathEvent e){
-		System.out.println(e.getEntity().getName());
-		System.out.println(((Player)e.getEntity()).getName());
-		if(root.players.contains(e.getEntity().getName())){
-			root.players.remove(e.getEntity().getName());
-			e.getEntity().getActivePotionEffects().clear();
-			e.getEntity().teleport(root.getLocation(locationType.DEATH));
+	public void onRespawn(final PlayerRespawnEvent e){
+		if(root.players.contains(e.getPlayer().getName())){
+			root.players.remove(e.getPlayer().getName());
+			e.getPlayer().getActivePotionEffects().clear();
+			
+			Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
+
+				@Override
+				public void run() {
+					e.getPlayer().teleport(root.getLocation(locationType.DEATH));
+					
+				}
+				
+			}, 5L);
+			
 		}
 		
-		if(root.selected.containsKey(e.getEntity().getName())){
-			root.selected.remove(e.getEntity().getName());
+		if(root.selected.containsKey(e.getPlayer().getName())){
+			root.selected.remove(e.getPlayer().getName());
 		}
 		
 	}
 
-	
 	
 }

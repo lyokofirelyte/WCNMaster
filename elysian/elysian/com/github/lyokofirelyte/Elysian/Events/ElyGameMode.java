@@ -25,6 +25,10 @@ public class ElyGameMode implements Listener, AutoRegister {
 	@EventHandler
 	public void onGameMode(PlayerGameModeChangeEvent e){
 		
+		if (e.getNewGameMode().equals(GameMode.SPECTATOR) || e.getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
+			return;
+		}
+		
 		DivinityPlayer dp = main.api.getDivPlayer(e.getPlayer());
 		DPI dpi;
 		boolean creative = true;
