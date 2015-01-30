@@ -7,8 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
+import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -170,7 +169,8 @@ public class ElyProtect implements Listener, AutoRegister {
 		
 		if (e.getEntity() instanceof Player){
 		
-			Player p = (Player)e.getEntity();
+			Player p = (Player) e.getEntity();
+			
 			String result = isInAnyRegion(p.getLocation());
 			
 			if (hasFlag(result, DRF.TAKE_DAMAGE) || e.getDamager() instanceof SmallFireball){
@@ -191,7 +191,7 @@ public class ElyProtect implements Listener, AutoRegister {
 		
 			Player p = (Player)e.getEntity();
 			String result = isInAnyRegion(p.getLocation());
-			
+
 			if (hasFlag(result, DRF.TAKE_DAMAGE) || main.api.getDivPlayer(p).getBool(MMO.IS_CHOPPING) || main.api.getDivPlayer(p).getBool(MMO.IS_BLADING)){
 				e.setCancelled(true);
 			}

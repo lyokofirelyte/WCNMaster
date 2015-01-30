@@ -2,7 +2,7 @@ package com.github.lyokofirelyte.Elysian.Games.Cranked;
 
 import java.util.ArrayList;
 
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
+import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

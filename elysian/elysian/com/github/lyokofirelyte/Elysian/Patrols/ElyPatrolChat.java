@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
+import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

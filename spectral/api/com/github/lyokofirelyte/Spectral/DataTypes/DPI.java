@@ -3,6 +3,22 @@ package com.github.lyokofirelyte.Spectral.DataTypes;
 public enum DPI {
 	
 	/**
+	 * A list of the entities tagged for the chaos ability
+	 */
+	CHAOS_LIST("CHAOS_LIST"),
+	
+	/**
+	 * PVP choice on login, one time only
+	 */
+	PVP_CHOICE("PVP_CHOICE"),
+	
+	/**
+	 * Who the player is looking up
+	 * @dataType String
+	 */
+	IP_LOOKUP("IP_LOOKUP"),
+	
+	/**
 	 * Saves the last ring location used in the event that the player disconnects.
 	 * @dataType Location
 	 */

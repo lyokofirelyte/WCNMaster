@@ -2,7 +2,7 @@ package com.github.lyokofirelyte.Elysian.Games.Spleef;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
+import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

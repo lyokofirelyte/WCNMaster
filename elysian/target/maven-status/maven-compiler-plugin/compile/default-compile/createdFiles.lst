@@ -14,9 +14,33 @@ com\github\lyokofirelyte\Elysian\Commands\ElySpaceship.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefStorage$2$1.class
 com\github\lyokofirelyte\Elysian\Games\Cranked\Cranked.class
 com\github\lyokofirelyte\Elysian\ElyAnnouncer.class
+<<<<<<< HEAD
 com\github\lyokofirelyte\Elysian\MMO\Magics\SpellEvents.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData$SpleefGameData.class
 com\github\lyokofirelyte\Elysian\Patrols\PatrolMobs.class
+=======
+com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefActive.class
+com\github\lyokofirelyte\Elysian\Games\Gotcha\GotchaData$GotchaGame.class
+com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVPActive.class
+com\github\lyokofirelyte\Elysian\Commands\ElyWarps.class
+com\github\lyokofirelyte\Elysian\Gui\GuiRoot.class
+com\github\lyokofirelyte\Elysian\Commands\ElyProxy.class
+com\github\lyokofirelyte\Elysian\Events\ElyMove.class
+com\github\lyokofirelyte\Elysian\Commands\ElyRings$1.class
+com\github\lyokofirelyte\Elysian\Events\ElyTP.class
+com\github\lyokofirelyte\Elysian\Events\ElyJoinQuit.class
+com\github\lyokofirelyte\Elysian\MMO\Abilities\TreeFeller.class
+com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefStorage$1.class
+com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData$SpleefPlayerData.class
+com\github\lyokofirelyte\Elysian\ElyMMOCleanup.class
+com\github\lyokofirelyte\Elysian\Events\ElyLogger.class
+com\github\lyokofirelyte\Elysian\Events\HolidayStuff.class
+com\github\lyokofirelyte\Elysian\Commands\ElyRanks.class
+com\github\lyokofirelyte\Elysian\MMO\MXP.class
+com\github\lyokofirelyte\Elysian\Commands\ElyModeration.class
+com\github\lyokofirelyte\Elysian\Gui\GuiSolarSpells.class
+com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVPData.class
+>>>>>>> FETCH_HEAD
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData$SpleefPlayer.class
 com\github\lyokofirelyte\Elysian\Games\Hellwave\HellwaveCommands.class
 com\github\lyokofirelyte\Elysian\Commands\ElyNewMember.class
@@ -24,6 +48,16 @@ com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVPData$TeamPVPGame.class
 com\github\lyokofirelyte\Elysian\Games\Gotcha\GotchaWords.class
 com\github\lyokofirelyte\Elysian\Events\ElyLogger$1$1.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData.class
+<<<<<<< HEAD
+=======
+com\github\lyokofirelyte\Elysian\Events\ElyLogger$2.class
+com\github\lyokofirelyte\Elysian\Commands\Elyvator.class
+com\github\lyokofirelyte\Elysian\MMO\Abilities\Chaos.class
+com\github\lyokofirelyte\Elysian\Commands\ElyCommand.class
+com\github\lyokofirelyte\Elysian\Events\ElyJoinQuit$1.class
+com\github\lyokofirelyte\Elysian\Commands\ElyHome.class
+com\github\lyokofirelyte\Elysian\Games\Cranked\CrankedCommand.class
+>>>>>>> FETCH_HEAD
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData$SpleefGame.class
 com\github\lyokofirelyte\Elysian\Events\ElyJoinQuit.class
 com\github\lyokofirelyte\Elysian\Commands\ElySpectate.class
@@ -107,11 +141,20 @@ com\github\lyokofirelyte\Elysian\MMO\ElyMMO.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefCommandMain.class
 com\github\lyokofirelyte\Elysian\Commands\ElyWarps.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData$SpleefSystem.class
+<<<<<<< HEAD
 com\github\lyokofirelyte\Elysian\MMO\Abilities\LifeForce.class
 com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVP.class
 com\github\lyokofirelyte\Elysian\Games\Hellwave\Hellwave.class
 com\github\lyokofirelyte\Elysian\Events\ElyLogger$1.class
 com\github\lyokofirelyte\Elysian\Gui\GuiCloset.class
+=======
+com\github\lyokofirelyte\Elysian\Games\Cranked\Cranked.class
+com\github\lyokofirelyte\Elysian\Commands\ElySpaceship$1.class
+com\github\lyokofirelyte\Elysian\Games\Spleef\Spleef.class
+com\github\lyokofirelyte\Elysian\Commands\ElyAlliance.class
+com\github\lyokofirelyte\Elysian\MMO\Abilities\Bezerk.class
+com\github\lyokofirelyte\Elysian\ElyMarkkit.class
+>>>>>>> FETCH_HEAD
 com\github\lyokofirelyte\Elysian\Events\ElyScoreBoard.class
 com\github\lyokofirelyte\Elysian\Patrols\ElyPatrolChat.class
 com\github\lyokofirelyte\Elysian\ElyMMOCleanup.class

@@ -19,6 +19,31 @@ import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
 public interface SpectralAPI {
 	
 	/**
+	 * Get server list
+	 */
+	public void requestServerList(String player);
+	
+	/**
+	 * Get the IP of the player
+	 */
+	public void requestIP(String player);
+	
+	/**
+	 * Send someone to the specified server
+	 */
+	public void sendToServer(String player, String server);
+	
+	/**
+	 * Send a plugin message to all server's channel with message.
+	 */
+	public void sendPluginMessageAll(String channel, String message);
+	
+	/**
+	 * Send a plugin message to the channel of server with message.
+	 */
+	public void sendPluginMessage(String server, String channel, String message);
+	
+	/**
 	 * @return A boolean determining if the API has an instance of the provided class
 	 */
 	public boolean hasInstance(Class<?> clazz);

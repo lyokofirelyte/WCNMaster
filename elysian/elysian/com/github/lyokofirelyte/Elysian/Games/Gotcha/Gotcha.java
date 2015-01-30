@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.DisplaySlot;
 
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
+import gnu.trove.map.hash.THashMap;
 
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;

@@ -21,19 +21,19 @@ public class PlayerLocation {
 		database = new File(DivinityManager.sysDir + "GeoLite2-City.mmdb");
 	}
 	
-	public String getCountry(Player p){
-		return response(p).getCountry().getName();
+	public String getCountry(String ip){
+		return response(ip).getCountry().getName();
 	}
 	
-	public String getCity(Player p){
-		return response(p).getCity().getName();
+	public String getCity(String ip){
+		return response(ip).getCity().getName();
 	}
 	
-	public String getPostal(Player p){
-		return response(p).getPostal().getCode();
+	public String getPostal(String ip){
+		return response(ip).getPostal().getCode();
 	}
 	
-	private CityResponse response(Player p){
+	private CityResponse response(String ip){
 		
 		try {
 			reader = new DatabaseReader.Builder(database).build();
@@ -44,7 +44,7 @@ public class PlayerLocation {
 		CityResponse response = null;
 		
 		try {
-			response = reader.city(InetAddress.getByName(p.getAddress().getHostName()));
+			response = reader.city(InetAddress.getByName(ip));
 			reader.close();
 		} catch (Exception e){
 			e.printStackTrace();

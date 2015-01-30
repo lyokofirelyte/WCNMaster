@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
+import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import com.github.lyokofirelyte.Divinity.Divinity;
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
@@ -26,6 +27,7 @@ import com.github.lyokofirelyte.Divinity.Events.DivinityPluginMessageEvent;
 import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
 import com.github.lyokofirelyte.Divinity.Storage.DivinityStorageModule;
+import com.github.lyokofirelyte.Elysian.Commands.ElyProxy;
 import com.github.lyokofirelyte.Elysian.Gui.GuiCloset;
 import com.github.lyokofirelyte.Elysian.Patrols.ElyPatrol;
 import com.github.lyokofirelyte.Spectral.SpectralAPI;
@@ -54,6 +56,8 @@ public class Elysian extends JavaPlugin {
 	public void onEnable(){
 		setup = new ElySetup(this);
 		setup.start();
+		divinity.getServer().getMessenger().registerIncomingPluginChannel(divinity, "BungeeCord", (ElyProxy) api.getInstance(ElyProxy.class));
+		divinity.getServer().getMessenger().registerOutgoingPluginChannel(divinity, "BungeeCord");
 	}
 	
 	@Override

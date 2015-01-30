@@ -2,6 +2,7 @@ package com.github.lyokofirelyte.Elysian;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
+
 import com.github.lyokofirelyte.Divinity.Divinity;
 import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Divinity.Manager.RecipeHandler;
@@ -109,7 +111,7 @@ public class ElySetup {
 		main.getServer().addRecipe(rh.getShapedRecipe());
 		
 		
-		splash = new Potion(PotionType.POISON, 1);//poison 1
+		splash = new Potion(PotionType.POISON, 1);
 		splash.setSplash(true);
 		 
 		i = splash.toItemStack(1);
@@ -139,6 +141,21 @@ public class ElySetup {
 		
 		rh = new RecipeHandler(r);
 		rh.setIngredient('f', new ItemStack(Material.COBBLESTONE));
+		main.getServer().addRecipe(rh.getShapedRecipe());
+		
+		r = new ShapedRecipe(DivInvManager.createItem(main.AS("&5&o))( &f&odRaX &5&o)(("), new String[] {"&6&o(HAOS DEVICE", "&a&o7000/7000"}, Enchantment.DURABILITY, 10, Material.ARROW, 1)).shape(
+				"0f1",
+				"fff",
+				"234"
+		);
+			
+		rh = new RecipeHandler(r);
+		rh.setIngredient('f', i);
+		rh.setIngredient('0', DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, 14));
+		rh.setIngredient('1', DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, 13));
+		rh.setIngredient('2', DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, 0));
+		rh.setIngredient('3', DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, 12));
+		rh.setIngredient('4', DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, 5));
 		main.getServer().addRecipe(rh.getShapedRecipe());
 	}
 }

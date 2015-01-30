@@ -1,6 +1,8 @@
 package com.github.lyokofirelyte.Divinity.Manager;
 
 
+import gnu.trove.map.hash.THashMap;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -9,8 +11,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

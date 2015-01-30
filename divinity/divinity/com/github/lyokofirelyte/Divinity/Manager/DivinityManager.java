@@ -1,5 +1,7 @@
 package com.github.lyokofirelyte.Divinity.Manager;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -114,6 +114,7 @@ public class DivinityManager {
 		
 		YamlConfiguration yaml = newFile && directory.equals(dir) && load ? userTemplate() : newFile && load ? new YamlConfiguration() : lc(file);
 		DivinityStorageModule storage = directory.equals(dir) && load ? new DivinityStorageModule(UUID.fromString(name), api) : load ? new DivinityStorageModule(name, api) : data.get(directory).get(name);
+		storage.set(DPI.CHAOS_LIST, "none");
 		
 		if (load){
 			

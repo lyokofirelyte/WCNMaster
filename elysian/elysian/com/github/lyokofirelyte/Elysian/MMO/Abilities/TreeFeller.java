@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
+import gnu.trove.map.hash.THashMap;
 
 import org.apache.commons.math3.util.Precision;
 import org.bukkit.Effect;
@@ -19,7 +19,6 @@ import org.bukkit.util.Vector;
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Commands.ElyProtect;
-import com.github.lyokofirelyte.Elysian.MMO.ElyMMO;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
 import com.github.lyokofirelyte.Spectral.DataTypes.DRF;
 import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
@@ -32,7 +31,7 @@ public class TreeFeller {
 	public TreeFeller(Elysian i) {
 		main = i;
 	}
-	
+
 	public void r(Player p, DivinityPlayer dp){
 		dp.set(MMO.IS_TREE_FELLING, !dp.getBool(MMO.IS_TREE_FELLING));
 		dp.s("Tree feller " + (dp.getBool(MMO.IS_TREE_FELLING) + "").replace("true", "&aactive! Left click the bottom of a tree to ninja!").replace("false", "&cinactive."));

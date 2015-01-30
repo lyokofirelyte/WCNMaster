@@ -76,6 +76,7 @@ public class ElyToggle implements AutoRegister {
 			cc(dp, "alliance_color") + "alliance_color <color> (alliance chat color)",
 			cc(dp, "global_color") + "global_color <color> (global chat color)",
 			cc(dp, "pm_color") + "pm_color <color> (private chat color)",
+			cc(dp, "pvp") + "pvp (fight people)"
 		 };
 
 		 for (String s : messages){
