@@ -856,7 +856,35 @@ public enum DPI {
 	 * @dataType long
 	 */
 	
-	RAIN_TOGGLE("RAIN_TOGGLE");
+	RAIN_TOGGLE("RAIN_TOGGLE"),
+	
+	/**
+	 * A list of members who are approved but were not online to become member.
+	 * @dataType String List
+	 */
+	
+	PRE_APPROVED("PRE_APPROVED"),
+	
+	/**
+	 * List of emotes the user can type in the chat.
+	 * @dataType String List
+	 */
+	
+	EMOTE_LIST("EMOTE_LIST"),
+	
+	/**
+	 * The message it prints out when the right command is performed.
+	 * @dataType String List
+	 */
+	
+	EMOTE_ACTION("EMOTE_ACTION"),
+	
+	/**
+	 * The spawn of the server set by staff.
+	 * @dataType Location
+	 */
+	
+	SPAWN_POINT("SPAWN_POINT");
 
 	DPI(String info){
 		this.info = info;

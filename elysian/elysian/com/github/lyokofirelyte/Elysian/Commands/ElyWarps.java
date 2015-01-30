@@ -7,8 +7,6 @@ import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -17,6 +15,7 @@ import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
 
 public class ElyWarps implements AutoRegister {
@@ -38,19 +37,19 @@ public class ElyWarps implements AutoRegister {
 		warps = new File(dir).list();
 	}
 	
-	
-	@DivCommand(aliases = {"s", "spawn"}, desc = "Elysian Spawn Command", help = "/s>", player = true)
-	public void onSpawn(Player p, String[] args, String cmd){
-		String[] loc = main.api.getDivSystem().getString("SPAWN_POINT").split("%SPLIT%");
+
+	@DivCommand(aliases = {"s", "spawn"}, desc = "Elysian Spawn Command", help = "/s", player = true)
+	public void onSpawn(Player p, String[] args){
+		String[] loc = main.api.getDivSystem().getStr(DPI.SPAWN_POINT).split("%SPLIT%");
 		Location spawn = new Location(Bukkit.getWorld(loc[0]), Float.parseFloat(loc[1]), Float.parseFloat(loc[2]), Float.parseFloat(loc[3]), Float.parseFloat(loc[4]), Float.parseFloat(loc[5]));
 		p.teleport(spawn);
 		main.s(p, "You have arrived at spawn!");
 	}
 	
 	@DivCommand(perm = "wa.staff.admin", aliases = {"setspawn"}, desc = "Elysian Spawn Set Command", help = "/setspawn", player = true)
-	public void onSpawnSet(Player p, String[] args, String cmd){
+	public void onSpawnSet(Player p, String[] args){
 		Location loc = p.getLocation();
-		main.api.getDivSystem().set("SPAWN_POINT", loc.getWorld() + "%SPLIT%" + loc.getX() + "%SPLIT%" + loc.getY() + "%SPLIT%" + loc.getZ() + "%SPLIT%" + loc.getYaw() + "%SPLIT%" + loc.getPitch());
+		main.api.getDivSystem().set(DPI.SPAWN_POINT, loc.getWorld().getName() + "%SPLIT%" + loc.getX() + "%SPLIT%" + loc.getY() + "%SPLIT%" + loc.getZ() + "%SPLIT%" + loc.getYaw() + "%SPLIT%" + loc.getPitch());
 		main.s(p, "Spawn point set!");
 	}
 	

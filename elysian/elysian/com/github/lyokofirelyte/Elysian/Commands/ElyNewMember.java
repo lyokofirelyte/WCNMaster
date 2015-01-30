@@ -34,9 +34,9 @@ public class ElyNewMember implements AutoRegister {
 			 }
 			 
 		 } else {
-			 List<String> users = new ArrayList<String>(main.api.getDivSystem().getStringList("PRE_APPROVED"));
+			 List<String> users = new ArrayList<String>(main.api.getDivSystem().getList(DPI.PRE_APPROVED));
 			 users.add(args[0]);
-			 main.api.getDivSystem().set("PRE_APPROVED", users);
+			 main.api.getDivSystem().set(DPI.PRE_APPROVED, users);
 			 
 			 main.s(p, "The player hasn't logged in yet, therefore he's added to the pre-approved list. He will automatically become member if he logs in.");
 		 }

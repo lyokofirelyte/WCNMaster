@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.Games.MobMondays.MMMain.locationType;
 import com.github.lyokofirelyte.Elysian.MMO.ElyMMO;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
@@ -31,15 +32,23 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 	}
 
 	@EventHandler
-	public void onJoin(PlayerJoinEvent e){
+	public void onJoin(final PlayerJoinEvent e){
 		
 		e.setJoinMessage(null);
 		final Player pl = e.getPlayer();
 		
 		if(!e.getPlayer().hasPlayedBefore()){
-			String[] loc = main.api.getDivSystem().getString("SPAWN_POINT").split("%SPLIT%");
-			Location spawn = new Location(Bukkit.getWorld(loc[0]), Float.parseFloat(loc[1]), Float.parseFloat(loc[2]), Float.parseFloat(loc[3]), Float.parseFloat(loc[4]), Float.parseFloat(loc[5]));
-			e.getPlayer().teleport(spawn);
+			String[] loc = main.api.getDivSystem().getStr(DPI.SPAWN_POINT).split("%SPLIT%");
+			final Location spawn = new Location(Bukkit.getWorld(loc[0]), Float.parseFloat(loc[1]), Float.parseFloat(loc[2]), Float.parseFloat(loc[3]), Float.parseFloat(loc[4]), Float.parseFloat(loc[5]));
+			
+			Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
+
+				@Override
+				public void run() {
+					e.getPlayer().teleport(spawn);
+				}
+				
+			}, 10L);
 		}
 		
 		Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){

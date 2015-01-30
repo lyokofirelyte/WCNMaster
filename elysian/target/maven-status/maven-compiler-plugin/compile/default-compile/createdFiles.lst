@@ -79,6 +79,7 @@ com\github\lyokofirelyte\Elysian\Events\ElyMessages.class
 com\github\lyokofirelyte\Elysian\Gui\GuiChest.class
 com\github\lyokofirelyte\Elysian\Events\ElyLogger$2.class
 com\github\lyokofirelyte\Elysian\Games\Cranked\CrankedActive.class
+com\github\lyokofirelyte\Elysian\Events\ElyJoinQuit$2.class
 com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVPActive.class
 com\github\lyokofirelyte\Elysian\Events\ElyJoinQuit$1.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData$SpleefPlayerData.class
