@@ -3,7 +3,7 @@ package com.github.lyokofirelyte.Elysian.MMO;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
+import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Material;
 

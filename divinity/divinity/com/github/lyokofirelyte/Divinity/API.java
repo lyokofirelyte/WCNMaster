@@ -1,5 +1,7 @@
 package com.github.lyokofirelyte.Divinity;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -21,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+
 import com.github.lyokofirelyte.Divinity.Commands.DivinityRegistry;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
 import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
@@ -51,6 +54,9 @@ import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityRegion;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityRing;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 public class API implements SpectralAPI {
 	
@@ -124,6 +130,73 @@ public class API implements SpectralAPI {
 		}
 		
 		return divManager.searchForPlayer(uuid);
+	}
+	
+	public void requestServerList(String player){
+		if (Bukkit.getOnlinePlayers().size() > 0){
+			try {
+				ByteArrayDataOutput out = ByteStreams.newDataOutput();
+				out.writeUTF("GetServers");
+				Bukkit.getPlayer(player).sendPluginMessage(main, "BungeeCord", out.toByteArray());
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void requestIP(String player){
+		
+		if (Bukkit.getOnlinePlayers().size() > 0){
+			try {
+				ByteArrayDataOutput out = ByteStreams.newDataOutput();
+				out.writeUTF("IP");
+				Bukkit.getPlayer(player).sendPluginMessage(main, "BungeeCord", out.toByteArray());
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void sendToServer(String player, String server){
+		
+		if (Bukkit.getOnlinePlayers().size() > 0){
+			try {
+				ByteArrayDataOutput out = ByteStreams.newDataOutput();
+				out.writeUTF("ConnectOther");
+				out.writeUTF(player);
+				out.writeUTF(server);
+				Iterables.getFirst(Bukkit.getOnlinePlayers(), null).sendPluginMessage(main, "BungeeCord", out.toByteArray());
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void sendPluginMessageAll(String subchannel, String message){
+		sendPluginMessage("ALL", subchannel, message);
+	}
+	
+	public void sendPluginMessage(String server, String subchannel, String message){
+		
+		if (Bukkit.getOnlinePlayers().size() > 0){
+			try {
+				ByteArrayDataOutput out = ByteStreams.newDataOutput();
+				out.writeUTF("Forward");
+				out.writeUTF(server);
+				out.writeUTF(subchannel);
+		
+				ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
+				DataOutputStream msgout = new DataOutputStream(msgbytes);
+				msgout.writeUTF(message);
+				msgout.writeShort(message.getBytes().length);
+		
+				out.writeShort(msgbytes.toByteArray().length);
+				out.write(msgbytes.toByteArray());
+	            Iterables.getFirst(Bukkit.getOnlinePlayers(), null).sendPluginMessage(main, "BungeeCord", out.toByteArray());
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public Collection<DivinityStorageModule> getAllPlayers(){

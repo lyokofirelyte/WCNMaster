@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
-
-
+import gnu.trove.map.hash.THashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -30,6 +28,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -41,6 +40,7 @@ import com.github.lyokofirelyte.Divinity.Events.PatrolEntityDeathEvent;
 import com.github.lyokofirelyte.Divinity.Events.PatrolPlayerDeathEvent;
 import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.Commands.ElyProtect;
 import com.github.lyokofirelyte.Elysian.MMO.Magics.SpellTasks;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.DataTypes.ElyChannel;
@@ -86,8 +86,8 @@ public class ElyMobs implements Listener, AutoRegister {
 				
 				Player damager = (Player)e.getDamager();
 				
-				if (!main.api.getDivPlayer(damager).getStr(DPI.DUEL_PARTNER).equals(p.getName())){
-					e.setCancelled(true);
+				if (main.api.getDivPlayer(damager).getBool(DPI.DUEL_INVITE) && main.api.getDivPlayer(p).getBool(DPI.DUEL_INVITE)){
+					return;
 				}
 				
 			} else if (e.getDamager() instanceof Projectile){
@@ -311,24 +311,26 @@ public class ElyMobs implements Listener, AutoRegister {
 			default: return;
 		}
 		
-		for (ItemStack i : p.getInventory().getContents()){
-			if (i != null && !i.getType().equals(Material.AIR)){
-				dp.getStack(DPI.DEATH_CHEST_INV).add(i);
+		if (!dp.getBool(DPI.DUEL_INVITE)){
+			for (ItemStack i : p.getInventory().getContents()){
+				if (i != null && !i.getType().equals(Material.AIR)){
+					dp.getStack(DPI.DEATH_CHEST_INV).add(i);
+				}
 			}
-		}
-		
-		for (ItemStack i : p.getInventory().getArmorContents()){
-			if (i != null && !i.getType().equals(Material.AIR)){
-				dp.getStack(DPI.DEATH_CHEST_INV).add(i);
+			
+			for (ItemStack i : p.getInventory().getArmorContents()){
+				if (i != null && !i.getType().equals(Material.AIR)){
+					dp.getStack(DPI.DEATH_CHEST_INV).add(i);
+				}
 			}
+			
+			dp.set(DPI.DEATH_CHEST_LOC, p.getWorld().getName() + " " + v.getBlockX() + " " + v.getBlockY() + " " + v.getBlockZ());
+			p.getLocation().getBlock().setType(Material.CHEST);
+			e.getDrops().clear();
+			
+			main.s(e.getEntity(), "&7&oYour items are in a chest at your death location.");
+			main.s(e.getEntity(), "&7&oRecent death chests have been merged with this one.");
 		}
-		
-		dp.set(DPI.DEATH_CHEST_LOC, p.getWorld().getName() + " " + v.getBlockX() + " " + v.getBlockY() + " " + v.getBlockZ());
-		p.getLocation().getBlock().setType(Material.CHEST);
-		e.getDrops().clear();
-		
-		main.s(e.getEntity(), "&7&oYour items are in a chest at your death location.");
-		main.s(e.getEntity(), "&7&oRecent death chests have been merged with this one.");
 		
 		if (dp.getBool(DPI.DEATHLOCS_TOGGLE)){
 			main.s(p, "&7&oYou died at: &6&o" + dp.getStr(DPI.DEATH_CHEST_LOC).replace(" ", "&7, "));
@@ -355,21 +357,6 @@ public class ElyMobs implements Listener, AutoRegister {
 		
 		DivinityPlayer dp = main.api.getDivPlayer(e.getPlayer());
 		
-		if (dp.getStr(DPI.DUEL_PARTNER).equals("killed")){
-			dp.set(DPI.DUEL_PARTNER, "none");
-			if (dp.getBool(DPI.IS_DUEL_SAFE)){
-				for (ItemStack i : dp.getStack(DPI.BACKUP_INVENTORY)){
-					if (i != null){
-						if (e.getPlayer().getInventory().firstEmpty() != -1){
-							e.getPlayer().getInventory().addItem(i);
-						} else {
-							e.getPlayer().getWorld().dropItem(e.getPlayer().getLocation(), i);
-						}
-					}
-				}
-				main.s(e.getPlayer(), "This duel was safe. Inventory restored.");
-			}
-		}
 		
 		if (!dp.getBool(DPI.IN_GAME) && e.getPlayer().getBedSpawnLocation() == null){
 			if (dp.getList(DPI.HOME).size() > 0){
@@ -486,38 +473,24 @@ public class ElyMobs implements Listener, AutoRegister {
 		}
 	}
 	
-	@DivCommand(aliases = {"duel"}, help = "/duel <player> [safe?]", desc = "Elysian Duel System", player = true)
+	@DivCommand(aliases = {"duel", "pvp"}, help = "/pvp on, /pvp off", desc = "Elysian PVP System", player = true, min = 1)
 	public void onDuel(Player p, String[] args){
 		
+		ElyProtect pro = (ElyProtect) main.api.getInstance(ElyProtect.class);
 		DivinityPlayer dp = main.api.getDivPlayer(p);
-		String safe = args.length == 2 ? "&asafe" : "&cdangerous";
 		
-		if (args.length == 0){
-			if (!dp.getStr(DPI.DUEL_INVITE).equals("none")){
-				if (main.api.isOnline(dp.getStr(DPI.DUEL_INVITE))){
-					dp.set(DPI.DUEL_PARTNER, dp.getStr(DPI.DUEL_INVITE));
-					main.s(p, "ACCEPTED DUEL! BEGIN!");
-					main.s(main.api.getPlayer(dp.getStr(DPI.DUEL_INVITE)), "ACCEPTED DUEL! BEGIN!");
-					main.api.getDivPlayer(dp.getStr(DPI.DUEL_INVITE)).set(DPI.DUEL_PARTNER, p.getName());
-					main.api.getDivPlayer(dp.getStr(DPI.DUEL_INVITE)).set(DPI.DUEL_INVITE, "none");
-					dp.set(DPI.DUEL_INVITE, "none");
-				} else {
-					main.s(p, "&c&oThey've logged off.");
-				}
-			}
-		} else if (main.api.doesPartialPlayerExist(args[0])){
-			if (main.api.isOnline(args[0])){
-				main.s(main.api.getPlayer(args[0]), "You are invited to a duel from " + p.getDisplayName() + "&b.");
-				main.s(main.api.getPlayer(args[0]), "This is a " +  safe + " &bduel. Type /duel to accept.");
-				main.api.getDivPlayer(args[0]).set(DPI.DUEL_INVITE, p.getName());
-				main.api.getDivPlayer(args[0]).set(DPI.IS_DUEL_SAFE, args.length == 2 ? true : false);
-				dp.set(DPI.IS_DUEL_SAFE, args.length == 2 ? true : false);
-				main.s(p, "Sent!");
-			} else {
-				main.s(p, "playerNotFound");
+		if (!dp.getBool(DPI.PVP_CHOICE) || pro.isInRegion(p.getLocation(), "newspawn")){
+
+			dp.set(DPI.DUEL_INVITE, args[0].equals("on") ? true : false);
+			main.s(p, "PVP " + (dp.getBool(DPI.DUEL_INVITE) + "").replace("true", "&aactivated").replace("false", "&cdeactivated") + ".");
+			
+			if (!dp.getBool(DPI.PVP_CHOICE)){
+				dp.set(DPI.PVP_CHOICE, true);
+				dp.set(DPI.DISABLED, false);
+				((ElyJoinQuit) main.api.getInstance(ElyJoinQuit.class)).onJoin(new PlayerJoinEvent(p, "test"));
 			}
 		} else {
-			main.s(p, "playerNotFound");
+			main.s(p, "&c&oYou can only toggle this while at spawn!");
 		}
 	}
 }

@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
+import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.command.CommandSender;
 
@@ -85,7 +85,7 @@ public class ElyPerms implements AutoRegister {
 		 }
 	 }
 	 
-	 @DivCommand(aliases = {"perms"}, desc = "Modify Permissions and Groups", help = "/perms <add, groupadd, remove, groupremove, view, list> <player> <perm>, /perms view <player> all", player = false, min = 1)
+	 @DivCommand(aliases = {"perm"}, desc = "Modify Permissions and Groups", help = "/perm <add, groupadd, remove, groupremove, view, list> <player> <perm>, /perm view <player> all", player = false, min = 1)
 	 public void onPerms(CommandSender cs, String[] args){
 		 
 		 if (cs.isOp()){

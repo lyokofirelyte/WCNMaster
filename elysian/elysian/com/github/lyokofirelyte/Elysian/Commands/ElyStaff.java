@@ -145,25 +145,14 @@ public class ElyStaff implements Listener, AutoRegister {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.admin", aliases = {"ip"}, desc = "IP & Location Information", help = "/ip <player>", min = 1)
-	 public void onIP(CommandSender cs, String[] args){
+	 @DivCommand(perm = "wa.staff.admin", aliases = {"ipinfo"}, desc = "IP & Location Information", help = "/ipinfo <player>", min = 1, player = true)
+	 public void onIP(Player cs, String[] args){
 		 
-		 if (main.api.isOnline(args[0])){
-			 
-			 try {
-				 Player p = main.api.getPlayer(args[0]);
-				 main.s(cs, "&6Location Overview: " + p.getDisplayName());
-				 main.s(cs, "IP: &3" + p.getAddress().getHostName());
-				 main.s(cs, "Port: &3" + p.getAddress().getPort());
-				 main.s(cs, "Country: &3" + main.divinity.api.playerLocation.getCountry(p));
-				 main.s(cs, "City: &3" + main.divinity.api.playerLocation.getCity(p));
-				 main.s(cs, "Postal Code: &3" + main.divinity.api.playerLocation.getPostal(p));
-			 } catch (Exception e){
-				 main.s(cs, "&c&oAn error occured fetching the information.");
-			 }
-			 
-		 } else {
-			 main.s(cs, "&c&oThat player is not online.");
+		 try {
+			 main.api.getDivPlayer(Bukkit.getPlayer(args[0])).set(DPI.IP_LOOKUP, cs.getName());
+			 main.api.requestIP(Bukkit.getPlayer(args[0]).getName());
+		 } catch (Exception e){
+			 main.s(cs, "&c&oAn error occured fetching the information.");
 		 }
 	 }
 	 

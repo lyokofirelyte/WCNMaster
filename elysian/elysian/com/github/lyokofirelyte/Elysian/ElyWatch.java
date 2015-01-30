@@ -109,7 +109,7 @@ public class ElyWatch implements Runnable, AutoRegister {
 			}
 		}
 		
-		if (dp.getBool(DPI.DISABLED) && dp.getStr(DPI.RING_LOC).equals("none")){
+		if (dp.getBool(DPI.DISABLED) && dp.getStr(DPI.RING_LOC).equals("none") && dp.getBool(DPI.PVP_CHOICE)){
 			if (System.currentTimeMillis() >= dp.getLong(DPI.DISABLE_TIME)){
 				dp.set(DPI.DISABLED, false);
 				DivinityUtilsModule.bc("&4&oThe disable placed on " + p.getDisplayName() + " &4&ohas expired.");

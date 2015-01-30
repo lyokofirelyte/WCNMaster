@@ -20,6 +20,7 @@ import com.github.lyokofirelyte.Divinity.API;
 import com.github.lyokofirelyte.Divinity.Divinity;
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
+import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
 
 
@@ -117,9 +118,15 @@ public class DivinityRegistry implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     	
     	if (sender instanceof Player){
-    		if (main.getDivPlayer((Player)sender).getBool(DPI.DISABLED)){
-    			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&oYou are prevented from using commands at this time."));
-    			return true;
+			DivinityPlayer dp = main.getDivPlayer((Player) sender);
+    		if (dp.getBool(DPI.DISABLED)){
+    			if (!dp.getBool(DPI.PVP_CHOICE) && !label.equals("pvp")){
+    				dp.err("Please select a PVP mode. /pvp on or /pvp off.");
+    				return true;
+    			} else if (dp.getBool(DPI.PVP_CHOICE)){
+    				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&oYou are prevented from using commands at this time."));
+        			return true;
+    			}
     		}
     	}
     	

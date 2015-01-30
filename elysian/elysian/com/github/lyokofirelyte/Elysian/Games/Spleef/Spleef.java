@@ -1,7 +1,5 @@
 package com.github.lyokofirelyte.Elysian.Games.Spleef;
-
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
-
+import gnu.trove.map.hash.THashMap;
 import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
 import com.github.lyokofirelyte.Divinity.Storage.DivinityStorageModule;
 import com.github.lyokofirelyte.Elysian.Elysian;

@@ -3,6 +3,11 @@ package com.github.lyokofirelyte.Spectral.DataTypes;
 public enum ElySkill {
 	
 	/**
+	 * Hamdrax-related shenans
+	 */
+	CHAOS("CHAOS"),
+	
+	/**
 	 * Attacking things with a sword
 	 */
 	ATTACK("ATTACK"),
@@ -11,6 +16,11 @@ public enum ElySkill {
 	 * Breaking certain blocks with a pickaxe
 	 */
 	MINING("MINING"),
+	
+	/**
+	 * Hitting shit w/ an axe
+	 */
+	AXES("AXES"),
 	
 	/**
 	 * Breaking logs with an axe

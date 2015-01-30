@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import net.minecraft.util.gnu.trove.map.hash.THashMap;
+import gnu.trove.map.hash.THashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.FireworkEffect.Type;
@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -36,7 +37,9 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
@@ -50,9 +53,12 @@ import com.github.lyokofirelyte.Divinity.Events.SkillExpGainEvent;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatExtra;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatHoverEventType;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
+import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Commands.ElyEffects;
 import com.github.lyokofirelyte.Elysian.Events.ElyLogger;
+import com.github.lyokofirelyte.Elysian.MMO.Abilities.Bezerk;
+import com.github.lyokofirelyte.Elysian.MMO.Abilities.Chaos;
 import com.github.lyokofirelyte.Elysian.MMO.Abilities.LifeForce;
 import com.github.lyokofirelyte.Elysian.MMO.Abilities.SkyBlade;
 import com.github.lyokofirelyte.Elysian.MMO.Abilities.SoulSplit;
@@ -84,6 +90,8 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 	public SoulSplit soulSplit;
 	public SpellEvents spellEvents;
 	public SpellTasks spellTasks;
+	public Bezerk bezerk;
+	public Chaos chaos;
 	
 	public Map<String, List<Item>> noPickup = new THashMap<>();
 	public Map<SmallFireball, String> potions = new THashMap<>();
@@ -99,6 +107,8 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		soulSplit = new SoulSplit(main);
 		spellEvents = new SpellEvents(main);
 		spellTasks = new SpellTasks(main);
+		bezerk = new Bezerk(main);
+		chaos = new Chaos(main);
 		fillMap();
 	}
 	
@@ -207,6 +217,12 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		tool(Material.GOLD_SPADE, ElySkill.ATTACK, 20);
 		tool(Material.DIAMOND_SPADE, ElySkill.ATTACK, 25);
 		
+		tool(Material.WOOD_AXE, ElySkill.AXES, 0);
+		tool(Material.STONE_AXE, ElySkill.AXES, 15);
+		tool(Material.IRON_AXE, ElySkill.AXES, 25);
+		tool(Material.GOLD_AXE, ElySkill.AXES, 30);
+		tool(Material.DIAMOND_AXE, ElySkill.AXES, 45);
+		
 		tool(Material.WOOD_AXE, ElySkill.WOODCUTTING, 0);
 		tool(Material.STONE_AXE, ElySkill.WOODCUTTING, 15);
 		tool(Material.IRON_AXE, ElySkill.WOODCUTTING, 25);
@@ -266,7 +282,7 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		
 		if (containsKey(m) && get(m).hasSkill(s)){
 			if (get(m).hasLevel(s, main.api.getDivPlayer(p).getLevel(s))){
-				if (neededItem.equals("none") || isHolding(p, neededItem)){
+				if (neededItem.equals("none") || isHolding(p, neededItem) || (p.getItemInHand().hasItemMeta() && p.getItemInHand().getItemMeta().hasLore() && isHolding(p, "arrow"))){
 					results[0] = true;
 				}
 			}
@@ -291,6 +307,18 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 			}
 		}
 	}
+	
+	public void checkDrax(Player p, DivinityPlayer dp, String label, int color, int maxChance){
+		if (new Random().nextInt(maxChance) == 1){
+			DivinityUtilsModule.bc(p.getDisplayName() + " &7has found a " + label + " drax shard!");
+			ItemStack shard = DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, color);
+			p.getWorld().dropItem(p.getLocation(), shard);
+			main.api.getDivSystem().addEffect("renewal" + p.getName(), ParticleEffect.RED_DUST, 0, 10, 0, 1, 200, p.getLocation(), 16, 1);
+			main.api.getDivSystem().addEffect("renewal2" + p.getName(), ParticleEffect.PORTAL, 2, 2, 2, 1, 200, p.getLocation(), 16, 1);
+			main.api.repeat(new SpellTasks(main), "renewal", 0L, 40L, "renewal3" + p.getName(), main, p);
+			main.api.schedule(new SpellTasks(main), "cancelRenewal", 400L, "renewalCancel", main, p);
+		}
+	}
 
 	@EventHandler (ignoreCancelled = true, priority = EventPriority.MONITOR)
 	public void onMob(EntityDamageByEntityEvent e){
@@ -313,12 +341,31 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 				
 				switch (p.getItemInHand().getType()){
 				
+					case ARROW:
+						
+						if (p.getItemInHand().hasItemMeta() && p.getItemInHand().getItemMeta().hasLore()){
+							if (new Random().nextInt(3) == 1){
+								e.getEntity().setFireTicks(200);
+							}
+							main.api.event(new SkillExpGainEvent(p, ElySkill.CHAOS, Integer.parseInt(Math.round(e.getDamage()*50) + "")));
+							e.setDamage(e.getDamage() + (e.getDamage()*((dp.getLevel(ElySkill.CHAOS)*.8)/100)));
+						}
+						
+					break;
+				
 					case STICK: case FENCE:
 						main.api.event(new SkillExpGainEvent(p, ElySkill.FENCING, Integer.parseInt(Math.round(e.getDamage()*7) + "")));
 						e.setDamage(e.getDamage() + (e.getDamage()*((dp.getLevel(ElySkill.FENCING)*.8)/100)));
 					break;
 					
-					default: 
+					case DIAMOND_AXE: case IRON_AXE: case WOOD_AXE: case GOLD_AXE: case STONE_AXE:
+						
+						e.setDamage(e.getDamage() + (e.getDamage()*((dp.getLevel(ElySkill.AXES)*.4)/100)));
+						main.api.event(new SkillExpGainEvent(p, ElySkill.AXES, Integer.parseInt(Math.round(e.getDamage()*5) + "")));
+						
+					break;
+					
+					default:
 						
 						e.setDamage(e.getDamage() + (e.getDamage()*((dp.getLevel(ElySkill.ATTACK)*.4)/100)));
 						main.api.event(new SkillExpGainEvent(p, ElySkill.ATTACK, Integer.parseInt(Math.round(e.getDamage()*5) + "")));
@@ -410,6 +457,8 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 			case PATROL: return "&6Hunt or skill with a group of people and share the XP!";
 			case SOLAR: return "&6Destructive spells!";
 			case LUNAR: return "&6Group-based healing & help skills!";
+			case AXES: return "&6Attack mobs with an axe!";
+			case CHAOS: return "&6Attack mobs with your hamdrax. Be careful!";
 		}
 	}
 	
@@ -431,9 +480,11 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 			case ENDURANCE: return "&60.4% less fall damage taken per level.";
 			case BUILDING: return "&6You literally get nothing for leveling this skill. Nothing.";
 			case FARMING: return "&bLevel 10: &6LIFE FORCE (right-click sapling)\n&7&oPlants a random tree.\n&7&oEvery level decreases cooldown by 1 second.";
-			case PATROL: return "&6More Shop Options";
+			case PATROL: return "&6More Shop Options\nCOMING SOON(TM)";
 			case SOLAR: return "&6Level up for new spells!\n&3&o0.4% damage increase per level";
 			case LUNAR: return "&6Level up for new spells!";
+			case AXES: return "&bLevel 10: &6BEZERK (right-click axe on mob)\n&7&oAdd a bleed effect on a mob.\n&7&oEvery level decreases cooldown by 1 second.\n&60.3% extra damage per level";
+			case CHAOS: return "&bLevel 10: &6(hA0s\n&7&ow3Ap0n a (ha0S Pur3 of p0wEr\n&7&oEvery level decreases cooldown by 1 second.\n&60.3% extra damage per level";
 		}
 	}
 	
@@ -450,6 +501,8 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 				
 				DivinityPlayer dp = main.api.getDivPlayer(args[0]);
 				JSONChatMessage msg = new JSONChatMessage("", null, null);
+				main.s(p, "Skill Overview For " + dp.getStr(DPI.DISPLAY_NAME));
+				p.sendMessage("");
 
 				for (ElySkill skill : ElySkill.values()){
 					
@@ -458,18 +511,17 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 					int xp = dp.getXP(skill);
 					int neededXp = dp.getNeededXP(skill);
 					
-					JSONChatExtra extra = new JSONChatExtra(main.AS(snow + " &b" + skill.s()));
+					JSONChatExtra extra = new JSONChatExtra(main.AS("&6>> &b" + skill.s() + " &3(&6" + lvl + "&3) (&6" + xp + "&3)"));
 					extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&3" + skill.s() + "\n&f----- " + snow + "&f-----\n&bLVL: &6" + lvl + "&b/&699\n&bXP: &6" + xp + "\n&bNEXT LVL: &6" + neededXp));
 					msg.addExtra(extra);
-					
-					extra = new JSONChatExtra(main.AS(" &3(&6" + lvl + "&3)" + StringUtils.repeat(".", (18-skill.s().length()))));
-					msg.addExtra(extra);
-					
-					extra = new JSONChatExtra(main.AS("&3[&b Info &3] "));
+					main.s(p, msg);
+					msg = new JSONChatMessage("", null, null);
+
+					extra = new JSONChatExtra(main.AS("&3(&f- &3I &f-&3) "));
 					extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS(getDesc(skill)));
 					msg.addExtra(extra);
 					
-					extra = new JSONChatExtra(main.AS("&3[&b XP &3] "));
+					extra = new JSONChatExtra(main.AS("&3(&f- &3X &f-&3) "));
 					
 					String message = "&3&oXP Generation Methods\n";
 					
@@ -479,8 +531,10 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 						}
 					}
 					
-					extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS(message));
-					msg.addExtra(extra);
+					if (!message.equals("&3&oXP Generation Methods\n")){
+						extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS(message));
+						msg.addExtra(extra);
+					}
 					
 					Map<Material, Integer> map = getTools(skill);
 					message = "";
@@ -489,18 +543,20 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 						message = (message.equals("") ? "&3&oExtra Drops Tool Requirement" : message) + "\n" + "&b" + tool.toString().toLowerCase() + "&f: " + (lvl >= map.get(tool) ? "&a" : "&c") + map.get(tool);
 					}
 					
-					extra = new JSONChatExtra(main.AS("&3[&b Tools &3] "));
-					extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS(message + " "));
-					msg.addExtra(extra);
+					if (!message.equals("")){
+						extra = new JSONChatExtra(main.AS("&3(&f- &3T &f-&3) "));
+						extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS(message + " "));
+						msg.addExtra(extra);
+					}
 					
-					extra = new JSONChatExtra(main.AS("&3[&b Perks &3] "));
+					extra = new JSONChatExtra(main.AS("&3(&f- &3P &f-&3)"));
 					extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS(getPerks(skill) + "\n&7&oAll gathering skills have a chance to drop double.\n&7&oThis chance increases by 0.4% per level."));
 					msg.addExtra(extra);
 					main.s(p, msg);
+					p.sendMessage("");
 				}
 				
 				p.sendMessage("");
-				
 				main.s(p, "&7&oHover over everything for more info...");
 				
 			} else {
@@ -616,7 +672,6 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 			}
 			
 			if (cont){
-				
 				if (results[0]){
 					main.api.event(new SkillExpGainEvent(p, skills.get(i), get(e.getBlock().getType()).getXP(skills.get(i))));
 					if (results[1]){
@@ -657,6 +712,38 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		return b != null && b.getType().toString().toLowerCase().contains(item.toLowerCase());
 	}
 	
+	@EventHandler
+	public void onHand(PlayerItemHeldEvent e){
+		
+		boolean cont = false;
+		
+		if (e.getNewSlot() < 9){
+			Inventory inv = e.getPlayer().getInventory();
+			ItemStack i = inv.getItem(e.getNewSlot());
+			if (i != null){
+				if (i.hasItemMeta() && i.getItemMeta().hasDisplayName() && i.getItemMeta().hasLore()){
+					if (i.getItemMeta().getDisplayName().contains("dRaX")){
+						e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 5000, false));
+						cont = true;
+					}
+				}
+			}
+		}
+		
+		if (!cont){
+			if (e.getPlayer().hasPotionEffect(PotionEffectType.FAST_DIGGING)){
+				for (PotionEffect eff : e.getPlayer().getActivePotionEffects()){
+					if (eff.getType().equals(PotionEffectType.FAST_DIGGING)){
+						if (eff.getAmplifier() == 5000){
+							e.getPlayer().removePotionEffect(PotionEffectType.FAST_DIGGING);
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+	
 	//lvl xp xp_needed
 	@EventHandler (ignoreCancelled = true, priority = EventPriority.MONITOR)
 	public void onXp(SkillExpGainEvent e){
@@ -670,6 +757,54 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		
 		if (dp.getBool(DPI.IN_GAME)){
 			return;
+		}
+		
+		switch (e.getSkill()){
+			case ATTACK: case AXES: case FENCING:
+				checkDrax(p, dp, "red", 14, 1000);
+			break;
+			
+			case ARCHERY:
+				checkDrax(p, dp, "green", 13, 200);
+			break;
+			
+			case MINING:
+				checkDrax(p, dp, "white", 0, 2000);
+			break;
+			
+			case DIGGING: case FARMING:
+				checkDrax(p, dp, "brown", 12, 2000);
+			break;
+			
+			case WOODCUTTING:
+				checkDrax(p, dp, "lime", 5, 500);
+			break;
+			
+			default: break;
+		}
+		
+		if (p.getItemInHand().hasItemMeta() && p.getItemInHand().getItemMeta().hasLore() && p.getItemInHand().getItemMeta().hasDisplayName()){
+			if (p.getItemInHand().getItemMeta().getDisplayName().contains("dRaX")){
+				ItemMeta im = p.getItemInHand().getItemMeta();
+				List<String> lore = new ArrayList<String>(im.getLore());
+				int amtLeft = Integer.parseInt(lore.get(1).substring(4).split("\\/")[0]);
+				amtLeft--;
+				if (amtLeft <= 0){
+					p.setItemInHand(new ItemStack(Material.AIR));
+					dp.err("Your drax has broken.");
+				} else {
+					if (amtLeft == 3500){
+						dp.err("Your drax has 50% of its charges remaining.");
+					} else if (amtLeft == 700){
+						dp.err("Your drax has 10% of its charges remaining.");
+					}
+					lore.remove(1);
+					lore.add(main.AS("&a&o" + amtLeft + "/7000"));
+					im.setLore(lore);
+					p.getItemInHand().setItemMeta(im);
+				}
+				p.updateInventory();
+			}
 		}
 		
 		e.setXp(dp.getBool(DPI.IGNORE_XP) ? e.getXp() : e.getXp()*2); // Added for balancing - current curve way too high.
@@ -845,6 +980,26 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		if (isHolding(p, "_sword") && dp.getBool(MMO.IS_SKY_BLADING)){
 			skyBlade.l(p, dp);
 		}
+		
+		if (isHolding(p, "_axe") && dp.getBool(MMO.IS_BEZERK)){
+			bezerk.l(p, dp, (LivingEntity) e.getRightClicked());
+		}
+		
+		if (isHolding(p, "arrow") && dp.getBool(MMO.IS_CHAOSING)){
+			if (e.getRightClicked() instanceof Player == false){
+				List<LivingEntity> entList = null;
+				if (dp.getRawInfo(DPI.CHAOS_LIST) != null && !dp.getRawInfo(DPI.CHAOS_LIST).equals("none")){
+					entList = (List<LivingEntity>) dp.getRawInfo(DPI.CHAOS_LIST);
+				} else {
+					entList = new ArrayList<LivingEntity>();
+				}
+				entList.add((LivingEntity) e.getRightClicked());
+				dp.set(DPI.CHAOS_LIST, entList);
+				dp.s("Add another mob!");
+			}
+		} else if (dp.getBool(MMO.IS_CHAOS) && isHolding(p, "arrow")){
+			chaos.l(p, dp, (LivingEntity) e.getRightClicked()); 
+		}
 	}
 	
 	public void laser(Player p, SmallFireball snowball){
@@ -872,8 +1027,12 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 			
 			case RIGHT_CLICK_AIR:
 				
-				if (isHolding(p, "_axe") && dp.getLevel(ElySkill.WOODCUTTING) >= 10){
+				if (isHolding(p, "_axe") && dp.getLevel(ElySkill.WOODCUTTING) >= 10 && !p.isSneaking()){
 					treeFeller.r(p, dp);
+				}
+				
+				if (isHolding(p, "_axe") && dp.getLevel(ElySkill.AXES) >= 10 && p.isSneaking()){
+					bezerk.r(p, dp);
 				}
 				
 				if (isHolding(p, "_pickaxe") && dp.getLevel(ElySkill.MINING) >= 10){
@@ -892,11 +1051,9 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 					life.r(p, dp);
 				}
 				
-				if (isHolding(p, ""))
-
-				/*if (isHolding(p, "FISHERMAN") && dp.getLevel(ElySkill.FISHERMAN) >= 10){
-					holy.l(p, dp, p.getLocation());
-				}*/
+				if (isHolding(p, "arrow") && p.getItemInHand().hasItemMeta() && p.getItemInHand().getItemMeta().hasLore() && dp.getLevel(ElySkill.CHAOS) >= 10){
+					chaos.r(p, dp);
+				}
 				
 				// nothing suspicious move along
 				if (p.getItemInHand().getType().equals(Material.CAKE) || p.getItemInHand().getType().equals(Material.CAKE_BLOCK)){
