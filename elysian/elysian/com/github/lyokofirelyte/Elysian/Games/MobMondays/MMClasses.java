@@ -14,12 +14,17 @@ public class MMClasses {
 	public void assignClass(Player p, String type){
 		
 		p.getInventory().clear();
-		p.getActivePotionEffects().clear();
+		
+		for(PotionEffect pe : p.getActivePotionEffects()){
+			p.removePotionEffect(pe.getType());
+		}
+		
 		p.getInventory().setArmorContents(null);
 		
 		ItemStack[] armor = null;
 		ItemStack[] contents = null;
-		
+		ItemStack health = new ItemStack(Material.POTION, 1, (short)8229);
+
 		
 		switch(type.toLowerCase()){
 		
@@ -34,9 +39,10 @@ public class MMClasses {
 				stick.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
 				stick.addUnsafeEnchantment(Enchantment.DAMAGE_UNDEAD, 2);
 				stick.addUnsafeEnchantment(Enchantment.KNOCKBACK, 1);
+				stick.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
 
 				
-				contents = new ItemStack[]{stick, fireprot, strength, food};
+				contents = new ItemStack[]{stick, fireprot, strength, food, health};
 				
 				p.getInventory().addItem(contents);
 				p.getInventory().setArmorContents(armor);
@@ -49,9 +55,10 @@ public class MMClasses {
 				ItemStack leaping = new ItemStack(Material.POTION, 8, (short)16395);
 				food = new ItemStack(Material.COOKED_BEEF, 32);
 				ItemStack sword = new ItemStack(Material.IRON_SWORD);
+				sword.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
 
 				
-				contents = new ItemStack[]{sword, leaping, food};
+				contents = new ItemStack[]{sword, leaping, food, health};
 				
 				p.getInventory().addItem(contents);
 				p.getInventory().setArmorContents(armor);
@@ -68,8 +75,9 @@ public class MMClasses {
 				bow.addEnchantment(Enchantment.ARROW_DAMAGE, 1);
 				bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
 				ItemStack arrow = new ItemStack(Material.ARROW);
-				
-				contents = new ItemStack[]{arrow, bow, food};
+				bow.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
+
+				contents = new ItemStack[]{arrow, bow, food, health};
 				
 				p.getInventory().addItem(contents);
 				p.getInventory().setArmorContents(armor);
@@ -81,9 +89,10 @@ public class MMClasses {
 				armor = new ItemStack[]{new ItemStack(Material.LEATHER_HELMET),  new ItemStack(Material.LEATHER_CHESTPLATE), new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS)};
 				ItemStack damage = new ItemStack(Material.POTION, 8, (short)16396);
 				ItemStack regen = new ItemStack(Material.POTION, 8, (short)8193);
-				ItemStack health = new ItemStack(Material.POTION, 8, (short)8229);
+				health = new ItemStack(Material.POTION, 8, (short)8229);
 				sword = new ItemStack(Material.GOLD_SWORD);
-				
+				sword.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
+
 				food = new ItemStack(Material.GOLDEN_APPLE, 16);
 
 				for(ItemStack i : armor){
@@ -102,8 +111,9 @@ public class MMClasses {
 				armor = new ItemStack[]{new ItemStack(Material.IRON_HELMET),  new ItemStack(Material.IRON_CHESTPLATE), new ItemStack(Material.IRON_LEGGINGS), new ItemStack(Material.IRON_BOOTS)};
 				food = new ItemStack(Material.COOKED_FISH, 32);
 				ItemStack axe = new ItemStack(Material.DIAMOND_AXE);
-				
-				contents = new ItemStack[]{food, axe};
+				axe.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
+
+				contents = new ItemStack[]{food, axe, health};
 				
 				p.getInventory().addItem(contents);
 				p.getInventory().setArmorContents(armor);
@@ -123,7 +133,7 @@ public class MMClasses {
 				ItemStack tnt = new ItemStack(Material.TNT, 64);
 				damage = new ItemStack(Material.POTION, 8, (short)16396);
 
-				contents = new ItemStack[]{flint, tnt, food, damage};
+				contents = new ItemStack[]{flint, tnt, food, damage, health};
 				
 				p.getInventory().addItem(contents);
 				p.getInventory().setArmorContents(armor);

@@ -1,10 +1,13 @@
 package com.github.lyokofirelyte.Elysian.Games.MobMondays;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.potion.PotionEffect;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Games.MobMondays.MMMain.locationType;
@@ -20,13 +23,38 @@ public class MMEvents implements Listener{
 	}
 	
 	@EventHandler
-	public void onQuit(PlayerQuitEvent e){
-		if(root.players.contains(e.getPlayer().getName())){
-			root.players.remove(e.getPlayer().getName());
-			e.getPlayer().getActivePotionEffects().clear();
+	public void onDeath(EntityDeathEvent e){
+		
+		if(e.getEntity().getKiller() instanceof Player){
+			Player p = (Player) e.getEntity().getKiller();
+			if(root.players.contains(p.getName())){
+				
+				if(root.scores.containsKey(p.getName())){
+					root.scores.put(p.getName(), root.scores.get(p.getName()) + 1);
+				}else{
+					root.scores.put(p.getName(), 1);
+				}
+				
+				
+			}
 			
-			if(root.selected.containsKey(e.getPlayer().getName())){
-				root.selected.remove(e.getPlayer().getName());
+		}
+		
+	}
+	
+	@EventHandler
+	public void onQuit(PlayerQuitEvent e){
+		Player p = e.getPlayer();
+		if(root.players.contains(p.getName())){
+			root.players.remove(p.getName());
+			main.api.cancelTask("mobMondaysScore" + p.getName());
+
+			for(PotionEffect pe : p.getActivePotionEffects()){
+				p.removePotionEffect(pe.getType());
+			}			
+			
+			if(root.selected.containsKey(p.getName())){
+				root.selected.remove(p.getName());
 			}
 			
 		}
@@ -34,15 +62,20 @@ public class MMEvents implements Listener{
 	
 	@EventHandler
 	public void onRespawn(final PlayerRespawnEvent e){
-		if(root.players.contains(e.getPlayer().getName())){
-			root.players.remove(e.getPlayer().getName());
-			e.getPlayer().getActivePotionEffects().clear();
+		final Player p = e.getPlayer();
+		if(root.players.contains(p.getName())){
+			root.players.remove(p.getName());
+			main.api.cancelTask("mobMondaysScore" + p.getName());
+
+			for(PotionEffect pe : p.getActivePotionEffects()){
+				p.removePotionEffect(pe.getType());
+			}			
 			
 			Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
 
 				@Override
 				public void run() {
-					e.getPlayer().teleport(root.getLocation(locationType.DEATH));
+					p.teleport(root.getLocation(locationType.DEATH));
 					
 				}
 				
@@ -50,8 +83,8 @@ public class MMEvents implements Listener{
 			
 		}
 		
-		if(root.selected.containsKey(e.getPlayer().getName())){
-			root.selected.remove(e.getPlayer().getName());
+		if(root.selected.containsKey(p.getName())){
+			root.selected.remove(p.getName());
 		}
 		
 	}

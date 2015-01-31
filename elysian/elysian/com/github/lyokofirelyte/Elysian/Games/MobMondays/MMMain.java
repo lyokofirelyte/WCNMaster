@@ -1,8 +1,9 @@
 package com.github.lyokofirelyte.Elysian.Games.MobMondays;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -32,10 +33,11 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 	
 	public List<String> classes = new ArrayList<String>(Arrays.asList("mage", "melee", "ranger", "pyro", "barbarian", "healer"));
 	public List<String> players = new ArrayList<String>();
-	public Map<String, String> selected = new HashMap<String, String>();
+	public Map<String, String> selected = new THashMap<String, String>();
+	public Map<String, Integer> scores = new THashMap<String, Integer>();
 	public enum locationType {DEATH, SPAWN, RANDOMMOB}; 
 	
-	int secondsLeft = 180;
+	int secondsLeft = 105;
 	int timer;
 	int round = 1;
 	
@@ -152,14 +154,14 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 		timer = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable(){ public void run(){
 			
 			if(secondsLeft == 0){
-				secondsLeft = 180;
+				secondsLeft = 105;
 				round = round + 1;
 				main.divinity.api.divUtils.bc("Round " + round + " has started!");
 				
 				if(round == 4){
 					for(String s : players){
 						Player temp = Bukkit.getPlayer(s);
-						temp.getInventory().addItem(new ItemStack(Material.POTION, 8, (short)8193));
+						temp.getInventory().addItem(new ItemStack(Material.POTION, 2, (short)8193));
 						switch(selected.get(s)){
 						case "mage":
 							temp.getInventory().addItem(new ItemStack(Material.COOKED_CHICKEN, 16));
@@ -194,13 +196,14 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 			
 			System.out.println(players.size());
 			if(players.size() != 1 ){
-				if(secondsLeft == 180){
+				if(secondsLeft == 105){
 					spawnRandomMobs();
 				}
 			}else{
 				main.divinity.api.divUtils.bc("We have a winner!&6 " + players.get(0) + " &bwon MobMondays!");
 				main.divinity.api.divUtils.bc("Please leave the arena by going to spawn or some other place :)");
 				Bukkit.getScheduler().cancelTask(timer);
+				main.api.cancelTask("mobMondaysScore");
 				active = false;
 				for(String s : players){
 					Bukkit.getPlayer(s).getActivePotionEffects().clear();
