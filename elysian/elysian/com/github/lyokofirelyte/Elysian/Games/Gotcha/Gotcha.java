@@ -279,7 +279,7 @@ public class Gotcha extends THashMap<String, GotchaGame> implements AutoSave, Au
 							Bukkit.getPlayer(dp.uuid()).setFlying(false);
 							Bukkit.getPlayer(dp.uuid()).setAllowFlight(false);
 							Bukkit.getPlayer(dp.uuid()).getInventory().addItem(i);
-							main.api.repeat(main.api, "event", 20L, 0L, "gotchaScore" + dp.name(), new ScoreboardUpdateEvent(Bukkit.getPlayer(dp.uuid()), "gameGotcha"));
+							main.api.repeat(main.api, "event", 0L, 20L, "gotchaScore" + dp.name(), new ScoreboardUpdateEvent(Bukkit.getPlayer(dp.uuid()), "gameGotcha"));
 						}
 						
 						main.divinity.api.activeTasks.put("gotchaCounter" + name, Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable(){ public void run(){

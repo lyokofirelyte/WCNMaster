@@ -54,6 +54,12 @@ public class ElySetup {
 		}
 		
 		main.divinity.api.sheets.fetch(false, true);
+		
+		if (main.api.getDivSystem().getList(DPI.EMOTE_LIST).size() <= 0){
+			YamlConfiguration yaml = YamlConfiguration.loadConfiguration(main.getResource("emotes.yml"));
+			main.api.getDivSystem().set(DPI.EMOTE_LIST, yaml.getStringList("EMOTE_LIST"));
+			main.api.getDivSystem().set(DPI.EMOTE_ACTION, yaml.getStringList("EMOTE_ACTION"));
+		}
 	}
 	
 	private void tasks(){
@@ -144,9 +150,9 @@ public class ElySetup {
 		main.getServer().addRecipe(rh.getShapedRecipe());
 		
 		r = new ShapedRecipe(DivInvManager.createItem(main.AS("&5&o))( &f&odRaX &5&o)(("), new String[] {"&6&o(HAOS DEVICE", "&a&o7000/7000"}, Enchantment.DURABILITY, 10, Material.ARROW, 1)).shape(
-				"0f1",
-				"fff",
-				"234"
+			"0f1",
+			"fff",
+			"234"
 		);
 			
 		rh = new RecipeHandler(r);

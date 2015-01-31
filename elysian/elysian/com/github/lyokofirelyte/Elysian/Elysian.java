@@ -58,6 +58,7 @@ public class Elysian extends JavaPlugin {
 		setup.start();
 		divinity.getServer().getMessenger().registerIncomingPluginChannel(divinity, "BungeeCord", (ElyProxy) api.getInstance(ElyProxy.class));
 		divinity.getServer().getMessenger().registerOutgoingPluginChannel(divinity, "BungeeCord");
+		api.getDivSystem().set(DPI.REBOOT_INIT, false);
 	}
 	
 	@Override

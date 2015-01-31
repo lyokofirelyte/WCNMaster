@@ -79,14 +79,15 @@ public class Chaos {
 			lastEnt.setCustomName(main.AS("&k| &4&lchA0t!c &k|"));
 			lastEnt.setCustomNameVisible(true);
 			
-			main.api.repeat(this, "check", 0L, 20L, "chaosCheck" + dp.name(), lastEnt, "chaosCheck" + dp.name());
+			main.api.repeat(this, "check", 0L, 20L, "chaosCheck" + dp.name(), lastEnt, "chaosCheck" + dp.name(), dp);
 			
 		} catch (Exception e){}
 	}
 	
-	public void check(LivingEntity ent, String task){
+	public void check(LivingEntity ent, String task, DivinityPlayer dp){
 		if (ent.isDead()){
 			main.api.cancelTask(task);
+			dp.set(MMO.IS_CHAOSING, false);
 			if (new Random().nextInt(1001) == 500){
 				ent.getWorld().dropItem(ent.getKiller().getLocation(), DivInvManager.createItem(main.AS("&5&o))( &f&odRaX &5&o)(("), new String[] {"&6&o(HAOS DEVICE", "&a&o22000/7000"}, Enchantment.DURABILITY, 10, Material.ARROW, 1));
 				DivinityUtilsModule.bc(ent.getKiller().getDisplayName() + " has found a super drax! (15,000 extra charges!)");

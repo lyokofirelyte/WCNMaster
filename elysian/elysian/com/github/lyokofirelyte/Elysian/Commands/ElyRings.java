@@ -40,6 +40,7 @@ import com.github.lyokofirelyte.Elysian.Gui.GuiRingFuelSafe;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRings;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.DataTypes.DRS;
+import com.github.lyokofirelyte.Spectral.DataTypes.RingsType;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
 import com.github.lyokofirelyte.Spectral.Public.ParticleEffect;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
@@ -70,13 +71,17 @@ public class ElyRings implements Listener, AutoRegister {
 					DivinityRing ring = main.api.getDivRing(args[1]);
 					Location l = p.getLocation().getBlock().getLocation();
 					Vector v = l.toVector();
-					
-					ring.set(DRS.CENTER, l.getWorld().getName() + " " + v.getBlockX() + " " + (v.getBlockY()-1) + " " + v.getBlockZ() + " " + l.getYaw() + " " + l.getPitch());
-					ring.set(DRS.MAT_ID, i.getType().getId());
-					ring.set(DRS.BYTE_ID, i.getData().getData());
-					ring.set(DRS.DEST, "none");
-					ring.set(DRS.IS_ALLIANCE_OWNED, args.length >= 3);
-					ring.set(DRS.ALLIANCE, (args.length >= 3 && main.api.doesRegionExist(args[2].toLowerCase()) ? args[2].toLowerCase() : "none"));
+
+					if (args.length >= 3 && args[2].equals("server")){
+						ring.set(DRS.IS_SERVER_RING, true);
+					} else {
+						ring.set(DRS.CENTER, l.getWorld().getName() + " " + v.getBlockX() + " " + (v.getBlockY()-1) + " " + v.getBlockZ() + " " + l.getYaw() + " " + l.getPitch());
+						ring.set(DRS.MAT_ID, i.getType().getId());
+						ring.set(DRS.BYTE_ID, i.getData().getData());
+						ring.set(DRS.DEST, "none");
+						ring.set(DRS.IS_ALLIANCE_OWNED, args.length >= 3);
+						ring.set(DRS.ALLIANCE, (args.length >= 3 && main.api.doesRegionExist(args[2].toLowerCase()) ? args[2].toLowerCase() : "none"));
+					}
 					
 					main.s(p, "Added!");
 					
@@ -100,7 +105,7 @@ public class ElyRings implements Listener, AutoRegister {
 			
 			case "help":
 				
-				main.s(p, "/rings add <name>, /rings remove <name>, /rings add <alliance> <alliance>.");
+				main.s(p, "/rings add <name>, /rings remove <name>, /rings add <alliance> <alliance>, /rings add <name> server");
 				
 			break;
 		}
@@ -356,7 +361,7 @@ public class ElyRings implements Listener, AutoRegister {
 			
 			for (DivinityStorage r : main.divinity.api.divManager.getMap(DivinityManager.ringsDir).values()){
 				DivinityRing ring = (DivinityRing) r;
-				if (ring.getCenter()[0].equals(clickedLoc[0]) && ring.getCenter()[1].equals(clickedLoc[1]) && ring.getCenter()[2].equals(clickedLoc[2]) && ring.getCenter()[3].equals(clickedLoc[3])){
+				if (!ring.getBool(DRS.IS_SERVER_RING) && ring.getCenter()[0].equals(clickedLoc[0]) && ring.getCenter()[1].equals(clickedLoc[1]) && ring.getCenter()[2].equals(clickedLoc[2]) && ring.getCenter()[3].equals(clickedLoc[3])){
 					if (!ring.isInOperation()){
 						if (e.getPlayer().isSneaking() && ring.isAllianceOwned()){
 							DivinityPlayer dp = main.api.getDivPlayer(e.getPlayer());
@@ -367,7 +372,7 @@ public class ElyRings implements Listener, AutoRegister {
 							}
 						} else {
 							main.s(e.getPlayer(), "Select!");
-							((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRings(main, v, ring.name()));
+							((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRings(main, v, ring.name(), RingsType.MENU));
 						}
 					} else {
 						main.s(e.getPlayer(), "&c&oRing already in operation!");

@@ -3,12 +3,38 @@ package com.github.lyokofirelyte.Spectral.DataTypes;
 public enum DPI {
 	
 	/**
+	 * Server name from BungeeCord
+	 * @dataType String
+	 */
+	SERVER_NAME("SERVER_NAME"),
+	
+	/**
+	 * Last server rebooted
+	 * @dataType String
+	 */
+	LAST_SERVER("LAST_SERVER"),
+	
+	/**
+	 * Is this the reboot server?
+	 * @dataType boolean
+	 */
+	IS_REBOOT_SERVER("IS_REBOOT_SERVER"),
+	
+	/**
+	 * Reboot init
+	 * @dataType boolean
+	 */
+	REBOOT_INIT("REBOOT_INIT"),
+	
+	/**
 	 * A list of the entities tagged for the chaos ability
+	 * @dataType LivingEntity List
 	 */
 	CHAOS_LIST("CHAOS_LIST"),
 	
 	/**
 	 * PVP choice on login, one time only
+	 * @dataType boolean
 	 */
 	PVP_CHOICE("PVP_CHOICE"),
 	

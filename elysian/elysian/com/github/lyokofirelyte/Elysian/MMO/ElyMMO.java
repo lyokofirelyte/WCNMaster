@@ -556,7 +556,6 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 					p.sendMessage("");
 				}
 				
-				p.sendMessage("");
 				main.s(p, "&7&oHover over everything for more info...");
 				
 			} else {
@@ -671,15 +670,15 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 				}
 			}
 			
-			if (cont){
-				if (results[0]){
-					main.api.event(new SkillExpGainEvent(p, skills.get(i), get(e.getBlock().getType()).getXP(skills.get(i))));
-					if (results[1]){
-						if (new Random().nextInt(101) < (dp.getLevel(skills.get(i))*0.3)){
-							p.getWorld().dropItemNaturally(p.getLocation(), new ItemStack(e.getBlock().getType()));
-						}
+			if (cont && results[0]){
+				main.api.event(new SkillExpGainEvent(p, skills.get(i), get(e.getBlock().getType()).getXP(skills.get(i))));
+				if (results[1]){
+					if (new Random().nextInt(101) < (dp.getLevel(skills.get(i))*0.3)){
+						p.getWorld().dropItemNaturally(p.getLocation(), new ItemStack(e.getBlock().getType()));
 					}
 				}
+			} else {
+				checkForDrax(p);
 			}
 		}
 	}
@@ -731,11 +730,18 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		}
 		
 		if (!cont){
-			if (e.getPlayer().hasPotionEffect(PotionEffectType.FAST_DIGGING)){
-				for (PotionEffect eff : e.getPlayer().getActivePotionEffects()){
+			checkForDrax(e.getPlayer());
+		}
+	}
+	
+	public void checkForDrax(Player p){
+		if (!p.getItemInHand().hasItemMeta() || !p.getItemInHand().getItemMeta().hasDisplayName() || p.getItemInHand().getItemMeta().getDisplayName().contains("dRax")){
+			if (p.hasPotionEffect(PotionEffectType.FAST_DIGGING)){
+				for (PotionEffect eff : p.getActivePotionEffects()){
 					if (eff.getType().equals(PotionEffectType.FAST_DIGGING)){
+						System.out.println(eff.getAmplifier());
 						if (eff.getAmplifier() == 5000){
-							e.getPlayer().removePotionEffect(PotionEffectType.FAST_DIGGING);
+							p.removePotionEffect(PotionEffectType.FAST_DIGGING);
 						}
 						break;
 					}
@@ -749,6 +755,7 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 	public void onXp(SkillExpGainEvent e){
 		
 		if (e.getXp() == 0 || e.isCancelled() || (!e.getPlayer().getWorld().getName().equals("world") && !e.getPlayer().getWorld().getName().equals("world_nether") && !e.getPlayer().getWorld().getName().equals("world_the_end"))){
+			checkForDrax(e.getPlayer());
 			return;
 		}
 		
@@ -804,7 +811,11 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 					p.getItemInHand().setItemMeta(im);
 				}
 				p.updateInventory();
+			} else {
+				checkForDrax(p);
 			}
+		} else {
+			checkForDrax(p);
 		}
 		
 		e.setXp(dp.getBool(DPI.IGNORE_XP) ? e.getXp() : e.getXp()*2); // Added for balancing - current curve way too high.

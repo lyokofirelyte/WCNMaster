@@ -144,6 +144,18 @@ public class API implements SpectralAPI {
 		}
 	}
 	
+	public void updateServerName(){
+		if (Bukkit.getOnlinePlayers().size() > 0){
+			try {
+				ByteArrayDataOutput out = ByteStreams.newDataOutput();
+				out.writeUTF("GetServer");
+				Iterables.getFirst(Bukkit.getOnlinePlayers(), null).sendPluginMessage(main, "BungeeCord", out.toByteArray());
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void requestIP(String player){
 		
 		if (Bukkit.getOnlinePlayers().size() > 0){
@@ -155,6 +167,23 @@ public class API implements SpectralAPI {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void sendAllToServer(final String server){
+		
+		final Player holder = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+		
+		for (Player player : Bukkit.getOnlinePlayers()){
+			if (!holder.getName().equals(player.getName())){
+				sendToServer(player.getName(), server);
+			}
+		}
+		
+		if (!getDivSystem().getBool(DPI.IS_REBOOT_SERVER)){
+			sendPluginMessage(server, "lastserver", getDivSystem().getStr(DPI.SERVER_NAME));
+		}
+		
+		sendToServer(holder.getName(), server);
 	}
 	
 	public void sendToServer(String player, String server){

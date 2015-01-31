@@ -24,4 +24,13 @@
             <version>1.0</version>
         </dependency> 
     </dependencies>
+    <build>
+		<sourceDirectory>.</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
 </project>
