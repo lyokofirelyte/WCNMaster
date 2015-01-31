@@ -768,6 +768,38 @@ public class ElyCommand implements AutoRegister {
 		}
 	}
 	
+	@DivCommand(aliases = {"setrebootserver"}, desc = "Set Reboot Server", help = "/setrebootserver <boolean>", player = false, perm = "wa.staff.admin")
+	public void onSetRebootServer(CommandSender cs, String[] args){
+		main.api.getDivSystem().set(DPI.IS_REBOOT_SERVER, args[0].equals("true") ? true : false);
+		main.s(cs, "Changed to &6" + main.api.getDivSystem().getBool(DPI.IS_REBOOT_SERVER) + "&b!");
+	}
+	
+	@DivCommand(aliases = {"reboot"}, desc = "Reboot Command", help = "/reboot", player = false, perm = "wa.staff.admin")
+	public void onReboot(CommandSender cs, String[] args){
+		
+		String ext = System.getProperty("os.name").contains("Windows") ? ".bat" : ".sh";
+		main.api.updateServerName();
+		
+		try {
+			Runtime.getRuntime().exec("../reboot" + ext);
+			main.s(cs, "Reboot queued! The reboot server is starting up. The transfer will start soon.");
+			DivinityUtilsModule.bc("Reboot in 20 seconds! You will be transfered to the waiting server, no need to log off!");
+			main.api.schedule(this, "rebootQueue", 400L, "rebootQueue");
+			main.api.schedule(this, "shutdown", 500L, "shutdown");
+		} catch (Exception e){
+			e.printStackTrace();
+			main.s(cs, "&c&oAn error occured with the reboot - aborting!");
+		}
+	}
+	
+	public void rebootQueue(){
+		main.api.sendAllToServer("reboot");
+	}
+	
+	public void shutdown(){
+		Bukkit.getServer().shutdown();
+	}
+	
 	@DivCommand(aliases = {"div", "divinity"}, desc = "Divinity Main Command", help = "/ely help", player = false)
 	public void onDivinity(CommandSender p, String[] args){
 		
@@ -804,15 +836,28 @@ public class ElyCommand implements AutoRegister {
 					}
 					
 					Collections.sort(sortedHelp);
+					int i = 10;
+					
+					if (args.length == 2){
+						if (DivinityUtilsModule.isInteger(args[1])){
+							i = Integer.parseInt(args[1]) * 10;
+						} else {
+							main.s(p, "&c&oThat's not a number...");
+							return;
+						}
+					}
 					
 					if (p instanceof Player){
-						for (String s : sortedHelp){
+						
+						for (int index = i - 10; index < i; index++){
 							JSONChatMessage message = new JSONChatMessage("", null, null);
-							JSONChatExtra extra = new JSONChatExtra(main.AS("&3" + s + " &7\u2744 &6" + help.get(s)[0]), null, null);
-							extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&7&o" + help.get(s)[1]));
+							JSONChatExtra extra = new JSONChatExtra(main.AS("&3" + sortedHelp.get(index) + " &7\u2744 &6" + help.get(sortedHelp.get(index))[0]), null, null);
+							extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&7&o" + help.get(sortedHelp.get(index))[1]));
 							message.addExtra(extra);
 							message.sendToPlayer(((Player)p));
 						}
+						
+						p.sendMessage(main.AS("&7&oUse /ely help <page> to visit other pages!"));
 						p.sendMessage(main.AS("&7&oHover to display the description of each command"));
 						
 						if (args.length == 2 && args[1].equals("all")){

@@ -3,6 +3,7 @@ package com.github.lyokofirelyte.Spectral.DataTypes;
 
 public enum DRS {
 	
+	IS_SERVER_RING("IS_SERVER_RING"),
 	IS_ALLIANCE_OWNED("IS_ALLIANCE_OWNED"),
 	ALLIANCE("ALLIANCE"),
 	FUEL("FUEL"),

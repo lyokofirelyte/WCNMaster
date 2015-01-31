@@ -19,6 +19,16 @@ import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
 public interface SpectralAPI {
 	
 	/**
+	 * Update the server name
+	 */
+	public void updateServerName();
+	
+	/**
+	 * Send all players on the current server to another server
+	 */
+	public void sendAllToServer(String server);
+	
+	/**
 	 * Get server list
 	 */
 	public void requestServerList(String player);

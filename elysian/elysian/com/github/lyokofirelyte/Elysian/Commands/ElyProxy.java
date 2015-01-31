@@ -31,8 +31,6 @@ public class ElyProxy implements AutoRegister, PluginMessageListener {
 			String send = args.length == 1 ? p.getName() : args[1];
 			main.api.sendToServer(send, args[0]);
 		}
-		
-		main.api.sendPluginMessageAll("test", "lol");
 	}
 
 	@Override
@@ -66,9 +64,15 @@ public class ElyProxy implements AutoRegister, PluginMessageListener {
 		    		main.s(player, in.readUTF());
 		    	break;
 		    	
-		  		case "test":
-		  			System.out.println("LUL");
-		  		break;
+		    	case "getserver":
+		    		main.api.getDivSystem().set(DPI.SERVER_NAME, in.readUTF());
+		    		System.out.println("Get server returned!");
+		    	break;
+		    	
+		    	case "lastserver":
+		    		main.api.getDivSystem().set(DPI.LAST_SERVER, in.readUTF());
+		    		System.out.println("Last server updated!");
+		    	break;
 		    }
 		}
 	}

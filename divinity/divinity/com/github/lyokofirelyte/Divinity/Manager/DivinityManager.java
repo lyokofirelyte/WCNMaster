@@ -178,11 +178,15 @@ public class DivinityManager {
 				}
 			}
 			
-			api.getDivSystem().setMarkkit(lc(new File(DivinityManager.sysDir + "markkit.yml")));
-			api.getDivSystem().loadEffects();
-			
-			for (AutoSave save : api.saveClasses.values()){
-				save.load();
+			try {
+				api.getDivSystem().setMarkkit(lc(new File(DivinityManager.sysDir + "markkit.yml")));
+				api.getDivSystem().loadEffects();
+				
+				for (AutoSave save : api.saveClasses.values()){
+					save.load();
+				}
+			} catch (Exception e){
+				e.printStackTrace();
 			}
 			
 		} else {
@@ -191,7 +195,9 @@ public class DivinityManager {
 				if (new File(gamesDir + gameFolder).isDirectory()){
 					for (String gameFile : new File(gamesDir + gameFolder + "/").list()){
 						if (!new File(gameFile).isDirectory() && gameFile.contains("yml")){
-							modifyObject(gamesDir + gameFolder + "/", gameFile.replace(".yml", ""), false, true);
+							try {
+								modifyObject(gamesDir + gameFolder + "/", gameFile.replace(".yml", ""), false, true);
+							} catch (Exception e){}
 						}
 					}
 				} else if (gameFolder.contains(".yml")){

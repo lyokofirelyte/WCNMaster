@@ -90,6 +90,8 @@ public class ElyMobs implements Listener, AutoRegister {
 					return;
 				}
 				
+				e.setCancelled(true);
+				
 			} else if (e.getDamager() instanceof Projectile){
 				
 				Projectile proj = (Projectile) e.getDamager();
