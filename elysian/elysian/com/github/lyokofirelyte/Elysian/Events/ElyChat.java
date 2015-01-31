@@ -205,7 +205,6 @@ public class ElyChat implements Listener, AutoRegister {
 		List<String> list2 = new ArrayList<String>(p.getList(DPI.BAN_QUEUE));
 		
 		if(e.getMessage().startsWith("@")){
-			System.out.println("ble");
 			String name = p.getStr(DPI.DISPLAY_NAME);
 			String emote = filter(e.getMessage().split(" ")[0].replace("@", ""));
 			List<String> emotelist = main.api.getDivSystem().getList(DPI.EMOTE_LIST);
@@ -226,13 +225,13 @@ public class ElyChat implements Listener, AutoRegister {
 			if(emotelist.contains(emote)){
 				List<String> emoteaction = main.api.getDivSystem().getList(DPI.EMOTE_ACTION);
 				
-				if(e.getMessage().split(" ").length == 2){
+				if(e.getMessage().split(" ").length == 2 && emoteaction.get(emotelist.indexOf(emote)).split(" %s%").length == 2){
 					String name2 = e.getMessage().split(" ")[1];
 					
 					if(main.api.doesPartialPlayerExist(name2)){
 						
 						DivinityPlayer p2 = main.api.getDivPlayer(name2);
-						DivinityUtilsModule.bc(name + "&a " + emoteaction.get(emotelist.indexOf(emote)).split(" %s%")[1].replace("%s%", name).replace("%a%", p2.getStr(DPI.DISPLAY_NAME) + "&a"));
+						DivinityUtilsModule.bc(name + "&a" + emoteaction.get(emotelist.indexOf(emote)).split(" %s%")[1].replace("%s%", name).replace("%a%", p2.getStr(DPI.DISPLAY_NAME) + "&a"));
 				
 					}else{	
 						DivinityUtilsModule.bc(name + "&a " + emoteaction.get(emotelist.indexOf(emote)).split(" %s%")[1].replace("%s%", name).replace("%a%", "&7" + name2 + "&a")    );				
