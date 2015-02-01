@@ -204,11 +204,7 @@ public class ElyChat implements Listener, AutoRegister {
 		List<String> list = new ArrayList<String>(p.getList(DPI.BAN_QUEUE));
 		List<String> list2 = new ArrayList<String>(p.getList(DPI.BAN_QUEUE));
 		
-<<<<<<< HEAD
-		if(e.getMessage().startsWith("@")){
-=======
 		if (e.getMessage().startsWith("@") && !p.getBool(DPI.MUTED)){
->>>>>>> FETCH_HEAD
 			String name = p.getStr(DPI.DISPLAY_NAME);
 			String emote = filter(e.getMessage().split(" ")[0].replace("@", ""));
 			List<String> emotelist = main.api.getDivSystem().getList(DPI.EMOTE_LIST);
