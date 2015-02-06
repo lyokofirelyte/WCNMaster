@@ -5,10 +5,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
@@ -17,8 +24,9 @@ import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
+import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
 
-public class ElyWarps implements AutoRegister {
+public class ElyWarps implements AutoRegister, Listener {
 
 	private Elysian main;
 	
@@ -27,6 +35,7 @@ public class ElyWarps implements AutoRegister {
 	}
 	
 	private String dir = "./plugins/Divinity/warps/";
+	private String warpText = "&3/&f*&3/ &bWarp &3/&f*&3/";
 	String[] warps = new String[]{};
 	
 	{
@@ -37,7 +46,74 @@ public class ElyWarps implements AutoRegister {
 		warps = new File(dir).list();
 	}
 	
+	@EventHandler
+	public void onSignChange(SignChangeEvent e){
+		Player p = e.getPlayer();
+		
+		if(main.api.perms(e.getPlayer(), "wa.staff.mod", true)){
+			if(e.getLine(0).equalsIgnoreCase("warp")){
+				if(e.getLine(1) != null && !e.getLine(1).equals("")){
+	
+					if (new ArrayList<String>(Arrays.asList(warps)).contains(e.getLine(1).toLowerCase() + ".yml")){
+						e.setLine(0, main.AS(warpText));
+						e.setLine(1, "&b" + e.getLine(1));
+						if(e.getLine(2) != null && !e.getLine(2).equals("")){
+							e.setLine(2, main.AS("&6" + e.getLine(2)));
+						}
+						
+					} else {
+						e.setLine(0, main.AS(warpText));
+						e.setLine(1, main.AS("&c&oNot found!"));
+					}
+				}else{
+					e.setLine(0, main.AS(warpText));
+					e.setLine(1, main.AS("&4Invalid!"));
+				}
+			}
+			
+			
+		}
+		
+		
+	}
+	
+	@EventHandler
+	public void onClickyTheSign(PlayerInteractEvent e){
+		
+		if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getClickedBlock().getState() instanceof Sign){
+			Sign s = (Sign) e.getClickedBlock().getState();
 
+			
+			if(s.getLine(0).equals(main.AS(warpText))){
+				String warp = ChatColor.stripColor(s.getLine(1));
+				if(s.getLine(2) != null && !s.getLine(2).equals("")){
+
+					if(main.api.perms(e.getPlayer(), ChatColor.stripColor(s.getLine(2)), false)){
+						if (new ArrayList<String>(Arrays.asList(warps)).contains(warp.toLowerCase() + ".yml")){
+							main.api.event(new DivinityTeleportEvent(e.getPlayer(), extractLoc(warp)));
+
+						}else{
+							s.setLine(1,  main.AS("&c&oNot found!"));
+							s.update();
+						}
+					}
+				}else{
+					if (new ArrayList<String>(Arrays.asList(warps)).contains(warp.toLowerCase() + ".yml")){
+						main.api.event(new DivinityTeleportEvent(e.getPlayer(), extractLoc(warp)));
+
+					}else{
+						s.setLine(1,  main.AS("&c&oNot found!"));
+
+						s.update();
+					}
+				}
+				
+			}
+			
+		}
+		
+	}
+	
 	@DivCommand(aliases = {"s", "spawn"}, desc = "Elysian Spawn Command", help = "/s", player = true)
 	public void onSpawn(Player p, String[] args){
 		String[] loc = main.api.getDivSystem().getStr(DPI.SPAWN_POINT).split("%SPLIT%");
