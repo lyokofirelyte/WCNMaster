@@ -9,8 +9,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.potion.PotionEffect;
 
+import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Games.MobMondays.MMMain.locationType;
+import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
 
 public class MMEvents implements Listener{
 
@@ -22,6 +24,19 @@ public class MMEvents implements Listener{
 		main = i.main;
 	}
 	
+	@EventHandler
+	public void onScoreboard(ScoreboardUpdateEvent e){
+		
+		if (e.getReason().contains("mobMondaysGame")){
+			
+			Player p = e.getPlayer();
+			DivinityPlayer dp = main.api.getDivPlayer(p);
+			
+			
+		}
+
+	}
+			
 	@EventHandler
 	public void onDeath(EntityDeathEvent e){
 		

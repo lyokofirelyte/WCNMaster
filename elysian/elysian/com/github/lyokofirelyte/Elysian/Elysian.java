@@ -49,6 +49,7 @@ public class Elysian extends JavaPlugin {
 	public Map<Location, List<List<String>>> queue = new THashMap<Location, List<List<String>>>();
 	public Map<Integer, GuiCloset> closets = new THashMap<>();
 	public List<String> numerals = new ArrayList<String>();
+	public List<String> discussion = new ArrayList<String>();
 	public Map<Object, String> spellTasks = new THashMap<Object, String>();
 	public boolean hasSunDayBeenPerformedBefore = false;
 	

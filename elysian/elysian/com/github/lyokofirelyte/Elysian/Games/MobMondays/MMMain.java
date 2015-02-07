@@ -146,7 +146,7 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 		
 		for(String s : players){
 			DivinityPlayer dp = main.api.getDivPlayer(s);
-			main.api.repeat(main.api, "event", 20L, 0L, "mobMondaysScore" + dp.name(), new ScoreboardUpdateEvent(Bukkit.getPlayer(dp.uuid()), "mobMondaysGame"));
+			main.api.repeat(main.api, "event", 0L, 20L, "mobMondaysScore" + dp.name(), new ScoreboardUpdateEvent(Bukkit.getPlayer(dp.uuid()), "mobMondaysGame"));
 
 		}
 		

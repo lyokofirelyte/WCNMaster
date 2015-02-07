@@ -1,5 +1,7 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,12 +9,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
@@ -27,6 +30,7 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -60,7 +64,7 @@ import com.sk89q.worldedit.regions.RegionSelector;
 public class ElyProtect implements Listener, AutoRegister {
 
 	private Elysian main;
-	
+	private String signText = "&3/&f*&3/ &bToggle &3/&f*&3/";
 	public ElyProtect(Elysian i){
 		main = i;
 	}
@@ -90,6 +94,41 @@ public class ElyProtect implements Listener, AutoRegister {
 		"&c&oIf only that was really a command... &7&o/ely help&c&o.",
 		"&c&oHelp me help you help us all, by typing &6&o/ely help&c&o."
 	);
+	
+	@EventHandler
+	public void onSignChang(SignChangeEvent e){
+		
+		if(main.api.perms(e.getPlayer(), "wa.staff.mod", true)){
+			if(e.getLine(0).equalsIgnoreCase("toggle")){
+				String region = isInAnyRegion(e.getBlock().getLocation());
+
+				if(e.getLine(1) != null && !e.getLine(1).equals("") && !region.equals("none")){
+					boolean found = false;
+
+					for(DRF d: DRF.values()){
+						if(d.toString().equals(ChatColor.stripColor(e.getLine(1)).toUpperCase())){
+							found = true;
+						}
+					}
+					
+					if (found){
+						e.setLine(0, main.AS(signText));
+						e.setLine(1, "&6" + e.getLine(1).toUpperCase());
+						
+					} else {
+						e.setLine(0, main.AS(signText));
+						e.setLine(1, main.AS("&c&oNot found!"));
+					}
+				}else{
+					e.setLine(0, main.AS(signText));
+					e.setLine(1, main.AS("&4Invalid!"));
+				}
+			}
+			
+			
+		}
+		
+	}
 	
 	@EventHandler
 	public void onBreak(BlockBreakEvent e){
@@ -140,6 +179,7 @@ public class ElyProtect implements Listener, AutoRegister {
 	public void onInteract(PlayerInteractEvent e){
 		
 		Player p = e.getPlayer();
+		DivinityPlayer dp = main.api.getDivPlayer(p);
 		String result = isInAnyRegion(p.getLocation());
 		Location l = e.getClickedBlock() != null ? e.getClickedBlock().getLocation() : e.getPlayer().getLocation();
 		
@@ -161,6 +201,28 @@ public class ElyProtect implements Listener, AutoRegister {
 				sel.selectSecondary(v);
 				main.s(p, "Selected second position!");
 			}
+		}else if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getClickedBlock().getState() instanceof Sign){
+			Sign s = (Sign) e.getClickedBlock().getState();
+
+			if(s.getLine(0).equals(main.AS(signText))){
+				String toggle = ChatColor.stripColor(s.getLine(1)).toUpperCase();
+				String region = isInAnyRegion(e.getClickedBlock().getLocation());
+				
+				if(!hasRegionPerms(p, region)){
+					dp.err("You don't have permission!");
+					return;
+				}
+
+				if (!region.equals("none")){
+					boolean isAllowed = !main.api.getDivRegion(region).getBool(DRF.valueOf(toggle));
+					System.out.println(isAllowed);
+					main.api.getDivRegion(region).set(DRF.valueOf(toggle), isAllowed);
+					main.s(p, "Flag &6" + toggle + " &bfor &6" + region + " &bchanged to &6" + isAllowed);
+				}else{
+					dp.s("No region found!");
+				}
+			}
+			
 		}
 	}
 	

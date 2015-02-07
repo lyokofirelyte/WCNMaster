@@ -860,6 +860,72 @@ public class ElyStaff implements Listener, AutoRegister {
 			ElyChannel.STAFF.send("&4[&cS&6e&er&2v&ae&br&3]", DivinityUtilsModule.createString(args, 0), main.api);
 		}
 	}
+	
+	@DivCommand(perm = "wa.member", aliases = {"d"}, desc = "Staff chat command", help = "/d [ -list | -invite <player> | -remove <player>]", player = true, min = 1)
+	public void onD(Player sender, String[] args){
+		DivinityPlayer dp = main.api.getDivPlayer(sender);
+
+		if(args[0].equalsIgnoreCase("-invite")){
+			if(args.length == 2){
+				if(main.api.doesPartialPlayerExist(args[1])){
+					
+					if(main.discussion.contains(args[1]) || main.api.perms(sender, "wa.staff.intern.", true)){
+						dp.err("Player already added!");
+						return;
+					}
+					
+					main.discussion.add(args[1]);
+					
+					DivinityPlayer temp = main.api.getDivPlayer(args[1]);
+					dp.s("Added player " + temp.name() + " to the discussion!");
+					
+					
+				}else{
+					dp.err("Player not found!");
+				}
+			}else{
+				dp.err("Not enough arguments!");
+			}
+		}else if(args[0].equalsIgnoreCase("-remove")){
+			if(args.length == 2){
+				if(main.api.doesPartialPlayerExist(args[1])){
+					
+					if(!main.discussion.contains(args[1]) || main.api.perms(sender, "wa.staff.intern.", true)){
+						dp.err("Player not added!");
+						return;
+					}
+					
+					main.discussion.remove(args[1]);
+					
+					DivinityPlayer temp = main.api.getDivPlayer(args[1]);
+					dp.s("Removed player " + temp.name() + " from the discussion!");
+					
+				}else{
+					dp.err("Player not found!");
+				}
+			}else{
+				dp.err("Not enough arguments!");
+			}
+		}else if(args[0].equalsIgnoreCase("-list")){
+			
+			dp.s("Guests in discussion chat:");
+			for(String s : main.discussion){
+				dp.s("   - " + s);
+			}
+			
+		}else{
+						
+			for(Player p : Bukkit.getOnlinePlayers()){
+				if(main.api.doesPartialPlayerExist(p.getName())){
+					if(main.discussion.contains(p.getName()) || main.api.perms(p, "wa.staff.intern", true)){
+						p.sendMessage(main.AS("&8&oDis! &9\u2744&f " + p.getDisplayName() + ":&9 " + DivinityUtilsModule.createString(args, 0)));
+					}
+				}
+			}
+			
+		}
+
+	}
 	 
 	@DivCommand(aliases = {"skull"}, min = 1, max = 1, player = true, perm = "wa.staff.intern")
 	public void onSkull(Player p, String[] args){
