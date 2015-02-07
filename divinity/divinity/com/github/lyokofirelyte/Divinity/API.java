@@ -2,6 +2,7 @@ package com.github.lyokofirelyte.Divinity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -268,6 +269,16 @@ public class API implements SpectralAPI {
 			}
 		}
 		
+		try {
+			UUID lookup = Bukkit.getOfflinePlayer(name).getUniqueId();
+			for (String file : new File(divManager.dir).list()){
+				if (file.replace(".yml", "").toLowerCase().equals(lookup.toString())){
+					return true;
+				}
+			}
+		} catch (Exception e){
+			return false;
+		}
 		return false;
 	}
 	

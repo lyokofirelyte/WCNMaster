@@ -1,6 +1,6 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +16,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
+import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
+import com.github.lyokofirelyte.Divinity.Storage.DivinityStorageModule;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.MMO.ElyMMO;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
@@ -90,23 +92,14 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 						main.api.getDivSystem().set("PRE_APPROVED", users);
 					 }
 					 
-					 if (!p.getStr(DPI.RING_LOC).equals("none")){
-						 main.api.event(new DivinityTeleportEvent(pl, p.getLoc(DPI.RING_LOC)));
-						 p.set(DPI.RING_LOC, "none");
-						 p.set(DPI.DISABLED, false);
-						 pl.setFlySpeed(0.2f);
-						 p.err("You logged out during flight. *slaps*");
-					 }
-					
-					if (!p.getBool(DPI.PVP_CHOICE) && pl.hasPlayedBefore()){
-						main.s(pl, "PVP POLICY HAS CHANGED! You can turn pvp on or off at spawn!");
-						main.s(pl, "&6&lPlease type /pvp on or /pvp off before playing!");
-						main.s(pl, "If you die during pvp, you won't get a death chest.");
-						main.s(pl, "You can turn pvp on/off at spawn at anytime.");
-						p.set(DPI.DISABLED, true);
-						return;
+					if (!p.getStr(DPI.RING_LOC).equals("none")){
+						main.api.event(new DivinityTeleportEvent(pl, p.getLoc(DPI.RING_LOC)));
+						p.set(DPI.RING_LOC, "none");
+						p.set(DPI.DISABLED, false);
+						pl.setFlySpeed(0.2f);
+						p.err("You logged out during flight. *slaps*");
 					}
-					
+
 					p.set(DPI.PVP_CHOICE, true);
 					
 					DivinityUtilsModule.customBC("&2(\\__/) " + pl.getDisplayName());
@@ -121,6 +114,7 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 					if (!reboot){
 						reboot = true;
 						main.api.getDivSystem().set(DPI.REBOOT_INIT, true);
+						pl.teleport(new Location(pl.getWorld(), -379, 92, 22, -129, -4));
 					}
 				}
 
@@ -137,6 +131,14 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent e){
+		
+		try {
+			DivinityStorageModule mod = main.divinity.api.divManager.data.get(DivinityManager.dir).get(e.getPlayer().getUniqueId().toString());
+			mod.save(new File(DivinityManager.dir + "/" + e.getPlayer().getUniqueId().toString() + ".yml"));
+			main.divinity.api.divManager.data.get(DivinityManager.dir).remove(e.getPlayer().getUniqueId().toString());
+		} catch (Exception ee){
+			ee.printStackTrace();
+		}
 		
 		if (!main.api.getDivSystem().getBool(DPI.IS_REBOOT_SERVER)){
 			ElyMMO mmo = (ElyMMO) main.api.getInstance(ElyMMO.class);

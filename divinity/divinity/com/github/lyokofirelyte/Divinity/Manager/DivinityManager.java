@@ -37,7 +37,7 @@ public class DivinityManager {
 	}
 	
 	public Map<String, Map<String, DivinityStorageModule>> data = new THashMap<>();
-	private List<String> dirs = Arrays.asList(dir, allianceDir, regionsDir, ringsDir, sysDir, gamesDir, backupDir);
+	private List<String> dirs = Arrays.asList(allianceDir, regionsDir, ringsDir, sysDir, gamesDir, backupDir);
 	
 	final static public String sysDir = "./plugins/Divinity/system/";
 	final static public String dir = "./plugins/Divinity/users/";
@@ -48,6 +48,10 @@ public class DivinityManager {
 	final static public String backupDir = "./plugins/Divinity/backup/";
 	
 	public DivinityPlayerModule searchForPlayer(String s){
+		
+		if (!data.containsKey(dir)){
+			data.put(dir, new THashMap<String, DivinityStorageModule>());
+		}
 
 		for (DivinityStorageModule dp : data.get(dir).values()){
 			if (dp.name().toLowerCase().startsWith(s.toLowerCase()) || dp.uuid().toString().equals(s)){
@@ -57,6 +61,9 @@ public class DivinityManager {
 		
 		try {
 			if (Bukkit.getPlayer(UUID.fromString(s)) != null){
+				return (DivinityPlayerModule) modifyObject(dir, s, true, true);
+			}
+			if (Bukkit.getOfflinePlayer(UUID.fromString(s)) != null){
 				return (DivinityPlayerModule) modifyObject(dir, s, true, true);
 			}
 		} catch (Exception e){}
@@ -92,6 +99,11 @@ public class DivinityManager {
 	public DivinityStorageModule modifyObject(String directory, String name, boolean newFile, boolean load){
 		
 		if (directory.equals(dir)){
+			
+			if (new File(directory + "/" + name + ".yml").exists()){
+				newFile = false;
+			}
+			
 			try {
 				UUID u = UUID.fromString(name);
 			} catch (Exception e){

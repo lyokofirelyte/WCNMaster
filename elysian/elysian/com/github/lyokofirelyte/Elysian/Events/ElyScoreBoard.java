@@ -93,7 +93,7 @@ public class ElyScoreBoard implements Listener, AutoRegister {
 		String[] scoreNames = new String[]{
 				
 			" ",
-			"&b" + getLoc(p),
+			p.getDisplayName(),
 			"  ",
 			"&5S: &c" + rounds[0],
 			"&eE: &c" + rounds[1],

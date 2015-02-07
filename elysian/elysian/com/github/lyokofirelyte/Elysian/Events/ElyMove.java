@@ -33,7 +33,6 @@ public class ElyMove implements Listener, AutoRegister {
 		}
 		
 		main.afkCheck(e.getPlayer());
-		main.api.event(new ScoreboardUpdateEvent(e.getPlayer(), "move"));
 		
 		if (!dp.getStr(DPI.SPECTATE_TARGET).equals("none") && !dp.getBool(DPI.SPECTATING)){
 			Player you = main.api.getPlayer(dp.getStr(DPI.SPECTATE_TARGET));
