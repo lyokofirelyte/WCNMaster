@@ -131,7 +131,6 @@ public class WebsiteManager implements Runnable {
 			for (String key : map.keySet()){
 				json.put(key, map.get(key));
 			}
-			
 			 
 			String url = "http://worldsapart.no-ip.org:9090" + folder;
 			URL obj = new URL(url);

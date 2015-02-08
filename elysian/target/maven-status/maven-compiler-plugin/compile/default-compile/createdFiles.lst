@@ -47,6 +47,7 @@ com\github\lyokofirelyte\Elysian\Games\Cranked\CrankedCommand.class
 com\github\lyokofirelyte\Elysian\Gui\GuiSolarSpells.class
 com\github\lyokofirelyte\Elysian\Commands\ElyModeration.class
 com\github\lyokofirelyte\Elysian\MMO\ElyMMO$1.class
+com\github\lyokofirelyte\Elysian\ElySetup$1.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData$SpleefDataType.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefStorage$1.class
 com\github\lyokofirelyte\Elysian\Commands\ElyEffects.class

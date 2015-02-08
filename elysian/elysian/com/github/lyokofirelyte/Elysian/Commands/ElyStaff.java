@@ -65,6 +65,11 @@ public class ElyStaff implements Listener, AutoRegister {
 		 main.s(cs, "Backup Complete!");
 	 }
 	 
+	 @DivCommand(perm = "wa.staff.intern", aliases = {"x"}, desc = "X Chat", help = "/x <message>", min = 1, player = true)
+	 public void onX(Player p, String[] args){
+		 main.api.sendPluginMessageAll("x", ChatColor.stripColor(DivinityUtilsModule.createString(args, 0)));
+	 }
+	 
 	 @DivCommand(perm = "wa.staff.admin", aliases = {"bomb"}, desc = "Holiday Bomb 9-11", help = "/bomb <player>", player = true, min = 1)
 	 public void onBomb(Player p, String[] args){
 		 

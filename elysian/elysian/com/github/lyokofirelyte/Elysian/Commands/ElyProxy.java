@@ -1,5 +1,7 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
+import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -25,8 +27,8 @@ public class ElyProxy implements AutoRegister, PluginMessageListener {
 		
 		if (args[0].equals("list")){
 			main.api.requestServerList(p.getName());
-		} else if (args[0].equals("all")){
-			
+		} else if (args[0].equals("all") && args.length == 2){
+			main.api.sendAllToServer(args[1]);
 		} else {
 			String send = args.length == 1 ? p.getName() : args[1];
 			main.api.sendToServer(send, args[0]);
@@ -72,6 +74,25 @@ public class ElyProxy implements AutoRegister, PluginMessageListener {
 		    	case "lastserver":
 		    		main.api.getDivSystem().set(DPI.LAST_SERVER, in.readUTF());
 		    		System.out.println("Last server updated!");
+		    	break;
+		    	
+		    	case "PlayerList":
+		    		
+		    		String server = in.readUTF();
+		    		String[] playerList = in.readUTF().split(", ");
+		    		
+		    	break;
+		    	
+		    	case "x":
+		    		
+		    		String msg = in.readUTF();
+		    		
+		    		for (Player staff : Bukkit.getOnlinePlayers()){
+		    			if (main.api.perms(staff, "wa.staff.intern", true) || main.api.perms(staff, "ely.staff", true)){
+		    				staff.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4) -X- ( &c" +  msg));
+		    			}
+		    		}
+		    		
 		    	break;
 		    }
 		}

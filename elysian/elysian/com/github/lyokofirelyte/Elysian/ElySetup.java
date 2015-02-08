@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -14,6 +15,7 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 
 import com.github.lyokofirelyte.Divinity.Divinity;
+import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Divinity.Manager.RecipeHandler;
 import com.github.lyokofirelyte.Elysian.Events.ElyLogger;
@@ -60,6 +62,14 @@ public class ElySetup {
 			main.api.getDivSystem().set(DPI.EMOTE_LIST, yaml.getStringList("EMOTE_LIST"));
 			main.api.getDivSystem().set(DPI.EMOTE_ACTION, yaml.getStringList("EMOTE_ACTION"));
 		}
+		
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable(){
+			public void run(){
+				for (Player p : Bukkit.getOnlinePlayers()){
+					main.api.event(new ScoreboardUpdateEvent(p, "move"));
+				}
+			}
+		}, 0L, 20L);
 	}
 	
 	private void tasks(){
