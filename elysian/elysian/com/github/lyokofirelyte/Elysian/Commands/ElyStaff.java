@@ -864,7 +864,7 @@ public class ElyStaff implements Listener, AutoRegister {
 			if(args.length == 2){
 				if(main.api.doesPartialPlayerExist(args[1])){
 					
-					if(main.discussion.contains(args[1]) || main.api.perms(sender, "wa.staff.intern.", true)){
+					if(main.discussion.contains(args[1]) || !main.api.perms(sender, "wa.staff.intern.", true)){
 						dp.err("Player already added!");
 						return;
 					}
@@ -885,7 +885,7 @@ public class ElyStaff implements Listener, AutoRegister {
 			if(args.length == 2){
 				if(main.api.doesPartialPlayerExist(args[1])){
 					
-					if(!main.discussion.contains(args[1]) || main.api.perms(sender, "wa.staff.intern.", true)){
+					if(!main.discussion.contains(args[1]) || !main.api.perms(sender, "wa.staff.intern.", true)){
 						dp.err("Player not added!");
 						return;
 					}
@@ -912,8 +912,8 @@ public class ElyStaff implements Listener, AutoRegister {
 						
 			for(Player p : Bukkit.getOnlinePlayers()){
 				if(main.api.doesPartialPlayerExist(p.getName())){
-					if(main.discussion.contains(p.getName()) || main.api.perms(p, "wa.staff.intern", true)){
-						p.sendMessage(main.AS("&8&oDis! &9\u2744&f " + p.getDisplayName() + ":&9 " + DivinityUtilsModule.createString(args, 0)));
+					if((main.discussion.contains(p.getName()) || main.api.perms(p, "wa.staff.intern", true) && (main.discussion.contains(sender.getName()) || main.api.perms(p, "wa.staff.intern", true)))){
+						p.sendMessage(main.AS("&8&oDis! &9\u2744&f " + sender.getDisplayName() + ":&9 " + DivinityUtilsModule.createString(args, 0)));
 					}
 				}
 			}

@@ -926,7 +926,14 @@ public enum DPI {
 	 * @dataType Location
 	 */
 	
-	SPAWN_POINT("SPAWN_POINT");
+	SPAWN_POINT("SPAWN_POINT"),
+	
+	/**
+	 * Stores the location of signs together with their permission.
+	 * @dataType String
+	 */
+	
+	SIGN_LOCATION("SIGN_LOCATION");
 
 	DPI(String info){
 		this.info = info;

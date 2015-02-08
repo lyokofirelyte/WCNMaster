@@ -3,6 +3,7 @@ package com.github.lyokofirelyte.Elysian.Commands;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
@@ -24,7 +26,6 @@ import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
 
 public class ElyWarps implements AutoRegister, Listener {
 
@@ -47,18 +48,28 @@ public class ElyWarps implements AutoRegister, Listener {
 	}
 	
 	@EventHandler
-	public void onSignChange(SignChangeEvent e){
-		Player p = e.getPlayer();
-		
+	public void onSignChange(SignChangeEvent e){		
 		if(main.api.perms(e.getPlayer(), "wa.staff.mod", true)){
 			if(e.getLine(0).equalsIgnoreCase("warp")){
 				if(e.getLine(1) != null && !e.getLine(1).equals("")){
 	
 					if (new ArrayList<String>(Arrays.asList(warps)).contains(e.getLine(1).toLowerCase() + ".yml")){
 						e.setLine(0, main.AS(warpText));
-						e.setLine(1, "&b" + e.getLine(1));
+
+						Sign s = (Sign) e.getBlock().getState();
 						if(e.getLine(2) != null && !e.getLine(2).equals("")){
-							e.setLine(2, main.AS("&6" + e.getLine(2)));
+							List<String> signs = new ArrayList<String>(main.api.getDivSystem().getList(DPI.SIGN_LOCATION));
+							Location l = e.getBlock().getLocation();
+							signs.add(l.getWorld().getName() + " " + l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ() + " %PERM%" + e.getLine(2));
+							main.api.getDivSystem().set(DPI.SIGN_LOCATION, signs);
+							e.setLine(1, main.AS("&6" + e.getLine(1)));
+							e.setLine(2, "");
+						}else{
+							e.setLine(1, "&b" + e.getLine(1));
+							List<String> signs = new ArrayList<String>(main.api.getDivSystem().getList(DPI.SIGN_LOCATION));
+							Location l = e.getBlock().getLocation();
+							signs.add(l.getWorld().getName() + " " + l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ() + " %PERM%wa.member");
+							main.api.getDivSystem().set(DPI.SIGN_LOCATION, signs);
 						}
 						
 					} else {
@@ -82,33 +93,56 @@ public class ElyWarps implements AutoRegister, Listener {
 		
 		if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getClickedBlock().getState() instanceof Sign){
 			Sign s = (Sign) e.getClickedBlock().getState();
-
 			
 			if(s.getLine(0).equals(main.AS(warpText))){
 				String warp = ChatColor.stripColor(s.getLine(1));
-				if(s.getLine(2) != null && !s.getLine(2).equals("")){
+				Location loc = e.getClickedBlock().getLocation();
 
-					if(main.api.perms(e.getPlayer(), ChatColor.stripColor(s.getLine(2)), false)){
-						if (new ArrayList<String>(Arrays.asList(warps)).contains(warp.toLowerCase() + ".yml")){
-							main.api.event(new DivinityTeleportEvent(e.getPlayer(), extractLoc(warp)));
-
-						}else{
-							s.setLine(1,  main.AS("&c&oNot found!"));
-							s.update();
+				for(String str : main.api.getDivSystem().getList(DPI.SIGN_LOCATION)){
+					String[] loc2 = str.split(" ");
+					System.out.println(loc2[1]);
+					System.out.println(loc.getBlockX());
+					System.out.println(loc2[1].equals(loc.getBlockX() + ""));
+		
+					if(loc2[0].equals(loc.getWorld().getName()) && loc2[1].equals(loc.getBlockX() + "") && loc2[2].equals(loc.getBlockY() + "") && loc2[3].equals(loc.getBlockZ() + "")){
+						String perm = str.split("%PERM%")[1];
+						if(main.api.perms(e.getPlayer(), perm, false)){
+							if (new ArrayList<String>(Arrays.asList(warps)).contains(warp.toLowerCase() + ".yml")){
+								main.api.event(new DivinityTeleportEvent(e.getPlayer(), extractLoc(warp)));
+		
+							}else{
+								s.setLine(1,  main.AS("&c&oNot found!"));
+								s.update();
+							}
 						}
+						return;
 					}
-				}else{
-					if (new ArrayList<String>(Arrays.asList(warps)).contains(warp.toLowerCase() + ".yml")){
-						main.api.event(new DivinityTeleportEvent(e.getPlayer(), extractLoc(warp)));
-
-					}else{
-						s.setLine(1,  main.AS("&c&oNot found!"));
-
-						s.update();
+					
+				}	
+			}
+			
+		}
+		
+	}
+	
+	@EventHandler
+	public void onSignBreak(BlockBreakEvent e){
+		
+		if(e.getBlock().getState() instanceof Sign){
+			Sign s = (Sign) e.getBlock().getState();
+			if(s.getLine(0).equals(main.AS(warpText))){
+				Location loc = e.getBlock().getLocation();
+				for(String str : main.api.getDivSystem().getList(DPI.SIGN_LOCATION)){
+					String[] loc2 = str.split(" ");
+					if(loc2[0].equals(loc.getWorld().getName()) && loc2[1].equals(loc.getBlockX() + "") && loc2[2].equals(loc.getBlockY() + "") && loc2[3].equals(loc.getBlockZ() + "")){
+						List<String> signs = new ArrayList<String>(main.api.getDivSystem().getList(DPI.SIGN_LOCATION));
+						signs.remove(signs.indexOf(str));
+						main.api.getDivSystem().set(DPI.SIGN_LOCATION, signs);
+						return;
 					}
 				}
-				
 			}
+			
 			
 		}
 		

@@ -46,7 +46,7 @@ public class ElyAlliance implements AutoRegister {
 		 
 		 if (StringUtils.isAlphanumeric(args[0]) || !StringUtils.isAlphanumeric(p.getName())){
 
-			 if (!args[0].toLowerCase().startsWith(dp.name().substring(0, 3).toLowerCase())){
+			 if (!args[0].toLowerCase().startsWith(p.getName().substring(0, 3).toLowerCase())){
 				 main.s(p, "none", "You must at least use the first 3 letters of your name.");
 			 } else {
 				 if (args[0].length() > 11){
