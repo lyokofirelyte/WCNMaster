@@ -1,5 +1,12 @@
 package com.github.lyokofirelyte.Elysian.Games.MobMondays;
 
+import gnu.trove.map.hash.THashMap;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,10 +15,16 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Games.MobMondays.MMMain.locationType;
+import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
 
 public class MMEvents implements Listener{
@@ -30,9 +43,53 @@ public class MMEvents implements Listener{
 		if (e.getReason().contains("mobMondaysGame")){
 			
 			Player p = e.getPlayer();
-			DivinityPlayer dp = main.api.getDivPlayer(p);
+			Map<String, Integer> topScores = new THashMap<String, Integer>();
+			List<Integer> sortedScores = new ArrayList<Integer>();
+			boolean form = false;
+			System.out.println("updati3ng");
+
+			if (root.active == true){
+					System.out.println("updating");
+				ScoreboardManager manager = Bukkit.getScoreboardManager();
+				Scoreboard board = manager.getNewScoreboard();
+				Objective o = p.getScoreboard().getObjective(DisplaySlot.SIDEBAR);
+
+				if (o == null || !o.getName().equals("mobMondaysGame")){
+					if (o != null){
+						o.unregister();
+						System.out.println("unregistering");
+					}
+					o = board.registerNewObjective("mobMondaysGame", "dummy");
+					o.setDisplaySlot(DisplaySlot.SIDEBAR);
+					form = true;
+				
+				}
+				
+				o.setDisplayName("§6MM Kills:");
+				
+				for (String s : root.players){
+					DivinityPlayer player = main.api.getDivPlayer(s);
+					topScores.put(player.getStr(DPI.DISPLAY_NAME), root.scores.get(s));
+					sortedScores.add(root.scores.get(s));
+				}
+				
+				Collections.sort(sortedScores);
+				Collections.reverse(sortedScores);
+				
+				for (int score : sortedScores){
+					for (String name : topScores.keySet()){
+						if (topScores.get(name) == score){
+							Score s = o.getScore(main.AS(name));
+							s.setScore(score);
+						}
+					}
+				}
+				
+				if (form){
+					p.setScoreboard(board);
+				}
 			
-			
+			}
 		}
 
 	}
@@ -71,6 +128,9 @@ public class MMEvents implements Listener{
 			if(root.selected.containsKey(p.getName())){
 				root.selected.remove(p.getName());
 			}
+			DivinityPlayer dp = main.api.getDivPlayer(p.getName());
+			dp.set(DPI.IN_GAME, false);
+
 			
 		}
 	}

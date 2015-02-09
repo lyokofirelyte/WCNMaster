@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoSave;
 import com.github.lyokofirelyte.Spectral.Identifiers.DivGame;
@@ -128,6 +129,10 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 			
 			msg("The game is starting in 10 seconds!");
 			
+			for(String s : players){
+				scores.put(s, 0);
+			}
+			
 			Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){ public void run(){
 				
 				actuallyStart();
@@ -146,6 +151,7 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 		
 		for(String s : players){
 			DivinityPlayer dp = main.api.getDivPlayer(s);
+			dp.set(DPI.IN_GAME, true);
 			main.api.repeat(main.api, "event", 0L, 20L, "mobMondaysScore" + dp.name(), new ScoreboardUpdateEvent(Bukkit.getPlayer(dp.uuid()), "mobMondaysGame"));
 
 		}
@@ -194,7 +200,6 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 			}
 			
 			
-			System.out.println(players.size());
 			if(players.size() != 1 ){
 				if(secondsLeft == 105){
 					spawnRandomMobs();
@@ -203,9 +208,11 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 				main.divinity.api.divUtils.bc("We have a winner!&6 " + players.get(0) + " &bwon MobMondays!");
 				main.divinity.api.divUtils.bc("Please leave the arena by going to spawn or some other place :)");
 				Bukkit.getScheduler().cancelTask(timer);
-				main.api.cancelTask("mobMondaysScore");
+				main.api.cancelTask("mobMondaysScore");		
 				active = false;
 				for(String s : players){
+				DivinityPlayer dp = main.api.getDivPlayer(s);
+				dp.set(DPI.IN_GAME, false);
 					Bukkit.getPlayer(s).getActivePotionEffects().clear();
 				}
 			}
@@ -216,7 +223,6 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 			secondsLeft = secondsLeft - 1;
 			
 		}}, 0L, 20L);
-//		Bukkit.getScheduler().cancelTask(timer);
 		
 	}
 	

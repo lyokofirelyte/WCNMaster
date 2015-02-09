@@ -869,7 +869,7 @@ public class ElyStaff implements Listener, AutoRegister {
 			if(args.length == 2){
 				if(main.api.doesPartialPlayerExist(args[1])){
 					
-					if(main.discussion.contains(args[1]) || !main.api.perms(sender, "wa.staff.intern.", true)){
+					if(main.discussion.contains(args[1]) || !main.api.perms(sender, "wa.staff.intern.", true) || main.api.perms(main.api.getPlayer(args[1]), "wa.staff.intern.", true)){
 						dp.err("Player already added!");
 						return;
 					}
@@ -890,7 +890,7 @@ public class ElyStaff implements Listener, AutoRegister {
 			if(args.length == 2){
 				if(main.api.doesPartialPlayerExist(args[1])){
 					
-					if(!main.discussion.contains(args[1]) || !main.api.perms(sender, "wa.staff.intern.", true)){
+					if(!main.discussion.contains(args[1]) || !main.api.perms(sender, "wa.staff.intern.", true) || main.api.perms(main.api.getPlayer(args[1]), "wa.staff.intern.", true)){
 						dp.err("Player not added!");
 						return;
 					}
