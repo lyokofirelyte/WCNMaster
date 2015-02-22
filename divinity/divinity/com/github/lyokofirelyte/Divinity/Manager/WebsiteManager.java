@@ -22,6 +22,7 @@ import com.github.lyokofirelyte.Divinity.JSON.JSONChatClickEventType;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatExtra;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatHoverEventType;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
+import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 
 public class WebsiteManager implements Runnable {
 	
@@ -48,7 +49,8 @@ public class WebsiteManager implements Runnable {
 			Map<String, Object> map = new THashMap<>();
 			map.put("type", "minecraft_refresh");
 			map.put("players", onlinePlayers);
-			
+			map.put("check", api.getDivSystem().getStr(DPI.WEBSITE_CODE));
+
 			JSONObject obj = sendPost("/api/chat", map);
 			List<String> message = (List<String>) obj.get("message");
 			String type = (String) obj.get("type");

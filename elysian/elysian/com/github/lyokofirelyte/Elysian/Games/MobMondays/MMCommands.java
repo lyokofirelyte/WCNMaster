@@ -3,12 +3,21 @@ package com.github.lyokofirelyte.Elysian.Games.MobMondays;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
+import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
+import com.github.lyokofirelyte.Divinity.JSON.JSONChatClickEventType;
+import com.github.lyokofirelyte.Divinity.JSON.JSONChatExtra;
+import com.github.lyokofirelyte.Divinity.JSON.JSONChatHoverEventType;
+import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Games.MobMondays.MMMain.locationType;
+import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
 import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
 
@@ -27,7 +36,7 @@ public class MMCommands {
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);
 		DivinityGame dg = root.toDivGame();
-		
+		List<String> locations = null;
 		switch(args[0]){
 			case "select":
 				if(!root.allowedToJoin){
@@ -42,7 +51,7 @@ public class MMCommands {
 //					dp.s("You can't perform this command in the survival world!");
 //					return;
 //				}
-				if(!root.players.contains(p.getName())){
+				if(!root.currentPlayers.contains(p.getName())){
 					dp.s("You have to do '/mm join' first!");
 					return;
 				}
@@ -67,7 +76,10 @@ public class MMCommands {
 			
 			case "active":
 				if(!main.api.perms(p, "wa.staff.mod2", false)) return;
-
+				if(args.length != 2){
+					dp.err("Not enough arguments!");
+					return;
+				}
 				root.allowedToJoin = !root.allowedToJoin;
 				if(root.allowedToJoin){
 					dp.s("You just allowed people to join!");
@@ -101,7 +113,7 @@ public class MMCommands {
 					dp.err("Mob mondays is not active!");
 					return;
 				}
-				if(root.players.contains(p.getName())){
+				if(root.currentPlayers.contains(p.getName())){
 					dp.s("You already joined!");
 					return;
 				}
@@ -110,10 +122,13 @@ public class MMCommands {
 					return;
 				}
 				p.teleport(root.getLocation(locationType.DEATH));
-				root.players.add(p.getName());
+				root.currentPlayers.add(p.getName());
+				root.scores.put(dp.name(), 0);
+				root.startingPlayers.add(p.getName());
 				root.msg(p.getName() + " has joined &aMobMondays!");
 				p.setGameMode(GameMode.SURVIVAL);
-				
+				dp.set(DPI.IN_GAME, true);
+				main.api.repeat(main.api, "event", 0L, 20L, "mobMondaysScore" + dp.name(), new ScoreboardUpdateEvent(Bukkit.getPlayer(dp.uuid()), "mobMondaysGame"));
 				
 				break;
 				
@@ -182,25 +197,77 @@ public class MMCommands {
 					return;
 				}
 				
-				List<String> locations = new ArrayList<String>(dg.getStringList("arenas." + args[1] + ".monsterspawn"));
+				locations = new ArrayList<String>(dg.getStringList("arenas." + args[1] + ".monsterspawn"));
 				locations.add(root.locationToString(p.getLocation()));
 				dg.set("arenas." + args[1] + ".monsterspawn", locations);
-				
+				dp.s("Added spawnpoint for the game &6" + args[1]);
 				
 				break;
 				
+				
+			case "monsterspawnlist":
+				if(!main.api.perms(p, "wa.staff.mod2", false)) return;
+
+				if(args.length >= 2){
+					if(!dg.contains("arenas."  + args[1])){
+						dp.err("The arena " + args[1] + " does not exist");
+						return;
+					}
+					
+				}
+				
+				showList(p, args[1]);
+
+				break;
+			
+			case "showmonsterspawn":
+				if(!main.api.perms(p, "wa.staff.mod2", false)) return;
+				locations = new ArrayList<String>(dg.getStringList("arenas." + args[1] + ".monsterspawn"));
+				String[] c = locations.get(Integer.parseInt(args[2])).split("%SPLIT%");
+				final Location loc = new Location(Bukkit.getWorld(c[0]), Float.parseFloat(c[1]), Float.parseFloat(c[2]), Float.parseFloat(c[3]));
+				loc.getBlock().setType(Material.OBSIDIAN);
+				p.teleport(new Location(loc.getWorld(), loc.getX(), loc.getY() + 1, loc.getZ()));
+				Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+					public void run(){
+						loc.getBlock().setType(Material.AIR);
+					}
+				}, 60L);
+				
+				break;
+				
+			case "remmonsterspawn":
+				if(!main.api.perms(p, "wa.staff.mod2", false)) return;
+				locations = new ArrayList<String>(dg.getStringList("arenas." + args[1] + ".monsterspawn"));
+				locations.remove(Integer.parseInt(args[2]));
+				dg.set("arenas." + args[1] + ".monsterspawn", locations);
+				
+				showList(p, args[1]);
+				
+				break;
+				
+			case "spectate":
+				if(!root.allowedToJoin){
+					dp.err("Mob mondays is not active!");
+					return;
+				}
+				p.teleport(root.getLocation(locationType.DEATH));
+				p.setGameMode(GameMode.SURVIVAL);
+				
+				break;
 				
 			default:
 				
 				for(String s : new String[]{
 					"select (selects your class)",
-					"start",
 					"join",
+					"start",
+					"spectate",
 					"addarena <name>",
 					"remarena <name>",
 					"arenalist",
 					"setdeath <arena>",
 					"setmonsterspawn <arena>",
+					"monsterspawnlist <arena>",
 					"active <arena>"
 				}){
 					dp.s("/mm " + s);
@@ -215,4 +282,33 @@ public class MMCommands {
 		
 	}
 	
+	public void showList(Player p, String arena){
+		main.s(p, "List of locations for the arena &6 " + arena);
+		DivinityGame dg = root.toDivGame();
+		int counter = 0;
+		List<String> locations = new ArrayList<String>(dg.getStringList("arenas." + arena + ".monsterspawn"));
+		for(String s : locations){
+			String message = "";
+			for(String str : s.split("%SPLIT%")){
+				if(str.contains(".")){
+					int coord = (int) Float.parseFloat(str);
+					message = message + coord + " ";
+				}else{
+					message = message + str +  " ";
+				}
+			}
+			System.out.println(message);
+			JSONChatMessage m = new JSONChatMessage(main.AS("&7" + main.numerals.get(counter) + "&f: &3" + message + " "));
+			JSONChatExtra showBlock = new JSONChatExtra(main.AS("&7[&e*&7] "));
+			JSONChatExtra removeValue = new JSONChatExtra(main.AS("&7[&c-&7]"));
+			showBlock.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&eShow the block and tp to it!"));
+			showBlock.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/mm showmonsterspawn " + arena + " " + counter);
+			removeValue.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&cDelete this spawn location"));
+			removeValue.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/mm remmonsterspawn " + arena + " " + counter);
+			m.addExtra(showBlock);
+			m.addExtra(removeValue);
+			main.s(p, m);		
+			counter++;
+		}
+	}
 }

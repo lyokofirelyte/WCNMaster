@@ -4,6 +4,7 @@ import gnu.trove.map.hash.THashMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -17,6 +18,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.DisplaySlot;
 
 import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
@@ -33,7 +35,8 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 	MMEvents mmevents;
 	
 	public List<String> classes = new ArrayList<String>(Arrays.asList("mage", "melee", "ranger", "pyro", "barbarian", "healer"));
-	public List<String> players = new ArrayList<String>();
+	public List<String> currentPlayers = new ArrayList<String>();
+	public List<String> startingPlayers = new ArrayList<String>();
 	public Map<String, String> selected = new THashMap<String, String>();
 	public Map<String, Integer> scores = new THashMap<String, Integer>();
 	public enum locationType {DEATH, SPAWN, RANDOMMOB}; 
@@ -64,14 +67,21 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 		List<EntityType> bosses = new ArrayList<EntityType>(Arrays.asList(EntityType.GIANT, EntityType.ENDERMAN, EntityType.BLAZE));
 		for(int i = 0; i < toDivGame().getStringList("arenas." + current + ".monsterspawn").size(); i++){
 			Location loc = getLocation(locationType.RANDOMMOB);
-			
-			for(int j = 0; j < players.size() * 2 + round; j++){
+			boolean spawnedWitch = false;
+			for(int j = 0; j < currentPlayers.size() * 2 + round; j++){
 				EntityType random = mobs.get(new Random().nextInt(mobs.size()));
 
 				if(random.equals(EntityType.SKELETON)){
 					Skeleton s = (Skeleton) loc.getWorld().spawnEntity(loc, EntityType.SKELETON);
 					s.getEquipment().setHelmet(new ItemStack(Material.LEATHER_HELMET));
 					s.getEquipment().setItemInHand(new ItemStack(Material.BOW));
+				}else if(random.equals(EntityType.WITCH)){
+					if(!spawnedWitch){
+						spawnedWitch = true;
+						Entity ent = loc.getWorld().spawnCreature(loc, random);
+						LivingEntity livingent = (LivingEntity) ent;
+						livingent.getEquipment().setHelmet(new ItemStack(Material.LEATHER_HELMET));
+					}
 				}else{
 					Entity ent = loc.getWorld().spawnCreature(loc, random);
 					LivingEntity livingent = (LivingEntity) ent;
@@ -80,7 +90,7 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 			
 			}
 			
-			if(players.size() <= 2){
+			if(currentPlayers.size() <= 2){
 				loc.getWorld().spawnCreature(loc, bosses.get(new Random().nextInt(bosses.size())));
 			}
 			
@@ -129,7 +139,7 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 			
 			msg("The game is starting in 10 seconds!");
 			
-			for(String s : players){
+			for(String s : currentPlayers){
 				scores.put(s, 0);
 			}
 			
@@ -142,20 +152,12 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 	
 	public void actuallyStart(){
 		
-		for(String s : players){
+		for(String s : currentPlayers){
 			Bukkit.getPlayer(s).teleport(getLocation(locationType.SPAWN));
 		}
-		
+		round = 1;
 		msg("The game has started!");
-				
-		
-		for(String s : players){
-			DivinityPlayer dp = main.api.getDivPlayer(s);
-			dp.set(DPI.IN_GAME, true);
-			main.api.repeat(main.api, "event", 0L, 20L, "mobMondaysScore" + dp.name(), new ScoreboardUpdateEvent(Bukkit.getPlayer(dp.uuid()), "mobMondaysGame"));
 
-		}
-		
 		
 		timer = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable(){ public void run(){
 			
@@ -165,7 +167,7 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 				main.divinity.api.divUtils.bc("Round " + round + " has started!");
 				
 				if(round == 4){
-					for(String s : players){
+					for(String s : currentPlayers){
 						Player temp = Bukkit.getPlayer(s);
 						temp.getInventory().addItem(new ItemStack(Material.POTION, 2, (short)8193));
 						switch(selected.get(s)){
@@ -200,21 +202,28 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 			}
 			
 			
-			if(players.size() != 1 ){
+			if(currentPlayers.size() != 1 ){
 				if(secondsLeft == 105){
 					spawnRandomMobs();
 				}
 			}else{
-				main.divinity.api.divUtils.bc("We have a winner!&6 " + players.get(0) + " &bwon MobMondays!");
+				main.divinity.api.divUtils.bc("We have a winner!&6 " + currentPlayers.get(0) + " &bwon MobMondays!");
 				main.divinity.api.divUtils.bc("Please leave the arena by going to spawn or some other place :)");
 				Bukkit.getScheduler().cancelTask(timer);
 				main.api.cancelTask("mobMondaysScore");		
 				active = false;
-				for(String s : players){
-				DivinityPlayer dp = main.api.getDivPlayer(s);
-				dp.set(DPI.IN_GAME, false);
+				for(String s : currentPlayers){
+					DivinityPlayer dp = main.api.getDivPlayer(s);
+					dp.set(DPI.IN_GAME, false);
 					Bukkit.getPlayer(s).getActivePotionEffects().clear();
+					Bukkit.getPlayer(s).getInventory().clear();
+					Bukkit.getPlayer(s).getInventory().setArmorContents(null);
+					Bukkit.getPlayer(s).getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
+					main.api.cancelTask("mobMondaysScore" + s);
 				}
+				startingPlayers.clear();
+				scores.clear();
+				currentPlayers.clear();
 			}
 			
 
@@ -227,7 +236,7 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 	}
 	
 	public void msg(String message){
-		for(String s : players){
+		for(String s : currentPlayers){
 			if(main.api.doesPartialPlayerExist(s)){
 				DivinityPlayer dp = main.api.getDivPlayer(s);
 				dp.s(message);

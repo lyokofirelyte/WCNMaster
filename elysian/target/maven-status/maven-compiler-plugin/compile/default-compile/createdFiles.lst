@@ -93,6 +93,7 @@ com\github\lyokofirelyte\Elysian\Games\MobMondays\MMMain.class
 com\github\lyokofirelyte\Elysian\MMO\Magics\SpellTasks.class
 com\github\lyokofirelyte\Elysian\Commands\ElyAlliance.class
 com\github\lyokofirelyte\Elysian\ElyMarkkit.class
+com\github\lyokofirelyte\Elysian\Games\MobMondays\MMCommands$1.class
 com\github\lyokofirelyte\Elysian\Patrols\ElyPatrolChat$1.class
 com\github\lyokofirelyte\Elysian\Commands\ElyRings$1.class
 com\github\lyokofirelyte\Elysian\Games\Gotcha\GotchaActive.class

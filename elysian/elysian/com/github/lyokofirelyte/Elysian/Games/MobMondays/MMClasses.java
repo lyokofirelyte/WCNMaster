@@ -43,9 +43,6 @@ public class MMClasses {
 
 				
 				contents = new ItemStack[]{stick, fireprot, strength, food, health};
-				
-				p.getInventory().addItem(contents);
-				p.getInventory().setArmorContents(armor);
 
 				break;
 		
@@ -59,9 +56,6 @@ public class MMClasses {
 
 				
 				contents = new ItemStack[]{sword, leaping, food, health};
-				
-				p.getInventory().addItem(contents);
-				p.getInventory().setArmorContents(armor);
 				
 				p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 60 * 1000, 0));
 				
@@ -78,10 +72,7 @@ public class MMClasses {
 				bow.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
 
 				contents = new ItemStack[]{arrow, bow, food, health};
-				
-				p.getInventory().addItem(contents);
-				p.getInventory().setArmorContents(armor);
-								
+							
 				break;
 				
 			case "healer":
@@ -101,9 +92,6 @@ public class MMClasses {
 				
 				contents = new ItemStack[]{regen, health, food, damage, sword};
 				
-				p.getInventory().addItem(contents);
-				p.getInventory().setArmorContents(armor);
-				
 				break;
 				
 			case "barbarian":
@@ -114,9 +102,6 @@ public class MMClasses {
 				axe.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
 
 				contents = new ItemStack[]{food, axe, health};
-				
-				p.getInventory().addItem(contents);
-				p.getInventory().setArmorContents(armor);
 				
 				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 60 * 1000, 2));
 				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * 60 * 1000, 0));
@@ -134,10 +119,7 @@ public class MMClasses {
 				damage = new ItemStack(Material.POTION, 8, (short)16396);
 
 				contents = new ItemStack[]{flint, tnt, food, damage, health};
-				
-				p.getInventory().addItem(contents);
-				p.getInventory().setArmorContents(armor);
-				
+
 				p.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 60 * 1000, 0));
 
 				break;
@@ -145,7 +127,13 @@ public class MMClasses {
 		
 		}
 		
+		for(ItemStack i : armor){
+			i.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
+		}
 		
+		p.getInventory().addItem(contents);
+		p.getInventory().setArmorContents(armor);
+
 		
 		
 	}
