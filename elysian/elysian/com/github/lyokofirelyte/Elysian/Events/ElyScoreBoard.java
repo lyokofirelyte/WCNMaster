@@ -93,12 +93,12 @@ public class ElyScoreBoard implements Listener, AutoRegister {
 		String[] scoreNames = new String[]{
 				
 			" ",
-			p.getDisplayName(),
+			"&7" + p.getDisplayName(),
+			"&b" + getShortDate(),
 			"  ",
 			"&5S: &c" + rounds[0],
 			"&eE: &c" + rounds[1],
 			"&4B: &c" + dp.getInt(MMO.VAMP_BAR) + "%",
-			"&9P: &c" + dp.getInt(DPI.PARAGONS),
 			"   ",
 			"&3Online: &c" + Bukkit.getOnlinePlayers().size(),
 			"&3RG: &c" + ((ElyProtect) main.api.getInstance(ElyProtect.class)).isInAnyRegion(p.getLocation()),
@@ -158,13 +158,13 @@ public class ElyScoreBoard implements Listener, AutoRegister {
 		if (system.getList(DPI.AFK_PLAYERS).contains(p.getName())){
 			first.setDisplayName("§7[ afk " + getMinutes(Long.parseLong(dp.getStr(DPI.AFK_TIME))) + " ]");
 		} else {
-			first.setDisplayName("§6" + getShortDate());
+			first.setDisplayName("§6" + getLoc(p));
 		}
 	}
 	
 	private String getShortDate(){
 		String[] full = DivinityUtilsModule.getTimeFull().split(" ");
-		return full[0].substring(0, 3) + ", " + full[1].substring(0, 3) + " " + full[2] + " " + full[3]; 
+		return /*full[0].substring(0, 3) + ", " +*/ full[1].substring(0, 3) + " " + full[2] + " " + full[3]; 
 	}
 	
 	private String getLoc(Player p){
