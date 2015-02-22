@@ -40,6 +40,8 @@ public class ElyMove implements Listener, AutoRegister {
 			Vector themV = e.getPlayer().getLocation().toVector();
 			you.setVelocity(themV.subtract(you.getLocation().toVector()).normalize());
 		}
+		
+		main.api.event(new ScoreboardUpdateEvent(e.getPlayer(), "move"));
 	}
 	
 	@EventHandler (ignoreCancelled = false)

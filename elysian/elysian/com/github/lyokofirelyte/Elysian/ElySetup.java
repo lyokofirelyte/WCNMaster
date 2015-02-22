@@ -62,14 +62,6 @@ public class ElySetup {
 			main.api.getDivSystem().set(DPI.EMOTE_LIST, yaml.getStringList("EMOTE_LIST"));
 			main.api.getDivSystem().set(DPI.EMOTE_ACTION, yaml.getStringList("EMOTE_ACTION"));
 		}
-		
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new Runnable(){
-			public void run(){
-				for (Player p : Bukkit.getOnlinePlayers()){
-					main.api.event(new ScoreboardUpdateEvent(p, "move"));
-				}
-			}
-		}, 0L, 20L);
 	}
 	
 	private void tasks(){
