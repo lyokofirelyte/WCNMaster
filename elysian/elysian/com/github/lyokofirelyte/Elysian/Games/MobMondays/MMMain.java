@@ -169,7 +169,9 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 				if(round == 4){
 					for(String s : currentPlayers){
 						Player temp = Bukkit.getPlayer(s);
-						temp.getInventory().addItem(new ItemStack(Material.POTION, 2, (short)8193));
+						temp.getInventory().addItem(new ItemStack(Material.POTION, 1, (short)16417));
+						temp.getInventory().addItem(new ItemStack(Material.POTION, 2, (short)16421));
+
 						switch(selected.get(s)){
 						case "mage":
 							temp.getInventory().addItem(new ItemStack(Material.COOKED_CHICKEN, 16));
@@ -199,6 +201,8 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 						
 					}
 				}
+			}else if(secondsLeft <= 5){
+				main.divinity.api.divUtils.bc(secondsLeft + " seconds left untill round " + (round + 1) + " starts!");
 			}
 			
 			
@@ -244,6 +248,20 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 		}
 	}
 	
+	public boolean isInventoryEmpty(Player p){
+		for(ItemStack i : p.getInventory().getContents()){
+			if(i != null){
+				return false;
+			}
+		}
+		for(ItemStack i : p.getInventory().getArmorContents()){
+			if(i != null){
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public Object[] registerSubClasses() {
 		return new Object[]{mmcmd, mmevents};

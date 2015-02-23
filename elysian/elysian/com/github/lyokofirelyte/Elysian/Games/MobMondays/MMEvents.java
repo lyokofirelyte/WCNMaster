@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -71,6 +72,7 @@ public class MMEvents implements Listener{
 				
 				for (String s : root.startingPlayers){
 					DivinityPlayer player = main.api.getDivPlayer(s);
+//					String strippedName = player.getStr(DPI.DISPLAY_NAME).replace(player.getStr(DPI.ALLIANCE_COLOR_1), "").replace(player.getStr(DPI.ALLIANCE_COLOR_2), "");
 					topScores.put(player.getStr(DPI.DISPLAY_NAME), root.scores.get(s));
 					sortedScores.add(root.scores.get(s));
 				}
@@ -81,12 +83,17 @@ public class MMEvents implements Listener{
 				for (int score : sortedScores){
 					for (String name : topScores.keySet()){
 						if (topScores.get(name) == score){
+//							System.out.println(name);
+//							System.out.println(ChatColor.stripColor(name));
 							if(!root.currentPlayers.contains(ChatColor.stripColor(name))){
 								Score s = o.getScore(main.AS("&4" + ChatColor.stripColor(name)));
 								s.setScore(score);
+//								System.out.println(name + " is dead");
 							}else{
 								Score s = o.getScore(main.AS(name));
 								s.setScore(score);
+//								System.out.println(name + " is alive");
+
 							}
 						}
 					}
@@ -147,13 +154,15 @@ public class MMEvents implements Listener{
 			p.getInventory().setArmorContents(null);
 			p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
 			main.api.cancelTask("mobMondaysScore" + p.getName());
-			
+			root.msg(dp.name() + " &b has left MobMondays!");
+
 		}
 	}
 	
 	@EventHandler
-	public void onRespawn(final PlayerRespawnEvent e){
-		final Player p = e.getPlayer();
+	public void onRespawn(PlayerRespawnEvent e){
+		Player p = e.getPlayer();
+		final Player p2 = e.getPlayer();
 		if(root.currentPlayers.contains(p.getName())){
 			root.currentPlayers.remove(p.getName());
 			main.api.cancelTask("mobMondaysScore" + p.getName());
@@ -167,24 +176,26 @@ public class MMEvents implements Listener{
 
 				@Override
 				public void run() {
-					p.teleport(root.getLocation(locationType.DEATH));
+					p2.teleport(root.getLocation(locationType.DEATH));
 					
 				}
 				
 			}, 5L);
 			
-		}
 		
-		if(root.selected.containsKey(p.getName())){
-			root.selected.remove(p.getName());
+			if(root.selected.containsKey(p.getName())){
+				root.selected.remove(p.getName());
+			}
+			DivinityPlayer dp = main.api.getDivPlayer(p);
+			dp.set(DPI.IN_GAME, false);
+			p.getActivePotionEffects().clear();
+			p.getInventory().clear();
+			p.getInventory().setArmorContents(null);
+			p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
+			main.api.cancelTask("mobMondaysScore" + p.getName());
+			root.msg(dp.name() + " &b has died during MobMondays!");
 		}
-		DivinityPlayer dp = main.api.getDivPlayer(p);
-		dp.set(DPI.IN_GAME, false);
-		p.getActivePotionEffects().clear();
-		p.getInventory().clear();
-		p.getInventory().setArmorContents(null);
-		p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
-		main.api.cancelTask("mobMondaysScore" + p.getName());
+
 	}
 
 	
@@ -192,10 +203,17 @@ public class MMEvents implements Listener{
 	public void onDamge(EntityDamageByEntityEvent e){
 		if(((e.getCause() == DamageCause.ENTITY_EXPLOSION && !(e.getDamager() instanceof Creeper))|| (e.getCause() == DamageCause.ENTITY_ATTACK) && e.getEntity() instanceof Player && e.getDamager() instanceof Player)){
 			Player p = (Player) e.getEntity();
-			if(root.currentPlayers.contains(p.getName()) && root.active){
+			if(root.currentPlayers.contains(p.getName())){
 				e.setCancelled(true);
 			}
 			
+		}else if(e.getDamager() instanceof Arrow){
+			Arrow ar = (Arrow) e.getDamager();
+			if(ar.getShooter() instanceof Player){
+				if(root.currentPlayers.contains(((Player)ar.getShooter()).getName()) && e.getEntity() instanceof Player){
+					e.setCancelled(true);
+				}
+			}
 		}
 	}
 	

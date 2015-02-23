@@ -288,7 +288,7 @@ public class ElyProtect implements Listener, AutoRegister {
 					
 					if (args.length > 1){
 						
-						switch (args[1]){
+						switch (args[1].split(":")[0]){
 						
 							case "home": case "claim": case "auto": case "tp": case "info": case "biome": case "add": case "deny": case "undeny":
 								

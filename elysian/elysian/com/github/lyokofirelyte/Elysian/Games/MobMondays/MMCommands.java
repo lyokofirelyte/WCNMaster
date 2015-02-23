@@ -8,6 +8,8 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.scoreboard.DisplaySlot;
 
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
@@ -32,13 +34,13 @@ public class MMCommands {
 	}
 	
 	@DivCommand(aliases = {"mm", "mobmondays"}, desc = "MobMondays Game Command", help = "/mm help", player = true, min = 1)
-	public void onBooth(Player p, String[] args){
+	public void onBooth(final Player p, String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);
 		DivinityGame dg = root.toDivGame();
 		List<String> locations = null;
 		switch(args[0]){
-			case "select":
+			case "select": case "kits":
 				if(!root.allowedToJoin){
 					dp.err("Mob mondays is not active!");
 					return;
@@ -94,6 +96,8 @@ public class MMCommands {
 				
 				
 			case "start":
+				if(!main.api.perms(p, "wa.staff.mod2", false)) return;
+
 				if(root.allowedToJoin == false){
 					dp.s("The game is not active yet!");
 					return;
@@ -102,12 +106,75 @@ public class MMCommands {
 					dp.s("You can't start it because it has already started!");
 					return;
 				}
+				
+				for(String s : root.currentPlayers){
+					if(!root.selected.containsKey(s)){
+						dp.s("Not everyone has selected a kit!");
+						return;
+					}
+				}
 				root.start(root.current);
 				root.active = true;
 				
+				
+				
 				break;
 				
+			case "kick":
+				if(!main.api.perms(p, "wa.staff.mod2", false)) return;
+
+				if(args.length != 2){
+					dp.s("Not enough arguments!");
+					return;
+				}
+				
+				if(!Bukkit.getPlayer(args[1]).isOnline()){
+					dp.s("Player not online!");
+					return;
+				}
+				
+				Bukkit.getPlayer(args[1]).performCommand("mm leave");
+				root.msg(args[1] + " was kicked from mob mondays!");
+				
+				break;
 			
+			case "leave":
+				if(root.currentPlayers.contains(p.getName())){
+					root.currentPlayers.remove(p.getName());
+					main.api.cancelTask("mobMondaysScore" + p.getName());
+
+					for(PotionEffect pe : p.getActivePotionEffects()){
+						p.removePotionEffect(pe.getType());
+					}			
+					p.getInventory().clear();
+
+					Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
+
+						@Override
+						public void run() {
+							p.teleport(root.getLocation(locationType.DEATH));
+							
+						}
+						
+					}, 5L);
+					
+				}
+				
+				if(root.selected.containsKey(p.getName())){
+					root.selected.remove(p.getName());
+				}
+
+				dp.set(DPI.IN_GAME, false);
+				p.getActivePotionEffects().clear();
+				p.getInventory().clear();
+				p.getInventory().setArmorContents(null);
+				p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
+				main.api.cancelTask("mobMondaysScore" + p.getName());
+				root.msg(dp.name() + " &b has left MobMondays!");
+				
+				break;
+				
+				
 			case "join":
 				if(!root.allowedToJoin){
 					dp.err("Mob mondays is not active!");
@@ -119,6 +186,10 @@ public class MMCommands {
 				}
 				if(root.active){
 					dp.s("You can't join because it has already started!");
+					return;
+				}
+				if(!root.isInventoryEmpty(p)){
+					dp.s("Your inventory is not empty!");
 					return;
 				}
 				p.teleport(root.getLocation(locationType.DEATH));
@@ -260,6 +331,7 @@ public class MMCommands {
 				for(String s : new String[]{
 					"select (selects your class)",
 					"join",
+					"leave",
 					"start",
 					"spectate",
 					"addarena <name>",
@@ -297,7 +369,6 @@ public class MMCommands {
 					message = message + str +  " ";
 				}
 			}
-			System.out.println(message);
 			JSONChatMessage m = new JSONChatMessage(main.AS("&7" + main.numerals.get(counter) + "&f: &3" + message + " "));
 			JSONChatExtra showBlock = new JSONChatExtra(main.AS("&7[&e*&7] "));
 			JSONChatExtra removeValue = new JSONChatExtra(main.AS("&7[&c-&7]"));

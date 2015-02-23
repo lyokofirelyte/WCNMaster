@@ -23,7 +23,7 @@ public class MMClasses {
 		
 		ItemStack[] armor = null;
 		ItemStack[] contents = null;
-		ItemStack health = new ItemStack(Material.POTION, 1, (short)8229);
+		ItemStack health = new ItemStack(Material.POTION, 3, (short)8229);
 
 		
 		switch(type.toLowerCase()){
@@ -100,7 +100,9 @@ public class MMClasses {
 				food = new ItemStack(Material.COOKED_FISH, 32);
 				ItemStack axe = new ItemStack(Material.DIAMOND_AXE);
 				axe.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
-
+				axe.addUnsafeEnchantment(Enchantment.KNOCKBACK, 1);
+				
+				
 				contents = new ItemStack[]{food, axe, health};
 				
 				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 60 * 1000, 2));
