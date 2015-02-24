@@ -250,12 +250,12 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 	
 	public boolean isInventoryEmpty(Player p){
 		for(ItemStack i : p.getInventory().getContents()){
-			if(i != null){
+			if(i != null && !i.getType().equals(Material.AIR)){
 				return false;
 			}
 		}
 		for(ItemStack i : p.getInventory().getArmorContents()){
-			if(i != null){
+			if(i != null && !i.getType().equals(Material.AIR)){
 				return false;
 			}
 		}
