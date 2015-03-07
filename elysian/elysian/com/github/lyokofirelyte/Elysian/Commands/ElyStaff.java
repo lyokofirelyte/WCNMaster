@@ -778,9 +778,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		 admins = admins.trim();
 		 admins = admins.replaceAll(" ", "&6, &7");
 		 main.s(p, admins);
-		 
-		 main.s(p, "&cOwner:");
-		 main.s(p, "&7tdstaz69");
+
 	 }
 	 
 	 @DivCommand(perm = "wa.staff.mod2", aliases = {"gamemode", "gm"}, desc = "GameMode Command", help = "/gm <c, s, a, sp> [player]", player = true, min = 1)

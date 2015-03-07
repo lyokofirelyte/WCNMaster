@@ -40,11 +40,6 @@
 	</distributionManagement>
 	<dependencies>
 		<dependency>
-			<groupId>me.confuser</groupId>
-			<artifactId>BarAPI</artifactId>
-			<version>3.0</version>
-		</dependency>
-		<dependency>
 			<groupId>com.github.lyokofirelyte</groupId>
 			<artifactId>CB</artifactId>
 			<version>1.0</version>
@@ -65,10 +60,6 @@
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
-		<repository>
-			<id>confuser-repo</id>
-			<url>http://ci.frostcast.net/plugin/repository/everything</url>
-		</repository>
 	</repositories>
 	<build>
 		<sourceDirectory>.</sourceDirectory>

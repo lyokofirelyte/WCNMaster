@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scoreboard.DisplaySlot;
 
+import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatClickEventType;
@@ -57,11 +58,8 @@ public class MMCommands {
 					dp.s("You have to do '/mm join' first!");
 					return;
 				}
-				if(args.length != 2 || !root.classes.contains(args[1])){
-					dp.s("The classes are: ");
-					for(String s : root.classes){
-						dp.s("   - " + s);
-					}
+				if(args.length != 2 || !root.description.keySet().contains(args[1])){
+					showClasses(p);
 					return;
 				}
 				
@@ -117,6 +115,18 @@ public class MMCommands {
 				root.active = true;
 				
 				
+				
+				break;
+				
+			case "bc":
+				if(!main.api.perms(p, "wa.staff.mod2", false)) return;
+				
+				if(args.length == 1){
+					dp.s("Not enough arguments!");
+					return;
+				}
+				
+				Bukkit.broadcastMessage(main.AS("&3MobMondays &l❅ &9" + DivinityUtilsModule.createString(args, 1)));
 				
 				break;
 				
@@ -334,6 +344,8 @@ public class MMCommands {
 					"leave",
 					"start",
 					"spectate",
+					"bc <message>", 
+					"kick <player>",
 					"addarena <name>",
 					"remarena <name>",
 					"arenalist",
@@ -352,6 +364,21 @@ public class MMCommands {
 		
 
 		
+	}
+	
+	public void showClasses(Player p){
+		DivinityPlayer dp = main.api.getDivPlayer(p);
+		
+		dp.s("The classes are: ");
+		for(String s : root.description.keySet()){
+			System.out.println(s);
+			JSONChatMessage m = new JSONChatMessage("");
+			JSONChatExtra info = new JSONChatExtra(main.AS("&b   - " + s));
+			info.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&6" + root.getDescription(s) + "\n&aClick to select this kit!"));
+			info.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/mm select " + s);
+			m.addExtra(info);
+			main.s(p, m);
+		}
 	}
 	
 	public void showList(Player p, String arena){

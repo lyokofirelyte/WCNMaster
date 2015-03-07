@@ -39,7 +39,6 @@ public class MMClasses {
 				stick.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
 				stick.addUnsafeEnchantment(Enchantment.DAMAGE_UNDEAD, 2);
 				stick.addUnsafeEnchantment(Enchantment.KNOCKBACK, 1);
-				stick.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
 
 				
 				contents = new ItemStack[]{stick, fireprot, strength, food, health};
@@ -52,7 +51,6 @@ public class MMClasses {
 				ItemStack leaping = new ItemStack(Material.POTION, 8, (short)16395);
 				food = new ItemStack(Material.COOKED_BEEF, 32);
 				ItemStack sword = new ItemStack(Material.IRON_SWORD);
-				sword.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
 
 				
 				contents = new ItemStack[]{sword, leaping, food, health};
@@ -69,9 +67,8 @@ public class MMClasses {
 				bow.addEnchantment(Enchantment.ARROW_DAMAGE, 1);
 				bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
 				ItemStack arrow = new ItemStack(Material.ARROW);
-				bow.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
 
-				contents = new ItemStack[]{arrow, bow, food, health};
+				contents = new ItemStack[]{arrow, bow, food, health, new ItemStack(Material.WOOD_SWORD)};
 							
 				break;
 				
@@ -99,7 +96,6 @@ public class MMClasses {
 				armor = new ItemStack[]{new ItemStack(Material.IRON_HELMET),  new ItemStack(Material.IRON_CHESTPLATE), new ItemStack(Material.IRON_LEGGINGS), new ItemStack(Material.IRON_BOOTS)};
 				food = new ItemStack(Material.COOKED_FISH, 32);
 				ItemStack axe = new ItemStack(Material.DIAMOND_AXE);
-				axe.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
 				axe.addUnsafeEnchantment(Enchantment.KNOCKBACK, 1);
 				
 				
@@ -116,11 +112,10 @@ public class MMClasses {
 				armor = new ItemStack[]{new ItemStack(Material.IRON_HELMET),  new ItemStack(Material.IRON_CHESTPLATE), new ItemStack(Material.IRON_LEGGINGS), new ItemStack(Material.IRON_BOOTS)};
 				food = new ItemStack(Material.GRILLED_PORK, 32);
 				ItemStack flint = new ItemStack(Material.FLINT_AND_STEEL);
-				flint.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
 				ItemStack tnt = new ItemStack(Material.TNT, 64);
 				damage = new ItemStack(Material.POTION, 8, (short)16396);
 
-				contents = new ItemStack[]{flint, tnt, food, damage, health};
+				contents = new ItemStack[]{flint, tnt, food, damage, health, new ItemStack(Material.WOOD_SWORD)};
 
 				p.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 60 * 1000, 0));
 
@@ -131,6 +126,12 @@ public class MMClasses {
 		
 		for(ItemStack i : armor){
 			i.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
+		}
+		for(ItemStack i : contents){
+			String name = i.getType().toString().toLowerCase();
+			if(name.contains("sword") || name.contains("axe") || name.contains("and steel") || name.contains("stick") || name.contains("bow")){
+				i.addUnsafeEnchantment(Enchantment.DURABILITY, 120);
+			}
 		}
 		
 		p.getInventory().addItem(contents);
