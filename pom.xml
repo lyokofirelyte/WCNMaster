@@ -25,6 +25,9 @@
 	    <module>divinity</module>
 	    <module>elysian</module>
 	    <module>spectral</module>
+	    <module>empyreal</module>
+	    <module>gameserver</module>
+	    <module>gotcha</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
