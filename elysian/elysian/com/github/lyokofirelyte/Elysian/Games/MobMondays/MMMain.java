@@ -34,11 +34,11 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 	MMCommands mmcmd;
 	MMEvents mmevents;
 	
-	public List<String> classes = new ArrayList<String>(Arrays.asList("mage", "melee", "ranger", "pyro", "barbarian", "healer"));
 	public List<String> currentPlayers = new ArrayList<String>();
 	public List<String> startingPlayers = new ArrayList<String>();
 	public Map<String, String> selected = new THashMap<String, String>();
 	public Map<String, Integer> scores = new THashMap<String, Integer>();
+	public Map<String, String> description = new THashMap<String, String>();
 	public enum locationType {DEATH, SPAWN, RANDOMMOB}; 
 	
 	int secondsLeft = 105;
@@ -55,6 +55,13 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 		main = i;
 		mmcmd = new MMCommands(this);
 		mmevents = new MMEvents(this);
+
+		description.put("mage", "Avada Kedavra");
+		description.put("melee", "Move quick; stab fast");
+		description.put("ranger", "No-scope your enemies");
+		description.put("pyro", "Let your inner crazy out");
+		description.put("barbarian", "Be a savage beast");
+		description.put("healer", "Kill them with kindness");
 	}
 	
 	public String locationToString(Location loc){
@@ -142,7 +149,8 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 			for(String s : currentPlayers){
 				scores.put(s, 0);
 			}
-			
+
+		
 			Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){ public void run(){
 				
 				actuallyStart();
@@ -211,23 +219,23 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 					spawnRandomMobs();
 				}
 			}else{
-				main.divinity.api.divUtils.bc("We have a winner!&6 " + currentPlayers.get(0) + " &bwon MobMondays!");
-				main.divinity.api.divUtils.bc("Please leave the arena by going to spawn or some other place :)");
-				Bukkit.getScheduler().cancelTask(timer);
-				main.api.cancelTask("mobMondaysScore");		
-				active = false;
-				for(String s : currentPlayers){
-					DivinityPlayer dp = main.api.getDivPlayer(s);
-					dp.set(DPI.IN_GAME, false);
-					Bukkit.getPlayer(s).getActivePotionEffects().clear();
-					Bukkit.getPlayer(s).getInventory().clear();
-					Bukkit.getPlayer(s).getInventory().setArmorContents(null);
-					Bukkit.getPlayer(s).getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
-					main.api.cancelTask("mobMondaysScore" + s);
-				}
-				startingPlayers.clear();
-				scores.clear();
-				currentPlayers.clear();
+//				main.divinity.api.divUtils.bc("We have a winner!&6 " + currentPlayers.get(0) + " &bwon MobMondays!");
+//				main.divinity.api.divUtils.bc("Please leave the arena by going to spawn or some other place :)");
+//				Bukkit.getScheduler().cancelTask(timer);
+//				main.api.cancelTask("mobMondaysScore");		
+//				active = false;
+//				for(String s : currentPlayers){
+//					DivinityPlayer dp = main.api.getDivPlayer(s);
+//					dp.set(DPI.IN_GAME, false);
+//					Bukkit.getPlayer(s).getActivePotionEffects().clear();
+//					Bukkit.getPlayer(s).getInventory().clear();
+//					Bukkit.getPlayer(s).getInventory().setArmorContents(null);
+//					Bukkit.getPlayer(s).getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
+//					main.api.cancelTask("mobMondaysScore" + s);
+//				}
+//				startingPlayers.clear();
+//				scores.clear();
+//				currentPlayers.clear();
 			}
 			
 
@@ -237,6 +245,14 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 			
 		}}, 0L, 20L);
 		
+	}
+	
+	public String getDescription(String name){
+		if(description.containsKey(name)){
+			return description.get(name);
+		}else{
+			return name;
+		}
 	}
 	
 	public void msg(String message){

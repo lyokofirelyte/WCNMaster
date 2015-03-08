@@ -71,6 +71,7 @@ public class ElyCommand implements AutoRegister {
 	Map<String, String[]> help = new THashMap<String, String[]>();
 
 	private void fillMap(List<String> perms, boolean all){
+		help.clear();
 		for (Object o : main.divinity.commandMap.values()){
 			for (Method m : o.getClass().getMethods()){
 				if (m.getAnnotation(DivCommand.class) != null){
@@ -820,11 +821,13 @@ public class ElyCommand implements AutoRegister {
 		} else {
 			
 			switch (args[0].toLowerCase()){
-			
+
 				case "help": case "helpmepleaseidontknowwhatimdoing":
 					
 					if (p instanceof Player){
-						fillMap(main.api.getDivPlayer((Player)p).getList(DPI.PERMS), args.length == 2 && args[1].equals("all"));
+						System.out.println(args.length >= 2 && args[1].equals("all"));
+
+						fillMap(main.api.getDivPlayer((Player)p).getList(DPI.PERMS), args.length >= 2 && args[1].equals("all"));
 					} else {
 						fillMap(new ArrayList<String>(), true);
 					}
@@ -838,7 +841,14 @@ public class ElyCommand implements AutoRegister {
 					Collections.sort(sortedHelp);
 					int i = 10;
 					
-					if (args.length == 2){
+					if(args.length == 3 && args[1].equals("all") && args[2] != null){
+						if (DivinityUtilsModule.isInteger(args[2])){
+							i = Integer.parseInt(args[2]) * 10;
+						} else {
+							main.s(p, "&c&oThat's not a number...");
+							return;
+						}
+					}else if (args.length == 2 && !args[1].equals("all")){
 						if (DivinityUtilsModule.isInteger(args[1])){
 							i = Integer.parseInt(args[1]) * 10;
 						} else {
