@@ -22,6 +22,7 @@ com\github\lyokofirelyte\Elysian\Commands\ElyRings$1.class
 com\github\lyokofirelyte\Elysian\Events\ElyTP.class
 com\github\lyokofirelyte\Elysian\Events\ElyJoinQuit.class
 com\github\lyokofirelyte\Elysian\MMO\Abilities\TreeFeller.class
+com\github\lyokofirelyte\Elysian\Events\ElysianSocketListener$1.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefStorage$1.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData$SpleefPlayerData.class
 com\github\lyokofirelyte\Elysian\ElyMMOCleanup.class
@@ -121,6 +122,7 @@ com\github\lyokofirelyte\Elysian\Patrols\ElyPatrol.class
 com\github\lyokofirelyte\Elysian\MMO\MMO.class
 com\github\lyokofirelyte\Elysian\Events\ElyMobs$1.class
 com\github\lyokofirelyte\Elysian\Games\Hellwave\HellwaveCommands.class
+com\github\lyokofirelyte\Elysian\Events\ElysianSocketListener.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefStorage.class
 com\github\lyokofirelyte\Elysian\Games\Gotcha\GotchaData.class
 com\github\lyokofirelyte\Elysian\Commands\ElyStaff.class

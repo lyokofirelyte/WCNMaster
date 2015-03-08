@@ -289,6 +289,8 @@ public class ElyChat implements Listener, AutoRegister {
 		
 		if (!main.api.getDivPlayer(e.getPlayer()).getBool(DPI.MUTED)){
 
+			main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "chat", "&e\u26A1 &7" + e.getPlayer().getDisplayName() + "&f: " + e.getMessage());
+			
 			new Thread(new Runnable(){ public void run(){
 				
 				for (Player p : Bukkit.getOnlinePlayers()){
@@ -310,19 +312,6 @@ public class ElyChat implements Listener, AutoRegister {
 					String staffColor = sentFrom.getStr(DPI.STAFF_COLOR);
 					String playerDesc = sentFrom.getStr(DPI.PLAYER_DESC);
 					String globalColor = sendTo.getStr(DPI.GLOBAL_COLOR);
-					
-					// CHRISTMAS STUFF
-					/*
-					String clr = Arrays.asList("&c", "&2", "&4", "&a").get(new Random().nextInt(4));
-					
-					String rankColor = new Random().nextInt(2) == 0 ? "&6" : "&e";
-					String rankName = ChatColor.stripColor(sentFrom.getStr(DPI.RANK_NAME));
-					String rankDesc = sentFrom.getStr(DPI.RANK_DESC);
-					String staffDesc = sentFrom.getStr(DPI.STAFF_DESC);
-					String staffColor = clr;
-					String playerDesc = sentFrom.getStr(DPI.PLAYER_DESC);
-					*/
-					// END CHRISTMAS STUFF
 					
 					JSONChatMessage msg = new JSONChatMessage("", null, null);
 					
@@ -359,12 +348,13 @@ public class ElyChat implements Listener, AutoRegister {
 					main.api.event(new DivinityPluginMessageEvent(p, "globalChat", new String[]{"&7" + e.getPlayer().getDisplayName() + "&f: &7&o" + e.getMessage()}));
 				}
 				
-				Map<String, Object> map = new THashMap<String, Object>();
+				/*Map<String, Object> map = new THashMap<String, Object>();
 				map.put("user", ChatColor.stripColor(main.AS(p.getStr(DPI.DISPLAY_NAME))));
 				map.put("message", ChatColor.stripColor(main.AS(e.getMessage())));
 				map.put("type", "minecraft_insert");
 				String msg = (String) main.divinity.api.web.sendPost("/api/chat", map).get("message").toString();
-				main.divinity.api.web.messages.add(msg);
+				main.divinity.api.web.messages.add(msg);*/
+				
 				Bukkit.getConsoleSender().sendMessage(main.AS(e.getPlayer().getDisplayName() + "&f: " + e.getMessage()));
 				
 			}}).start();

@@ -3,11 +3,15 @@ package com.github.lyokofirelyte.Empyreal.Command;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 
 public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 	
@@ -51,5 +55,25 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 			break;
 		}
 		
+	}
+	
+	@GameCommand(aliases = { "o" }, help = "/o <msg>", desc = "Staff Chat", player = true)
+	public void onO(Player p, GamePlayer<?> gp, String[] args){
+		
+		if (p.isOp()){
+			
+			if (!main.getServerName().equals("GameServer")){
+				main.sendToSocket(main.getServerSockets().get("GameServer"), "forward", "o", "&c" + p.getDisplayName() + "&f: &c&o" + Utils.createString(args, 0));
+			} else {
+				for (Player player : Bukkit.getOnlinePlayers()){
+					if (player.isOp()){
+						player.sendMessage(Utils.AS("&4\u273B &c" + p.getDisplayName() + "&f: &c&o" + Utils.createString(args, 0)));
+					}
+				}
+			}
+			
+		} else {
+			gp.s("&c&oSorry, only staff can use staff chat!");
+		}
 	}
 }

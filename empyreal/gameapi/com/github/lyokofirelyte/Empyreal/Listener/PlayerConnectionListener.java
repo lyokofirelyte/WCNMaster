@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Empyreal.Command;
+package com.github.lyokofirelyte.Empyreal.Listener;
 
 import lombok.Getter;
 
@@ -10,7 +10,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.GameModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.google.common.collect.Iterables;
 
 public class PlayerConnectionListener implements AutoRegister<PlayerConnectionListener>, Listener {
@@ -39,7 +40,7 @@ public class PlayerConnectionListener implements AutoRegister<PlayerConnectionLi
 		
 		e.setQuitMessage(null);
 		
-		if (!main.getServerName().equals("GameServer")){
+		if (!main.getServerName().equals("GameServer") && !main.getServerName().equals("Creative")){
 			APIScheduler.DELAY.start(main, "quit " + e.getPlayer().getName(), 5L, new Runnable(){
 				public void run(){
 					if (Bukkit.getServer().getOnlinePlayers().size() <= 0 || (Bukkit.getServer().getOnlinePlayers().size() == 1 && Iterables.getFirst(Bukkit.getOnlinePlayers(), null).equals(e.getPlayer()))){

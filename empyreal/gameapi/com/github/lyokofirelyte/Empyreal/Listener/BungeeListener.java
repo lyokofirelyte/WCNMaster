@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Empyreal;
+package com.github.lyokofirelyte.Empyreal.Listener;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,8 +7,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.github.lyokofirelyte.Empyreal.Command.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Empyreal;
+import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Command.CommandEmpyreal;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 

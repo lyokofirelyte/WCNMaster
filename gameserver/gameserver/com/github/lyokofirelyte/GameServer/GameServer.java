@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.GameModule;
-import com.github.lyokofirelyte.Empyreal.GamePlayer;
 import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
+import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 
 public class GameServer extends JavaPlugin implements GameModule {
 	
@@ -32,6 +32,9 @@ public class GameServer extends JavaPlugin implements GameModule {
 	
 	@Getter
 	private Map<String, GameSign> signs = new HashMap<String, GameSign>();
+	
+	@Getter
+	private Map<String, Integer> socketPorts = new HashMap<String, Integer>();
 	
 	@Override
 	public void shutdown(){
@@ -63,6 +66,14 @@ public class GameServer extends JavaPlugin implements GameModule {
 		getApi().unregisterPlayer(getApi().getGamePlayer(p.getUniqueId()));
 	}
 	
+	@Override
+	public void onPlayerChat(GamePlayer<?> gp, String msg){
+		
+		Utils.bc("&7" + gp.getPlayer().getDisplayName() + "&f: &e" + msg);
+		getApi().sendToSocket(getApi().getServerSockets().get("wa"), "chat", "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+		getApi().sendToSocket(getApi().getServerSockets().get("Creative"), "chat", "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+	}
+	
 	public void updateAllSigns(String serverName, int line, String msg){
 		for (GameSign sign : getSigns().values()){
 			if (sign.getServerName().equals(serverName)){
@@ -73,8 +84,6 @@ public class GameServer extends JavaPlugin implements GameModule {
 	
 	@Override
 	public void onRegister(){
-		
-		System.out.println("Registered.");
 		
 		File file = new File("./plugins/GameServer/signs/");
 		file.mkdirs();

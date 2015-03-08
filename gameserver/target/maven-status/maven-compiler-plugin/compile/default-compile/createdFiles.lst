@@ -1,7 +1,9 @@
+com\github\lyokofirelyte\GameServer\CommandGameServer.class
 com\github\lyokofirelyte\GameServer\GenericListener.class
 com\github\lyokofirelyte\GameServer\GameSign.class
 com\github\lyokofirelyte\GameServer\GameServer.class
 com\github\lyokofirelyte\GameServer\GameServerPlayer.class
 com\github\lyokofirelyte\GameServer\InnerSignListener.class
 com\github\lyokofirelyte\GameServer\InnerSignListener$1.class
+com\github\lyokofirelyte\GameServer\GameSign$1.class
 com\github\lyokofirelyte\GameServer\SignListener.class

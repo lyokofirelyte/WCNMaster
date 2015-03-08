@@ -2,7 +2,6 @@ package com.github.lyokofirelyte.GameServer;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.lang.reflect.Field;
 
 import lombok.Getter;
@@ -10,16 +9,12 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
-import org.bukkit.craftbukkit.libs.com.google.gson.GsonBuilder;
-import org.bukkit.craftbukkit.libs.com.google.gson.JsonElement;
-import org.bukkit.craftbukkit.libs.com.google.gson.JsonParser;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.Saveable;
 import com.github.lyokofirelyte.Empyreal.Utils;
@@ -50,13 +45,23 @@ public class GameSign {
 	@Getter @Setter @Saveable
 	protected int Z;
 	
-	public GameSign(Sign sign){
-		setServerName(ChatColor.stripColor(sign.getLine(0)));
-		setState(ChatColor.stripColor(sign.getLine(2)));
-		setX(sign.getX());
-		setY(sign.getY());
-		setZ(sign.getZ());
-		setWorld(sign.getWorld().getName());
+	public GameSign(GameServer main, String serverName, String state, int x, int y, int z, String world, final Sign sign){
+		setServerName(serverName);
+		setState(state);
+		setX(x);
+		setY(y);
+		setZ(z);
+		setWorld(world);
+		
+		APIScheduler.DELAY.start(main.getApi(), x + y + z + "", 10L, new Runnable(){
+			public void run(){
+				sign.setLine(0, Utils.AS("&b" + getServerName()));
+				sign.setLine(1, Utils.AS("&f0 Players"));
+				sign.setLine(2, Utils.AS("&e&oPre-Lobby"));
+				sign.setLine(3, Utils.AS("&a[ JOIN ]"));
+				sign.update();
+			}
+		});
 	}
 	
 	public GameSign(File f){
@@ -89,6 +94,7 @@ public class GameSign {
 			try {
 				f.setAccessible(true);
 				if (f.getAnnotation(Saveable.class) != null){
+					System.out.println(f.get(this));
 					obj.put(f.getName().toUpperCase(), f.get(this));
 				}
 			} catch (Exception e){

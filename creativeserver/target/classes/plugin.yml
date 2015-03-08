@@ -1,0 +1,6 @@
+name: CreativeServer
+main: com.github.lyokofirelyte.CreativeServer.CreativeServer
+author: lyokofirelyte
+prefix: CreativeServer
+version: 1
+depend: [Empyreal, WorldEdit]

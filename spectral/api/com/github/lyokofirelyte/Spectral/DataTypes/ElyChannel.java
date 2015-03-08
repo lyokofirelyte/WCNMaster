@@ -9,7 +9,7 @@ import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
 public enum ElyChannel {
 
 	MEMBERS_ONLY("MEMBERS_ONLY", "wa.member", "&3Elysian &7\u2744", "&b"),
-	STAFF("STAFF", "wa.staff.intern", "&c&oOh! &4\u2744", "&c&o"),
+	STAFF("STAFF", "wa.staff.intern", "&4\u273B", "&c&o"),
 	ALLIANCE("ALLIANCE", "wa.alliance.<?>", "&aAlliance &2\u2744", "&a", DPI.ALLIANCE_TOGGLE),
 	SURVIVAL_WORLD("world", "wa.member", "&2World &a\u2744", "&2"),
 	NETHER("world_nether", "wa.member", "&4Nether &c\u2744", "&4"),

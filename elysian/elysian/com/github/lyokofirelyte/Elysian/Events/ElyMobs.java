@@ -399,7 +399,7 @@ public class ElyMobs implements Listener, AutoRegister {
 		
 		if (args.length == 0){
 			main.s(p, "Stored XP: &6" + dp.getInt(DPI.EXP) + "&b.");
-			main.s(p, "&7&o825 = level 30. Only take out what you need, as you can't put it back!");
+			main.s(p, "&7&o1395 = level 30. Only take out what you need, as you can't put it back!");
 		} else if (args.length == 2){
 		
 			if (args[0].equals("take")){

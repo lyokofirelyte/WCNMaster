@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Empyreal;
+package com.github.lyokofirelyte.Empyreal.Modules;
 
 import org.bukkit.entity.Player;
 
@@ -17,4 +17,6 @@ public interface GameModule {
 	public void onPlayerJoin(Player p);
 	
 	public void onPlayerQuit(Player p);
+	
+	public void onPlayerChat(GamePlayer<?> p, String msg);
 }

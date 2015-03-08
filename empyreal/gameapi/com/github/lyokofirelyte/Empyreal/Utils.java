@@ -146,11 +146,11 @@ public class Utils {
     }
 	
 	public static void s(CommandSender sender, String message){
-		sender.sendMessage(AS("&6\u26A1 &e" + message));
+		sender.sendMessage(AS("&e\u26A1 &6" + message));
 	}
 	
 	public static void bc(String message){
-		Bukkit.broadcastMessage(AS("&6\u26A1 &e" + message));
+		Bukkit.broadcastMessage(AS("&e\u26A1 &6" + message));
 	}
 	
 	public static void customBC(String message){

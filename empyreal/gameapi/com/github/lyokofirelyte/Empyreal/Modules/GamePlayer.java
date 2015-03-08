@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Empyreal;
+package com.github.lyokofirelyte.Empyreal.Modules;
 
 import java.util.List;
 import java.util.UUID;

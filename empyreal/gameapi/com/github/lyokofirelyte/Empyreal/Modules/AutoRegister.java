@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Empyreal.Command;
+package com.github.lyokofirelyte.Empyreal.Modules;
 
 public interface AutoRegister<T> {
 	
