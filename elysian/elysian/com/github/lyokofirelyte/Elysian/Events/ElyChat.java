@@ -289,7 +289,7 @@ public class ElyChat implements Listener, AutoRegister {
 		
 		if (!main.api.getDivPlayer(e.getPlayer()).getBool(DPI.MUTED)){
 
-			main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "chat", "&e\u26A1 &7" + e.getPlayer().getDisplayName() + "&f: " + e.getMessage());
+			main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "chat", "&7" + e.getPlayer().getDisplayName() + "&f: " + e.getMessage());
 			
 			new Thread(new Runnable(){ public void run(){
 				

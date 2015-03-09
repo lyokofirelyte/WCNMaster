@@ -854,7 +854,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		if (sender instanceof Player){
 			Player p = (Player) sender;
 			ElyChannel.STAFF.send(p.getDisplayName(), DivinityUtilsModule.createString(args, 0), main.api);
-			main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "forward", "o", "&4\u273B &c" + p.getDisplayName() + "&f: &c&o" + DivinityUtilsModule.createString(args, 0));
+			main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "forward", "o", "&c" + p.getDisplayName() + "&f: &c&o" + DivinityUtilsModule.createString(args, 0));
 		} else {
 			ElyChannel.STAFF.send("&4[&cS&6e&er&2v&ae&br&3]", DivinityUtilsModule.createString(args, 0), main.api);
 		}

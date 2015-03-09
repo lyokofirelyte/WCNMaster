@@ -10,6 +10,7 @@ import java.net.Socket;
 import lombok.Getter;
 
 import org.bukkit.Bukkit;
+import org.bukkit.inventory.Inventory;
 
 import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
@@ -59,13 +60,14 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 	}
 		
 	public void run(){
+		
+		String serverName = "";
 			
 		try {
 		    	
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream(), true);
 				
-			String serverName = "";
 			String inText = "";
 				
 			while ((inText = in.readLine()) != null){
@@ -130,12 +132,8 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 				    	break;
 				    	
 				    	case "assign_socket":
-				    		
-				    		main.getSocketPorts().put(serverName, new Integer(21000 + main.getSocketPorts().size()));
-				    		out.println("assign_socket");
-				    		out.println(main.getSocketPorts().get(serverName));
-				    		out.println("END");
-				    		main.getApi().getServerSockets().put(serverName, new Socket("127.0.0.1", main.getSocketPorts().get(serverName)));
+
+				    		main.getApi().getServerSockets().put(serverName, socket);
 				    		
 				    	break;
 				    	
@@ -151,7 +149,7 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 			}
 				
 		} catch (Exception e){
-			e.printStackTrace();
+			System.out.println(serverName + " is now offline.");
 		} finally {
 			try {
 				in.close();

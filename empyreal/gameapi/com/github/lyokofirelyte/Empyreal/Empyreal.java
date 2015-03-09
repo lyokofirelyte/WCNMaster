@@ -37,6 +37,7 @@ import org.json.simple.parser.JSONParser;
 
 import com.github.lyokofirelyte.Empyreal.Command.CommandRegistry;
 import com.github.lyokofirelyte.Empyreal.Listener.BungeeListener;
+import com.github.lyokofirelyte.Empyreal.Listener.EmpyrealSocketListener;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.ConsolePlayer;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
@@ -407,67 +408,11 @@ public class Empyreal extends JavaPlugin {
 		first.setDisplayName(Utils.AS(displayName));
 	}
 	
-	@SneakyThrows // to clean or not to clean...
+	@SneakyThrows
 	private void assignSocket(){
 		
 		sendToSocket(getServerSockets().get("GameServer"), "assign_socket", getServerName());
-		final BufferedReader in = new BufferedReader(new InputStreamReader(getServerSockets().get("GameServer").getInputStream()));
-		String inText = "";
-		
-		while ((inText = in.readLine()) != null){
-			
-			if (inText.equals("END")){
-				break;
-			}
-			
-			if (inText.equals("assign_socket")){
-				new Thread(new Runnable(){
-					public void run(){
-						try {
-							int portAssignment = Integer.parseInt(in.readLine());
-							ServerSocket socket = new ServerSocket(portAssignment);
-							while (true){
-								final Socket incomingSocket = socket.accept();
-								new Thread(new Runnable(){
-									public void run(){
-										try {
-											BufferedReader inBuffer = new BufferedReader(new InputStreamReader(incomingSocket.getInputStream()));
-											String text = "";
-											String serverName = inBuffer.readLine();
-											while ((text = inBuffer.readLine()) != null){
-												
-												switch (text){
-												
-													case "o":
-														
-														String msg = inBuffer.readLine();
-														
-														for (Player p : Bukkit.getOnlinePlayers()){
-															if (p.isOp()){
-																p.sendMessage(Utils.AS("&4\u273B " + msg));
-															}
-														}
-														
-													break;
-													
-													case "chat":
-														
-														Bukkit.broadcastMessage(Utils.AS("&e\u26A1 " + inBuffer.readLine()));
-														
-													break;
-													
-													case "END": break;
-												}
-											}
-										} catch (Exception e){}
-									}
-								}).start();
-							}
-						} catch (Exception e){}
-					}
-				}).start();
-				break;
-			}
-		}
+		BufferedReader in = new BufferedReader(new InputStreamReader(getServerSockets().get("GameServer").getInputStream()));
+		new Thread(new EmpyrealSocketListener(in)).start();
 	}
 }

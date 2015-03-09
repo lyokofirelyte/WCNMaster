@@ -70,6 +70,7 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 						player.sendMessage(Utils.AS("&4\u273B &c" + p.getDisplayName() + "&f: &c&o" + Utils.createString(args, 0)));
 					}
 				}
+				main.sendToAllServerSockets("o", "&c" + p.getDisplayName() + "&f: &c&o" + Utils.createString(args, 0));
 			}
 			
 		} else {
