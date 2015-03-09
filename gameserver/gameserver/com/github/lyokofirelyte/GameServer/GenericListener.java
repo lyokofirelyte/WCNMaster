@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
-import com.github.lyokofirelyte.Empyreal.Command.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
 public class GenericListener implements AutoRegister<GenericListener>, Listener {
 	
@@ -25,7 +25,7 @@ public class GenericListener implements AutoRegister<GenericListener>, Listener 
 	
 	public GenericListener(GameServer i){
 		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "gamerule doDaylightCycle false");
-		Bukkit.setDefaultGameMode(GameMode.ADVENTURE);
+		Bukkit.setDefaultGameMode(GameMode.SURVIVAL);
 	}
 
 	@EventHandler

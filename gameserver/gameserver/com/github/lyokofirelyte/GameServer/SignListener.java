@@ -5,22 +5,18 @@ import java.util.List;
 import lombok.Getter;
 
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
 import com.github.lyokofirelyte.Empyreal.Utils;
-import com.github.lyokofirelyte.Empyreal.Command.AutoRegister;
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
 public class SignListener implements AutoRegister<SignListener>, Listener {
 
@@ -55,13 +51,13 @@ public class SignListener implements AutoRegister<SignListener>, Listener {
 						}
 					}
 					
-					if (!main.getServerDeployQueue().containsKey(serverName)){
+					if (!main.getServerDeployQueue().containsKey(serverName) && sign.getLine(2).equals(Utils.AS("&e&oPre-Lobby"))){
 						main.getServerDeployQueue().put(serverName, e.getPlayer().getName());
 						main.getApi().deployServer(serverName);
 						sign.setLine(2, Utils.AS("&e&oStarting..."));
 						Utils.s(e.getPlayer(), "&ePlease wait while we create a fresh lobby...");
 					} else {
-						if (!sign.getLine(2).equals("&a&oLobby")){
+						if (!sign.getLine(2).equals(Utils.AS("&a&oLobby"))){
 							Utils.s(e.getPlayer(), "&c&oThat server is not ready yet!");
 						} else {
 							main.getApi().sendToServer(e.getPlayer().getName(), serverName);
@@ -79,13 +75,9 @@ public class SignListener implements AutoRegister<SignListener>, Listener {
 		
 		if (e.getPlayer().isOp()){
 			if (e.getLine(0).equals("game") && e.getLine(1) != null && !e.getLine(1).equals("")){
-				e.setLine(0, Utils.AS("&b" + e.getLine(1)));
-				e.setLine(1, Utils.AS("&f0 Players"));
-				e.setLine(2, Utils.AS("&e&oPre-Lobby"));
-				e.setLine(3, Utils.AS("&a[ JOIN ]"));
-				((Sign) e.getBlock().getState()).update();
-				GameSign sign = new GameSign((Sign) e.getBlock().getState());
-				main.getSigns().put(sign.getFullName(), sign);
+				Sign sign = ((Sign) e.getBlock().getState());
+				GameSign gs = new GameSign(main, e.getLine(1), "&e&oPre-Lobby", sign.getBlock().getX(), sign.getBlock().getY(), sign.getBlock().getZ(), sign.getWorld().getName(), sign);
+				main.getSigns().put(gs.getFullName(), gs);
 			}
 		}
 	}

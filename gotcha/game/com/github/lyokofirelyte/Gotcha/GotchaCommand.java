@@ -8,9 +8,9 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 
-import com.github.lyokofirelyte.Empyreal.GamePlayer;
-import com.github.lyokofirelyte.Empyreal.Command.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 
 public class GotchaCommand implements AutoRegister<GotchaCommand> {
 
@@ -23,12 +23,14 @@ public class GotchaCommand implements AutoRegister<GotchaCommand> {
 		main = i;
 	}
 	
-	@GameCommand(aliases = {"gotcha"}, desc = "Gotcha Game Command", help = "/gotcha help", player = true, min = 1)
+	@GameCommand(aliases = {"gotcha"}, desc = "Gotcha Game Command", help = "/gotcha help", player = true)
 	public void onGotcha(CommandSender sender, GamePlayer<?> gp, String[] args){
 		
 		if (!sender.isOp()){
 			gp.s("&c&oGotcha commands are for admins only, sorry!");
 		}
+		
+		args = args.length == 0 ? new String[] { "help" } : args;
 		
 		switch (args[0]){
 		

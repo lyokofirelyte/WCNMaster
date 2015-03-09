@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-
 import com.google.common.collect.Lists;
 
 import org.bukkit.Bukkit;
@@ -738,8 +736,11 @@ public class ElyStaff implements Listener, AutoRegister {
 		 main.s(sender, "&oTeleport block " + (dp.getBool(DPI.TP_BLOCK) + "").replace("true", "&aactive.").replace("false", "&cdisabled."));
 	 }
 	 
-	 @DivCommand(aliases = {"staff"}, desc = "Staff List Command", help = "/staff", player = false)
+	 @DivCommand(aliases = {"staff"}, desc = "Online Staff List Command", help = "/staff", player = false)
 	 public void onStaff(CommandSender p, String[] args){
+		 
+		 main.s(p, "Online Staff:");
+		 main.s(p, "");
 		 
 		 String interns = "";
 		 String mods = "";
@@ -778,7 +779,6 @@ public class ElyStaff implements Listener, AutoRegister {
 		 admins = admins.trim();
 		 admins = admins.replaceAll(" ", "&6, &7");
 		 main.s(p, admins);
-
 	 }
 	 
 	 @DivCommand(perm = "wa.staff.mod2", aliases = {"gamemode", "gm"}, desc = "GameMode Command", help = "/gm <c, s, a, sp> [player]", player = true, min = 1)
@@ -854,6 +854,9 @@ public class ElyStaff implements Listener, AutoRegister {
 		if (sender instanceof Player){
 			Player p = (Player) sender;
 			ElyChannel.STAFF.send(p.getDisplayName(), DivinityUtilsModule.createString(args, 0), main.api);
+			try{
+				main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "forward", "o", "&4\u273B &c" + p.getDisplayName() + "&f: &c&o" + DivinityUtilsModule.createString(args, 0));
+			}catch(Exception e){}
 		} else {
 			ElyChannel.STAFF.send("&4[&cS&6e&er&2v&ae&br&3]", DivinityUtilsModule.createString(args, 0), main.api);
 		}

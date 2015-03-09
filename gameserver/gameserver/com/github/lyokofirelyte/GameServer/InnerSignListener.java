@@ -11,7 +11,8 @@ import lombok.Getter;
 
 import org.bukkit.Bukkit;
 
-import com.github.lyokofirelyte.Empyreal.Command.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
 /**
  * Socket listener for when we can't use Bungee's plugin listener channel.
@@ -51,7 +52,7 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 			}
 		}).start();
 	}
-		
+	
 	public InnerSignListener(GameServer main, Socket s){
 		this.main = main;
 		this.socket = s;
@@ -76,6 +77,23 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 				if (inText != null && !inText.equals("END")){
 					
 					switch (inText){
+					
+						case "chat":
+							
+							String msg = Utils.AS(in.readLine());
+							Bukkit.broadcastMessage("&e\u26A1 " + msg);
+							
+							if (!main.getApi().getServerName().equals("Creative")){
+								main.getApi().sendToSocket(main.getApi().getServerSockets().get("Creative"), "chat", msg);
+							}
+							
+						break;
+						
+						case "forward":
+							
+							main.getApi().sendToAllServerSockets(in.readLine(), in.readLine());
+							
+						break;
 						
 						case "server_boot_complete":
 									
@@ -110,10 +128,25 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 				    		main.updateAllSigns(serverName, 2, "&c&oIn Progress");
 				    		
 				    	break;
+				    	
+				    	case "assign_socket":
+				    		
+				    		main.getSocketPorts().put(serverName, new Integer(21000 + main.getSocketPorts().size()));
+				    		out.println("assign_socket");
+				    		out.println(main.getSocketPorts().get(serverName));
+				    		out.println("END");
+				    		main.getApi().getServerSockets().put(serverName, new Socket("127.0.0.1", main.getSocketPorts().get(serverName)));
+				    		
+				    	break;
+				    	
+				    	case "remove_socket":
+				    		
+				    		main.getApi().getServerSockets().get(serverName).close();
+				    		main.getApi().getServerSockets().remove(serverName);
+				    		
+				    	break;
 					}
 					
-				} else {
-					break;
 				}
 			}
 				

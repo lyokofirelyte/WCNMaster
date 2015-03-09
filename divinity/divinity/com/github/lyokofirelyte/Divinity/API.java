@@ -5,8 +5,10 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,6 +18,10 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -78,7 +84,17 @@ public class API implements SpectralAPI {
 	public Map<String, Object> clazzez = new HashMap<String, Object>();
 	public Map<String, AutoSave> saveClasses = new HashMap<String, AutoSave>();
 	
+	@Getter @Setter
+	private Map<String, Socket> serverSockets = new HashMap<String, Socket>();
+	
+	@Getter @Setter
+	private String serverName = "";
+	
+	@SneakyThrows
 	public API(Divinity i){
+		
+		String thisFile = new File("javabestlanguage").getAbsolutePath();
+		setServerName(thisFile.split("\\" + File.separator)[thisFile.split("\\" + File.separator).length-2]);
 		
 		main = i;
 		divUtils = new DivinityUtilsModule(this);
@@ -100,6 +116,13 @@ public class API implements SpectralAPI {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		try{
+			serverSockets.put("GameServer", new Socket("127.0.0.1", 20000));
+		} catch(Exception e){
+			System.out.println("Could not connect to socket 20000.");
+		}
+		
 	}
 	
 	public boolean hasInstance(Class<?> clazz){
@@ -108,6 +131,18 @@ public class API implements SpectralAPI {
 	
 	public Object getInstance(Class<?> clazz){
 		return clazzez.get(clazz.toString());
+	}
+	
+	@SneakyThrows
+	public void sendToSocket(Socket socket, String... msgs){
+		
+		PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+		
+		pw.println(getServerName());
+		
+		for (String msg : msgs){
+			pw.println(msg);
+		}
 	}
 
 	public DivinityPlayer getDivPlayer(Object o){

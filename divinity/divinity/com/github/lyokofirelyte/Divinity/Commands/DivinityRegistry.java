@@ -158,7 +158,7 @@ public class DivinityRegistry implements CommandExecutor {
     						if (m.getAnnotation(DivCommand.class) != null && Arrays.asList(m.getAnnotation(DivCommand.class).aliases()).contains(command)){
     							try {
     								DivCommand anno = m.getAnnotation(DivCommand.class);
-    								if ((sender instanceof Player && main.getDivPlayer((Player)sender).getList(DPI.PERMS).contains(anno.perm())) || sender instanceof Player == false || sender.isOp()){
+    								if ((sender instanceof Player && main.getDivPlayer((Player)sender).getList(DPI.PERMS).contains(anno.perm())) || sender instanceof Player == false || sender.isOp() || anno.perm().equals("wa.guest")){
     									if (args.length > anno.max() || args.length < anno.min()){
     										DivinityUtilsModule.s(sender, anno.help());
     										return true;

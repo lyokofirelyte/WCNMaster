@@ -23,7 +23,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.SimplePluginManager;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 
 public class CommandRegistry implements CommandExecutor {
 	
@@ -78,7 +79,7 @@ public class CommandRegistry implements CommandExecutor {
     						if (m.getAnnotation(GameCommand.class) != null && Arrays.asList(m.getAnnotation(GameCommand.class).aliases()).contains(command)){
     							try {
     								GameCommand anno = m.getAnnotation(GameCommand.class);
-    								if ((sender instanceof Player && main.getGamePlayer(((Player) sender).getUniqueId()).getPerms().contains(anno.perm())) || sender instanceof Player == false || sender.isOp()){
+    								if ((sender instanceof Player && main.getGamePlayer(((Player) sender).getUniqueId()).getPerms().contains(anno.perm())) || sender instanceof Player == false || sender.isOp() || anno.perm().equals("emp.member")){
     									if (args.length > anno.max() || args.length < anno.min()){
     										s(sender, anno.help());
     										return true;

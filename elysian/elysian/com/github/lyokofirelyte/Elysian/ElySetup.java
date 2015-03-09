@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,13 +14,12 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 
 import com.github.lyokofirelyte.Divinity.Divinity;
-import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Divinity.Manager.RecipeHandler;
+import com.github.lyokofirelyte.Elysian.Events.ElyCrate;
 import com.github.lyokofirelyte.Elysian.Events.ElyLogger;
 import com.github.lyokofirelyte.Elysian.Gui.GuiCloset;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRoot;
-import com.github.lyokofirelyte.Elysian.MMO.ElyMMO;
 import com.github.lyokofirelyte.Elysian.Patrols.ElyPatrol;
 import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
 import com.github.lyokofirelyte.Spectral.DataTypes.ElyTask;
@@ -165,5 +163,6 @@ public class ElySetup {
 		rh.setIngredient('3', DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, 12));
 		rh.setIngredient('4', DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, 5));
 		main.getServer().addRecipe(rh.getShapedRecipe());
+		
 	}
 }

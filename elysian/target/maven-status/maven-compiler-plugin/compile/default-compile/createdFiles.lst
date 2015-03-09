@@ -11,6 +11,7 @@ com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefActive.class
 com\github\lyokofirelyte\Elysian\Gui\GuiLunarSpells.class
 com\github\lyokofirelyte\Elysian\Gui\GuiRingFuelSafe.class
 com\github\lyokofirelyte\Elysian\ElyMarkkit$2.class
+com\github\lyokofirelyte\Elysian\Events\ElysianSocketListener$1.class
 com\github\lyokofirelyte\Elysian\Commands\ElySpaceship.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefStorage$2$1.class
 com\github\lyokofirelyte\Elysian\Games\Cranked\Cranked.class
@@ -31,6 +32,7 @@ com\github\lyokofirelyte\Elysian\Commands\ElySpectate.class
 com\github\lyokofirelyte\Elysian\Games\Booth\BoothEvent.class
 com\github\lyokofirelyte\Elysian\Commands\ElyProxy.class
 com\github\lyokofirelyte\Elysian\Gui\GuiRings.class
+com\github\lyokofirelyte\Elysian\Events\ElysianSocketListener.class
 com\github\lyokofirelyte\Elysian\Commands\ElySpaceship$2.class
 com\github\lyokofirelyte\Elysian\Commands\ElyWealth.class
 com\github\lyokofirelyte\Elysian\Events\ElyMobs.class
@@ -85,6 +87,7 @@ com\github\lyokofirelyte\Elysian\Gui\GuiChest.class
 com\github\lyokofirelyte\Elysian\Events\ElyLogger$2.class
 com\github\lyokofirelyte\Elysian\Games\Cranked\CrankedActive.class
 com\github\lyokofirelyte\Elysian\Events\ElyJoinQuit$2.class
+com\github\lyokofirelyte\Elysian\Events\ElyCrate.class
 com\github\lyokofirelyte\Elysian\Games\TeamPVP\TeamPVPActive.class
 com\github\lyokofirelyte\Elysian\Events\ElyJoinQuit$1.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData$SpleefPlayerData.class

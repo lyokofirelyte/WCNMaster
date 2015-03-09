@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,8 +35,12 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.github.lyokofirelyte.Empyreal.Command.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Command.CommandRegistry;
+import com.github.lyokofirelyte.Empyreal.Listener.BungeeListener;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Modules.ConsolePlayer;
+import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
+import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -60,7 +65,7 @@ public class Empyreal extends JavaPlugin {
 	private Map<String, List<String>> previousBoards = new HashMap<String, List<String>>();
 	
 	@Getter @Setter
-	private Socket socketToGameServer;
+	private Map<String, Socket> serverSockets = new HashMap<String, Socket>();
 
 	@Getter @Setter
 	private CommandRegistry commandRegistry;
@@ -68,11 +73,13 @@ public class Empyreal extends JavaPlugin {
 	@Getter @Setter
 	private String serverName = "";
 
-	@Override
+	@Override @SneakyThrows
 	public void onEnable(){
 		
 		String thisFile = new File("javabestlanguage").getAbsolutePath();
 		setServerName(thisFile.split("\\" + File.separator)[thisFile.split("\\" + File.separator).length-2]);
+		
+		registerSockets();
 		
 		players.put(new ConsolePlayer().getUUID(), new ConsolePlayer());
 		commandRegistry = new CommandRegistry(this);
@@ -84,7 +91,7 @@ public class Empyreal extends JavaPlugin {
 		APIScheduler.REPEAT.start(this, "server_check", 1200L, 1200L, new Runnable(){
 			public void run(){
 
-				if (!getServerName().equals("GameServer") && !getServerName().equals("")){
+				if (!getServerName().equals("GameServer") && !getServerName().equals("") && !getServerName().equals("Creative")){
 					if (Bukkit.getOnlinePlayers().size() <= 0){
 						Bukkit.getServer().shutdown();
 					}
@@ -93,12 +100,45 @@ public class Empyreal extends JavaPlugin {
 		});
 	}
 	
+	private void registerSockets(){
+		
+		try {
+		
+			System.out.println("Registering sockets for " + getServerName() + "...");
+			
+			if (!serverName.equals("GameServer")){
+				serverSockets.put("GameServer", new Socket("127.0.0.1", 20000));
+			}
+
+			serverSockets.put("wa", new Socket("127.0.0.1", 20001));
+			
+			if (!serverName.equals("GameServer")){
+				assignSocket();
+			}
+			
+			System.out.println("Sockets registered!");
+			
+		} catch (Exception e){
+			System.out.println("Failed to register sockets. Retrying in 2 seconds...");
+			APIScheduler.DELAY.start(this, "init", 40L, new Runnable(){
+				public void run(){
+					registerSockets();
+				}
+			});
+		}
+	}
+	
 	@Override
 	public void onDisable(){
+		
 		for (GameModule module : gameModules){
 			if (gameModules.contains(module)){
 				unregisterModule(module);
 			}
+		}
+		
+		if (!serverName.equals("GameServer")){
+			sendToSocket(getServerSockets().get("GameServer"), "remove_socket");
 		}
 	}
 	
@@ -168,7 +208,6 @@ public class Empyreal extends JavaPlugin {
 	}
 	
 	public void registerModule(GameModule module){
-		System.out.println("Registered module " + module.getPackageName());
 		gameModules.add(module);
 		commandRegistry.registerAll(module, module.getPackageName(), module.getJarName());
 		module.onRegister();
@@ -181,22 +220,29 @@ public class Empyreal extends JavaPlugin {
 		}
 	}
 	
+	/**
+	 * Only call this from the GameServer. If you need to use this from somewhere else (ex: Gotcha), send a forward to the game server.
+	 * Ex: sendToSocket(getServerSockets().get("GameServer"), "forward", "reason", "message");
+	 */
 	@SneakyThrows
-	public void sendToGameServer(String... msgs){
-		
-		if (getSocketToGameServer() == null){
-			setSocketToGameServer(new Socket("127.0.0.1", 20000));
+	public void sendToAllServerSockets(String... msgs){
+		for (Socket socket : getServerSockets().values()){
+			if (socket != null){
+				sendToSocket(socket, msgs);
+			}
 		}
-
-		PrintWriter pw = new PrintWriter(getSocketToGameServer().getOutputStream(), true);
+	}
+	
+	@SneakyThrows
+	public void sendToSocket(Socket socket, String... msgs){
+		
+		PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
 		
 		pw.println(getServerName());
 		
 		for (String msg : msgs){
 			pw.println(msg);
 		}
-		
-		pw.println("END");
 	}
 	
 	public void sendPacketAll(String subchannel, Map<String, String> packet){
@@ -359,5 +405,69 @@ public class Empyreal extends JavaPlugin {
 		}
 			
 		first.setDisplayName(Utils.AS(displayName));
+	}
+	
+	@SneakyThrows // to clean or not to clean...
+	private void assignSocket(){
+		
+		sendToSocket(getServerSockets().get("GameServer"), "assign_socket", getServerName());
+		final BufferedReader in = new BufferedReader(new InputStreamReader(getServerSockets().get("GameServer").getInputStream()));
+		String inText = "";
+		
+		while ((inText = in.readLine()) != null){
+			
+			if (inText.equals("END")){
+				break;
+			}
+			
+			if (inText.equals("assign_socket")){
+				new Thread(new Runnable(){
+					public void run(){
+						try {
+							int portAssignment = Integer.parseInt(in.readLine());
+							ServerSocket socket = new ServerSocket(portAssignment);
+							while (true){
+								final Socket incomingSocket = socket.accept();
+								new Thread(new Runnable(){
+									public void run(){
+										try {
+											BufferedReader inBuffer = new BufferedReader(new InputStreamReader(incomingSocket.getInputStream()));
+											String text = "";
+											String serverName = inBuffer.readLine();
+											while ((text = inBuffer.readLine()) != null){
+												
+												switch (text){
+												
+													case "o":
+														
+														String msg = inBuffer.readLine();
+														
+														for (Player p : Bukkit.getOnlinePlayers()){
+															if (p.isOp()){
+																p.sendMessage(Utils.AS("&4\u273B " + msg));
+															}
+														}
+														
+													break;
+													
+													case "chat":
+														
+														Bukkit.broadcastMessage(Utils.AS("&e\u26A1 " + inBuffer.readLine()));
+														
+													break;
+													
+													case "END": break;
+												}
+											}
+										} catch (Exception e){}
+									}
+								}).start();
+							}
+						} catch (Exception e){}
+					}
+				}).start();
+				break;
+			}
+		}
 	}
 }

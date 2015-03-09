@@ -27,6 +27,7 @@
 	    <module>spectral</module>
 	    <module>empyreal</module>
 	    <module>gameserver</module>
+		<module>creativeserver</module>
 	    <module>gotcha</module>
 	</modules>
 	<properties>

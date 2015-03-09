@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
 import lombok.Getter;
 import lombok.Setter;
 
-import com.github.lyokofirelyte.Empyreal.GamePlayer;
 import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 
 public class GotchaPlayer implements GamePlayer<GotchaPlayer> {
 	

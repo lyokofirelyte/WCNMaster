@@ -18,11 +18,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.GameModule;
-import com.github.lyokofirelyte.Empyreal.GamePlayer;
 import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
+import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 
 public class Gotcha extends JavaPlugin implements GameModule {
 	
@@ -73,7 +74,7 @@ public class Gotcha extends JavaPlugin implements GameModule {
 			setChosenArena(arenas.get(new Random().nextInt(arenas.size())));
 		}
 		
-		getApi().sendToGameServer("server_boot_complete");
+		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "server_boot_complete");
 	}
 	
 	@Override
@@ -82,6 +83,11 @@ public class Gotcha extends JavaPlugin implements GameModule {
 		for (GotchaArena arena : arenas.values()){
 			arena.save();
 		}
+	}
+	
+	@Override
+	public void onPlayerChat(GamePlayer<?> gp, String msg){
+		Utils.bc("&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
 	}
 	
 	@Override
@@ -128,7 +134,7 @@ public class Gotcha extends JavaPlugin implements GameModule {
 	}
 	
 	public void start(){
-		getApi().sendToGameServer("game_in_progress");	
+		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "game_in_progress");	
 	}
 	
 	public void updateBoardAll(){

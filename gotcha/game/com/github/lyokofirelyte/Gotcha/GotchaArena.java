@@ -2,6 +2,7 @@ package com.github.lyokofirelyte.Gotcha;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -25,7 +26,7 @@ public class GotchaArena {
 	private String lobby;
 	
 	@Getter @Setter @Saveable
-	private List<String> spawnPoints;
+	private List<String> spawnPoints = new ArrayList<String>();
 	
 	@Getter
 	private String folderPath = "./plugins/Gotcha/arenas/";

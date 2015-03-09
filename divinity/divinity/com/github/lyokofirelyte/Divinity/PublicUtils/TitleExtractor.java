@@ -33,7 +33,7 @@ public class TitleExtractor {
     	
     	try {
 			return gpt(url);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			return "URL (no title)";
 		}
     }
