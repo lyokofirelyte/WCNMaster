@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
@@ -51,7 +52,12 @@ public class ElyNewMember implements AutoRegister {
 		 JSONChatExtra extra = new JSONChatExtra(main.AS("&aClick here to sign up!"), null, null);
 		 extra.setClickEvent(JSONChatClickEventType.OPEN_URL, "http://www.minecraftforum.net/forums/servers/pc-servers/hybrid-servers/773300-worlds-apart-1-7-survival-vanilla-creative-ranks");
 		 msg.addExtra(extra);
-		 msg.sendToAllPlayers();
+		 
+		 if(main.api.perms(p, "wa.staff.intern", true)){
+			 msg.sendToAllPlayers();
+		 }else{
+			 msg.sendToPlayer((Player)p);
+		 }
 		 
 		 DivinityUtilsModule.bc("--------------------------------------------");
 	 }

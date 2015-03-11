@@ -933,7 +933,14 @@ public enum DPI {
 	 * @dataType String
 	 */
 	
-	SIGN_LOCATION("SIGN_LOCATION");
+	SIGN_LOCATION("SIGN_LOCATION"),
+	
+	/**
+	 * Stores a list of rolldice values.
+	 * @dataType String list
+	 */
+	
+	ROLLDICE_LIST("ROLLDICE_LIST");
 
 	DPI(String info){
 		this.info = info;

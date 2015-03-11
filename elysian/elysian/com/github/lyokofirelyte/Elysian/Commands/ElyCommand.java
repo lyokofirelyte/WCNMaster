@@ -1,5 +1,7 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,8 +12,6 @@ import java.util.Random;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-
-import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,6 +24,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.json.simple.JSONObject;
 
@@ -106,6 +107,150 @@ public class ElyCommand implements AutoRegister {
 		}
 		
 		return false;
+	}
+	
+	
+	@DivCommand(aliases = {"tutorial"}, perm = "wa.member", desc = "Basic tutorial books for Worlds Apart!", help = "/tutorial", player = true)
+	public void onTutorial(Player p, String[] args){
+		
+		if(args.length == 0){
+			for(String s : new String[]{
+					"membership / member",
+					"staff"
+			}){
+				main.s(p, "/tutorial " + s);
+			}
+			return;
+		}
+		
+		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+		BookMeta bm = (BookMeta) book.getItemMeta();
+		bm.setAuthor("Server");
+		
+		switch(args[0].toLowerCase()){
+		
+			case "membership": case "member":
+				bm.setTitle(args[0].toUpperCase());
+				bm.setPages(textAsPages("Welcome to the Worlds Collide Network! Things can be a bit confusing when you're a new player, so we have some "
+						+ "tutorial books to help you along. The first thing you're going to want to do is apply for membership! This is "
+						+ "super easy and wont take much time. Start by typing '/member' in chat, this will give you a link to our "
+						+ "forums. The membership application is super simple, all you have to do is answer a few questions by posting on our forums. If you have any questions feel free to ask other players or staff for help."));
+				
+				book.setItemMeta(bm);
+				p.getInventory().addItem(book);
+				main.s(p, "Tutorial book: &6" + args[0] + "&b added!");
+				break;
+		
+			case "staff":
+				bm.setTitle(args[0].toUpperCase());
+				bm.setPages(textAsPages("You can type '/staff' in game to see which members are staff. Always feel free to ask them questions, they "
+						+ "will do the best they can to help you out! You will also see a colored 'WCN' in front of the names of staff "
+						+ "when they are talking."
+						+ " If you hover over 'WCN' it will give you a brief description of what that staff member does."));
+				
+				book.setItemMeta(bm);
+				p.getInventory().addItem(book);
+				main.s(p, "Tutorial book: &6" + args[0] + "&b added!");
+				break;
+		}
+		
+		
+		
+	}
+		
+	public List<String> textAsPages(String text){
+		List<String> pages = new ArrayList<String>();
+		StringBuilder page = new StringBuilder();
+		int charCount = 0;
+		
+		for(String s : text.split(" ")){
+			if(charCount + s.toCharArray().length > 170){
+				charCount = 0;
+				page.append(s + " ");
+				pages.add(page.toString());
+				page = new StringBuilder();
+			}else{
+				charCount = charCount + s.toCharArray().length;
+				page.append(s + " ");
+			}
+		}
+
+		if(charCount != 0){
+			pages.add(page.toString());
+		}
+		
+		return pages;
+		
+	}
+		
+	@DivCommand(aliases = {"rolldice", "rd"}, perm = "wa.staff.intern", desc = "Get a random result from a list!", help = "/rolldice", player = true)
+	public void onRollDice(Player p, String[] args){
+		
+		DivinityPlayer dp = main.api.getDivPlayer(p);
+		List<String> list = new ArrayList(main.api.getDivSystem().getList(DPI.ROLLDICE_LIST));
+
+		if(args.length == 0){
+			for(String s : new String[]{
+					"roll (Gets the random result)",
+					"add <#> (Adds it to the rolldice list)",
+					"remove <#> (Removes it from the rolldice list)",
+					"list (Shows you the list of current values)"
+			}){
+				dp.s("/rolldice " + s);
+			}
+			return;
+		}
+		
+		switch(args[0].toLowerCase()){
+		
+		case "roll":
+			dp.s("The value &6" + list.get(new Random().nextInt(list.size())) + " &bwas rolled!");
+			
+			break;
+		
+		
+		case "add":
+			if(args.length != 2) return;
+			
+			if(!list.contains(args[1])){
+				list.add(args[1]);
+				main.api.getDivSystem().set(DPI.ROLLDICE_LIST, list);
+				dp.s("Added!");
+			}else{
+				dp.s("Value already in the list!");
+			}
+			
+			break;
+		
+		
+		case "remove":
+			if(args.length != 2) return;
+			
+			if(list.contains(args[1])){
+				list.remove(args[1]);
+				main.api.getDivSystem().set(DPI.ROLLDICE_LIST, list);
+				dp.s("Removed!");
+			}else{
+				dp.s("Value not in the list!");
+			}
+			
+			break;
+	
+		case "list":
+			StringBuilder result = new StringBuilder();
+			
+			for(String s : list){
+				result.append("&6" + s + "&b, ");
+			}
+			
+			dp.s(result.toString());
+				
+			break;
+		
+			
+		
+		}
+		
 	}
 	
 	@DivCommand(aliases = {"website"}, desc = "Obtain a registration code for the website", help = "/website", player = true)
@@ -825,8 +970,6 @@ public class ElyCommand implements AutoRegister {
 				case "help": case "helpmepleaseidontknowwhatimdoing":
 					
 					if (p instanceof Player){
-						System.out.println(args.length >= 2 && args[1].equals("all"));
-
 						fillMap(main.api.getDivPlayer((Player)p).getList(DPI.PERMS), args.length >= 2 && args[1].equals("all"));
 					} else {
 						fillMap(new ArrayList<String>(), true);

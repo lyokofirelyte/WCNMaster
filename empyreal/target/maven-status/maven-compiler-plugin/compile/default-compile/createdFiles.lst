@@ -9,13 +9,12 @@ com\github\lyokofirelyte\Empyreal\Modules\ConsolePlayer.class
 com\github\lyokofirelyte\Empyreal\Empyreal$2.class
 com\github\lyokofirelyte\Empyreal\Saveable.class
 com\github\lyokofirelyte\Empyreal\Listener\BungeeListener.class
+com\github\lyokofirelyte\Empyreal\Listener\EmpyrealSocketListener.class
 com\github\lyokofirelyte\Empyreal\JSONMap.class
 com\github\lyokofirelyte\Empyreal\Listener\EmpyrealChatListener.class
 com\github\lyokofirelyte\Empyreal\APIScheduler.class
-com\github\lyokofirelyte\Empyreal\Empyreal$3$1.class
 com\github\lyokofirelyte\Empyreal\Command\CommandEmpyreal.class
 com\github\lyokofirelyte\Empyreal\Command\CommandRegistry.class
-com\github\lyokofirelyte\Empyreal\Empyreal$3.class
 com\github\lyokofirelyte\Empyreal\Listener\PlayerConnectionListener.class
 com\github\lyokofirelyte\Empyreal\Listener\PlayerConnectionListener$1.class
 com\github\lyokofirelyte\Empyreal\Modules\GameModule.class

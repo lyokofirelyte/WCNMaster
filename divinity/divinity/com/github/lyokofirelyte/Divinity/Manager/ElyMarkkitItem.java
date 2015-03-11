@@ -34,6 +34,14 @@ public class ElyMarkkitItem {
 		return damage;
 	}
 	
+	public void setMaterial(Material material){
+		this.material = material;
+	}
+	
+	public void setDurability(int durability){
+		this.damage = durability;
+	}
+	
 	public int getMaterialID(){
 		return material.getId();
 	}
@@ -41,7 +49,7 @@ public class ElyMarkkitItem {
 	public int getStackSellPrice(){
 		return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + "." + 64 + ".sellprice");
 	}
-	
+
 	public int getStackBuyPrice(){
 		return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + "." + 64 + ".buyprice");
 	}
@@ -64,6 +72,10 @@ public class ElyMarkkitItem {
 	
 	public int getInStock(){
 		return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + ".inStock");
+	}
+	
+	public int getAmountForPrice(int money){
+		return money / getBuyPrice(1);
 	}
 	
 	public void setInStock(int i){

@@ -7,7 +7,7 @@ import org.bukkit.event.block.BlockFormEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
 
 public class BoothEvent implements Listener {
-
+/*
 	Booth root;
 	Elysian main;
 	
@@ -23,4 +23,5 @@ public class BoothEvent implements Listener {
 		//}
 		
 	}
+	*/
 }

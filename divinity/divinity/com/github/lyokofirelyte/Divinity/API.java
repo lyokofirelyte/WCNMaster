@@ -117,7 +117,12 @@ public class API implements SpectralAPI {
 			e.printStackTrace();
 		}
 		
-		serverSockets.put("GameServer", new Socket("127.0.0.1", 20000));
+		try{
+			serverSockets.put("GameServer", new Socket("127.0.0.1", 20000));
+		} catch(Exception e){
+			System.out.println("Could not connect to socket 20000.");
+		}
+		
 	}
 	
 	public boolean hasInstance(Class<?> clazz){

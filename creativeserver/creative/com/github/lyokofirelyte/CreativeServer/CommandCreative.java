@@ -38,6 +38,15 @@ public class CommandCreative implements AutoRegister<CommandCreative>, Listener 
 		}
 	}
 	
+	@GameCommand(aliases = { "time" }, desc = "Set the time of yourself", help = "/time <#>", player = true)
+	public void onTimeSet(Player cs, GamePlayer<?> gp, String[] args){
+		if(Utils.isInteger(args[0])){
+			cs.setPlayerTime(Integer.parseInt(args[0]), false);
+		}else{
+			gp.s("That is not a number!");
+		}
+	}
+	
 	@GameCommand(aliases = { "tp", "teleport" }, desc = "Teleport Command", help = "/tp <player>", player = true)
 	public void onTP(Player cs, GamePlayer<?> gp, String[] args){
 		
