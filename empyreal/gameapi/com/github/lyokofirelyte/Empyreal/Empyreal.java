@@ -108,10 +108,10 @@ public class Empyreal extends JavaPlugin {
 			System.out.println("Registering sockets for " + getServerName() + "...");
 			
 			if (!serverName.equals("GameServer")){
-				serverSockets.put("GameServer", new Socket("127.0.0.1", 20000));
+				serverSockets.put("GameServer", new Socket("127.0.0.1", 24000));
 			}
 
-			serverSockets.put("wa", new Socket("127.0.0.1", 20001));
+			serverSockets.put("wa", new Socket("127.0.0.1", 24001));
 			
 			if (!serverName.equals("GameServer")){
 				assignSocket();
@@ -139,12 +139,19 @@ public class Empyreal extends JavaPlugin {
 		}
 		
 		if (!serverName.equals("GameServer")){
+			sendToSocket(getServerSockets().get("GameServer"), "server_shutdown");
 			sendToSocket(getServerSockets().get("GameServer"), "remove_socket");
 		}
 	}
 	
 	@SneakyThrows
 	public static void saveJSON(String completePath, JSONObject obj){
+		
+		File file = new File(completePath);
+		
+		if (!file.exists()){
+			file.createNewFile();
+		}
 		
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		JsonParser jp = new JsonParser();
@@ -154,27 +161,6 @@ public class Empyreal extends JavaPlugin {
 		writer.write(gson.toJson(je));
 		writer.flush();
 		writer.close();
-	}
-	
-	@SneakyThrows
-	public static JSONMap<Object, Object> loadJSON(String filePath){
-		
-		File file = new File(filePath);
-		JSONMap<Object, Object> map = new JSONMap();
-		
-		if (file.exists()){
-			
-			JSONObject obj = (JSONObject) new JSONParser().parse(new FileReader(file.getPath()));
-			
-			for (Object key : obj.keySet()){
-				map.set(key, obj.get(key));
-			}
-			
-		} else {
-			System.out.println("File does not exist: " + filePath + "!");
-		}
-		
-		return map;
 	}
 	
 	public void deployServer(String scriptName){
@@ -221,15 +207,48 @@ public class Empyreal extends JavaPlugin {
 		}
 	}
 	
+	@SneakyThrows
+	public static JSONMap<Object, Object> loadJSON(String filePath){
+		
+		File file = new File(filePath);
+		JSONMap<Object, Object> map = new JSONMap();
+		
+		if (file.exists()){
+			
+			JSONObject obj = (JSONObject) new JSONParser().parse(new FileReader(file.getPath()));
+			
+			for (Object key : obj.keySet()){
+				map.set(key, obj.get(key));
+			}
+			
+		} else {
+			System.out.println("File does not exist: " + filePath + "!");
+		}
+		
+		return map;
+	}
+	
 	/**
 	 * Only call this from the GameServer. If you need to use this from somewhere else (ex: Gotcha), send a forward to the game server.
-	 * Ex: sendToSocket(getServerSockets().get("GameServer"), "forward", "reason", "message");
+	 * Ex: sendToSocket(getServerSockets().get("GameServer"), "forward", "reason", "message"); <br />
+	 * Add any servers you don't want to be sent at the end!
 	 */
 	@SneakyThrows
 	public void sendToAllServerSockets(String... msgs){
-		for (Socket socket : getServerSockets().values()){
-			if (socket != null){
-				sendToSocket(socket, msgs);
+		
+		List<String> noSend = new ArrayList<String>();
+		
+		if (msgs.length >= 3){
+			for (int i = 2; i < msgs.length; i++){
+				noSend.add(msgs[i]);
+			}
+		}
+		
+		for (String socket : getServerSockets().keySet()){
+			if (getServerSockets().get(socket) != null){
+				if (!noSend.contains(socket)){
+					sendToSocket(getServerSockets().get(socket), msgs[0], msgs[1]);
+				}
 			}
 		}
 	}
@@ -356,6 +375,12 @@ public class Empyreal extends JavaPlugin {
 	
 	public void updateScoreBoard(GamePlayer<?> player, String displayName, String... scoreNames){
 		
+		displayName = Utils.AS(displayName);
+		
+		for (int i = 0; i < scoreNames.length; i++){
+			scoreNames[i] = Utils.AS(scoreNames[i]);
+		}
+		
 		if (!previousBoards.containsKey(player.getName())){
 			previousBoards.put(player.getName(), new ArrayList<String>());
 		}
@@ -413,6 +438,6 @@ public class Empyreal extends JavaPlugin {
 		
 		sendToSocket(getServerSockets().get("GameServer"), "assign_socket", getServerName());
 		BufferedReader in = new BufferedReader(new InputStreamReader(getServerSockets().get("GameServer").getInputStream()));
-		new Thread(new EmpyrealSocketListener(in)).start();
+		new Thread(new EmpyrealSocketListener(this, in)).start();
 	}
 }

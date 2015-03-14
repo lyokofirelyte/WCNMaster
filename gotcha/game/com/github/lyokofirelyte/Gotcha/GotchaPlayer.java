@@ -30,6 +30,9 @@ public class GotchaPlayer implements GamePlayer<GotchaPlayer> {
 	@Getter @Setter
 	private int score = 0;
 	
+	@Getter @Setter
+	private long cooldown = -1;
+	
 	public Player getPlayer(){
 		return Bukkit.getPlayer(UUID);
 	}

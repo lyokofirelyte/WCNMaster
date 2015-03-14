@@ -13,11 +13,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.ChatColor;
 
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
@@ -43,10 +46,16 @@ public class Gotcha extends JavaPlugin implements GameModule {
 	private GotchaArena chosenArena;
 	
 	@Getter @Setter
-	private int timeLeft = 0;
+	private int secondsLeft = 0;
 	
 	@Getter @Setter
 	private boolean gameStarted = false;
+	
+	@Getter @Setter
+	private boolean canShoot = false;
+	
+	@Getter @Setter
+	private GamePlayer<?> currentWinner;
 
 	@Override
 	public void onEnable(){
@@ -66,12 +75,12 @@ public class Gotcha extends JavaPlugin implements GameModule {
 		file.mkdirs();
 		
 		for (String arena : file.list()){
-			arenas.put(arena, new GotchaArena(arena));
-			arenas.get(arena).load();
+			arenas.put(arena.replace(".json", ""), new GotchaArena(arena.replace(".json", "")));
+			arenas.get(arena.replace(".json", "")).load();
 		}
 		
 		if (arenas.size() > 0){
-			setChosenArena(arenas.get(new Random().nextInt(arenas.size())));
+			setChosenArena((GotchaArena) arenas.values().toArray()[new Random().nextInt(arenas.size())]);
 		}
 		
 		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "server_boot_complete");
@@ -96,6 +105,18 @@ public class Gotcha extends JavaPlugin implements GameModule {
 		GamePlayer<GotchaPlayer> player = new GotchaPlayer(p);
 		getApi().registerPlayer(player);
 		
+		if (p.isOp()){
+			player.getPerms().add("gameserver.staff");
+			p.setOp(false);
+		}
+		
+		p.setGameMode(GameMode.SURVIVAL);
+		p.setWalkSpeed(0.2f);
+		p.setFlying(false);
+		p.setAllowFlight(false);
+		
+		updateList();
+		
 		if (arenas.size() > 0){
 			
 			p.teleport(getChosenArena().toLocation(getChosenArena().getLobby()));
@@ -106,18 +127,31 @@ public class Gotcha extends JavaPlugin implements GameModule {
 			im.setDisplayName(Utils.AS("&a&oReady!"));
 			im.setLore(Arrays.asList(Utils.AS("&d&oGotcha! Laser Weapon")));
 			i.setItemMeta(im);
-			p.getInventory().addItem(i);
+			p.setItemInHand(i);
 			
-			if (!isGameStarted() && Bukkit.getOnlinePlayers().size() >= 3){
+			if (!isGameStarted() && Bukkit.getOnlinePlayers().size() >= 2){
 				
 				APIScheduler.DELAY.start(getApi(), "gotcha_delay", 20*60L, new Runnable(){
 					public void run(){
-						if (Bukkit.getOnlinePlayers().size() >= 3){
+						
+						if (Bukkit.getOnlinePlayers().size() >= 2){
 							start();
 						} else {
 							Utils.bc("&c&oToo many players left! Waiting for players...");
 							setGameStarted(false);
+							APIScheduler.REPEAT.stop("gotcha_delay_2");
+							secondsLeft = 60;
+							updateBoardAll();
 						}
+					}
+				});
+				
+				secondsLeft = 60;
+				
+				APIScheduler.REPEAT.start(getApi(), "gotcha_delay_2", 0L, 20L, new Runnable(){
+					public void run(){
+						updateBoardAll();
+						secondsLeft--;
 					}
 				});
 				
@@ -134,17 +168,55 @@ public class Gotcha extends JavaPlugin implements GameModule {
 	}
 	
 	public void start(){
-		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "game_in_progress");	
-	}
-	
-	public void updateBoardAll(){
+		
+		updateList();
+		setCanShoot(true);
+		secondsLeft = 600;
+		
+		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "game_in_progress");
+		
 		for (Player p : Bukkit.getOnlinePlayers()){
-			GamePlayer<GotchaPlayer> player = getApi().getGamePlayer(p.getUniqueId());
-			updateBoard(player);
+			p.setWalkSpeed(0.4f);
+			spawnPlayer(p);
 		}
 	}
 	
-	public void updateBoard(GamePlayer<GotchaPlayer> gp){
+	public void endGame(){
+		
+		Utils.bc("Moving to lobby in 10 seconds...");
+		setCanShoot(false);
+		secondsLeft = 10;
+		updateBoardAll();
+		
+		for (Player p : Bukkit.getOnlinePlayers()){
+			p.getInventory().clear();
+			p.updateInventory();
+			p.setWalkSpeed(0.2f);
+		}
+		
+		gameStarted = false;
+	}
+	
+	public void spawnPlayer(Player p){
+		p.teleport(chosenArena.toLocation(chosenArena.getSpawnPoints().get(new Random().nextInt(chosenArena.getSpawnPoints().size()))));
+	}
+	
+	public void updateList(){
+		
+		String[] str = new String[Bukkit.getOnlinePlayers().size()];
+		int ii = 0;
+		
+		for (Player onlinePlayer : Bukkit.getOnlinePlayers()){
+			str[ii] = onlinePlayer.getDisplayName();
+			ii++;
+		}
+		
+		for (Player onlinePlayer : Bukkit.getOnlinePlayers()){
+			getApi().updateScoreBoard(getApi().getGamePlayer(onlinePlayer.getUniqueId()), "GOTCHA! " + getTimeLeft(), str);
+		}
+	}
+	
+	public void updateBoardAll(){
 		
 		List<Integer> scores = new ArrayList<Integer>();
 		Map<GamePlayer<GotchaPlayer>, Integer> mappedScores = new HashMap<>();
@@ -154,28 +226,55 @@ public class Gotcha extends JavaPlugin implements GameModule {
 			GamePlayer<GotchaPlayer> player = getApi().getGamePlayer(p.getUniqueId());
 			scores.add(player.getType().getScore());
 			mappedScores.put(player, player.getType().getScore());
+			p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).setDisplayName(Utils.AS("&aGOTCHA! " + getTimeLeft()));
 		}
 		
-		Collections.sort(scores);
-		Collections.reverse(scores);
-		
-		for (int i : scores){
-			for (GamePlayer<GotchaPlayer> g : mappedScores.keySet()){
-				if (g.getType().getScore() == i){
-					finals.add(g.getName() + " " + i);
-				}
+		for (Player p : Bukkit.getOnlinePlayers()){
+			for (GamePlayer<GotchaPlayer> gg : mappedScores.keySet()){
+				p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).getScore(gg.getName()).setScore(gg.getType().getScore());	
+			}
+			if (!p.isOp()){
+				p.closeInventory();
 			}
 		}
 		
-		getApi().updateScoreBoard(gp, "&aGOTCHA!",
-			finals.toArray(new String[finals.size()])
-		);
+		if (secondsLeft <= 0){
+			
+			if (canShoot){
+				Collections.sort(scores);
+				Collections.reverse(scores);
+	
+				for (int i : scores){
+					for (GamePlayer<GotchaPlayer> g : mappedScores.keySet()){
+						if (g.getType().getScore() == i){
+							finals.add(g.getName());
+						}
+					}
+				}
+				
+				Utils.bc("&7" + finals.get(0) + " &awas victorious!");
+				endGame();
+				
+			} else {
+				APIScheduler.REPEAT.stop("gotcha_delay_2");
+				getApi().sendAllToServer("GameServer");
+			}
+		}
+	}
+	
+	public String getTimeLeft(){
+		String time = Math.round(secondsLeft/60) + ":" + (secondsLeft % 60);
+		return time.split(":")[1].length() == 1 ? time.replace(":", ":0") : time;
 	}
 	
 	@Override
 	public void onPlayerQuit(Player p){
 		
 		GamePlayer<GotchaPlayer> player = getApi().getGamePlayer(p.getUniqueId());
+		
+		if (gameStarted){
+			Utils.bc("&e" + player.getName() + " &6<-> &econnection lost");
+		}
 		//TODO handle score sends later
 	}
 	

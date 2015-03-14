@@ -1,14 +1,7 @@
-//package com.github.lyokofirelyte.Gotcha;
+package com.github.lyokofirelyte.Gotcha;
 
-/*import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import lombok.Getter;
 
-import gnu.trove.map.hash.THashMap;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -20,44 +13,44 @@ import org.bukkit.entity.SmallFireball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.projectiles.ProjectileSource;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 
-import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
-import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
-import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Elysian.Games.Gotcha.GotchaData.GotchaGame;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Public.ParticleEffect;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.APIScheduler;
+import com.github.lyokofirelyte.Empyreal.ParticleEffect;
+import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 
-public class GotchaActive implements Listener {
+public class GotchaActive implements Listener, AutoRegister<GotchaActive> {
 
-	private Elysian main;
 	private Gotcha root;
+	
+	@Getter
+	private GotchaActive type = this;
 	
 	public GotchaActive(Gotcha i){
 		root = i;
-		main = root.main;
 	}
 	
 	@EventHandler
-	public void onQuit(PlayerQuitEvent e){
-		
-		DivinityPlayer dp = main.api.getDivPlayer(e.getPlayer());
-		
-		if (root.isPlayerInGame(dp)){
-			root.getGameWithPlayer(dp).remPlayer(dp);
-			root.getGameWithPlayer(dp).msg(e.getPlayer().getDisplayName() + " &c&ohas left the Gotcha game!");
+	public void onIn(InventoryDragEvent e){
+		if (!e.getWhoClicked().isOp()){
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onIn(InventoryClickEvent e){
+		if (!e.getWhoClicked().isOp()){
+			e.setCancelled(true);
 		}
 	}
 	
@@ -66,16 +59,7 @@ public class GotchaActive implements Listener {
 		
 		if (!e.getPlayer().isOp()){
 			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler
-	public void onDamage(EntityDamageEvent e){
-		
-		if (e.getEntity() instanceof Player){
-			if (root.getGameWithPlayer(main.api.getDivPlayer((Player)e.getEntity())) != null){
-				e.setCancelled(true);
-			}
+			e.getPlayer().closeInventory();
 		}
 	}
 	
@@ -85,25 +69,28 @@ public class GotchaActive implements Listener {
 		if (e.getEntity() instanceof SmallFireball){
 			
 			SmallFireball ball = (SmallFireball) e.getEntity();
-			DivinityPlayer shooter = null;
-			DivinityPlayer victim = null;
-			GotchaGame game = null;
 			
 			if (((Projectile) ball).getShooter() instanceof Player){
 				
-				shooter = main.api.getDivPlayer((Player) ((Projectile)ball).getShooter());
-				game = root.getGameWithPlayer(shooter);
-
-				if (game != null){
-					for (Entity v : ball.getNearbyEntities(2D, 2D, 2D)){
-						if (v instanceof Player){
-							victim = main.api.getDivPlayer((Player) v);
-							main.api.cancelTask(root.tasks.get(ball));
+				ProjectileSource source = ((Projectile) ball).getShooter();
+				GamePlayer<GotchaPlayer> shooter = root.getApi().getGamePlayer(((Player) source).getUniqueId());
+				
+				for (Entity v : ball.getNearbyEntities(2D, 2D, 2D)){
+					if (v instanceof Player){
+						GamePlayer<GotchaPlayer> shot = root.getApi().getGamePlayer(((Player) v).getUniqueId());
+						if (!shot.getName().equals(shooter.getName())){
+							APIScheduler.REPEAT.stop(ball.getUniqueId().toString());
 							ParticleEffect.ANGRY_VILLAGER.display(1, 1, 1, 0, 2000, v.getLocation(), 100);
 							v.getWorld().playSound(v.getLocation(), Sound.EXPLODE, 15F, 15F);
-							game.addPoint(shooter);
-							main.api.event(new DivinityTeleportEvent(Bukkit.getPlayer(victim.uuid()), game.getRandomSpawnPoint()));
-							game.msg("&6&oKill-Feed&f: " + shooter.getStr(DPI.DISPLAY_NAME) + " &7&o" + GotchaWords.generate() + "'d &7" + victim.getStr(DPI.DISPLAY_NAME));
+							shooter.getType().setScore(shooter.getType().getScore() + 1);
+							root.spawnPlayer(shot.getPlayer());
+							Utils.bc(shooter.getName() + " &7&o" + GotchaWords.generate() + "'d &6" + shot.getName());
+							
+							if (shooter.getType().getScore() >= 30){
+								Utils.bc("&7" + shooter.getName() + " &awas victorious!");
+								root.endGame();
+							}
+							
 							break;
 						}
 					}
@@ -113,95 +100,71 @@ public class GotchaActive implements Listener {
 	}
 	
 	@EventHandler
-	public void onLaunch(PlayerInteractEvent e){
-		
-		if (e.getAction() == Action.RIGHT_CLICK_AIR && e.getPlayer().getItemInHand().getType().equals(Material.DIAMOND_HOE)){
-			
-			Player p = e.getPlayer();
-			DivinityPlayer dp = main.api.getDivPlayer(p);
-			
-			if (dp.getBool(DPI.IN_GAME) && root.getGameWithPlayer(dp) != null && root.getGameWithPlayer(dp).isCooldownDone(dp)){
-				root.getGameWithPlayer(dp).resetCooldown(dp);
-				Location eyeLocation = p.getLocation();
-				eyeLocation.setY(eyeLocation.getY() + 1.5);
-				Location frontLocation = eyeLocation.add(eyeLocation.getDirection());
-				
-				SmallFireball fireball = (SmallFireball) p.getWorld().spawnEntity(frontLocation, EntityType.SMALL_FIREBALL);
-				fireball.setShooter(p);
-				fireball.setVelocity(p.getLocation().getDirection().multiply(2.2));
-				
-				String taskName = "gotchaLaser" + p.getName() + new Random().nextInt(1000);
-				
-				root.tasks.put(fireball, taskName);
-				main.api.repeat(this, "gotchaLaser", 0L, 1L, taskName, fireball);
-			}
-		}
-	}
-	
-	public void gotchaLaser(SmallFireball ball){
-		if (!ball.isDead()){
-			ParticleEffect.DRIP_WATER.display(0, 0, 0, 1, 100, ball.getLocation(), 30);
-			ParticleEffect.RED_DUST.display(0, 0, 0, 1, 50, ball.getLocation(), 30);
-		} else {
-			main.api.cancelTask(root.tasks.get(ball));
-			root.tasks.remove(ball);
+	public void onSwap(PlayerItemHeldEvent e){
+		if (!e.getPlayer().isOp()){
+			e.setCancelled(true);
 		}
 	}
 	
 	@EventHandler
-	public void onScoreboard(ScoreboardUpdateEvent e){
+	public void onLaunch(final PlayerInteractEvent e){
 		
-		if (e.getReason().contains("gameGotcha")){
-			
-			Player p = e.getPlayer();
-			DivinityPlayer dp = main.api.getDivPlayer(p);
-			GotchaGame game = root.getGameWithPlayer(dp);
-			Map<String, Integer> topScores = new THashMap<String, Integer>();
-			List<Integer> sortedScores = new ArrayList<Integer>();
-			boolean form = false;
-			
-			if (game != null){
+		if (root.isCanShoot()){
+			if (e.getAction() == Action.RIGHT_CLICK_AIR && e.getPlayer().getItemInHand().getType().equals(Material.DIAMOND_HOE)){
+				
+				Player p = e.getPlayer();
+				GamePlayer<GotchaPlayer> gp = root.getApi().getGamePlayer(p.getUniqueId());
+				GotchaPlayer g = gp.getType();
+				
+				if (g.getCooldown() == -1){
+
+					g.setCooldown(3L);
 					
-				ScoreboardManager manager = Bukkit.getScoreboardManager();
-				Scoreboard board = manager.getNewScoreboard();
-				Objective o = p.getScoreboard().getObjective(DisplaySlot.SIDEBAR);
-					
-				if (o == null || !o.getName().equals("gameGotcha")){
-					if (o != null){
-						o.unregister();
-					}
-					o = board.registerNewObjective("gameGotcha", "dummy");
-					o.setDisplaySlot(DisplaySlot.SIDEBAR);
-					form = true;
-				}
-				
-				o.setDisplayName("§6Gotcha! " + game.getTimeLeft());
-	
-				for (DivinityPlayer player : game.getPlayers()){
-					topScores.put(player.getStr(DPI.DISPLAY_NAME), game.getScore(player));
-					sortedScores.add(game.getScore(player));
-				}
-				
-				Collections.sort(sortedScores);
-				Collections.reverse(sortedScores);
-				
-				for (int score : sortedScores){
-					for (String name : topScores.keySet()){
-						if (topScores.get(name) == score){
-							Score s = o.getScore(main.AS(name));
-							s.setScore(score);
+					APIScheduler.REPEAT.start(root.getApi(), "cooldown_" + p.getName(), 20L, 20L, new Runnable(){
+						public void run(){
+							
+							Player p = e.getPlayer();
+							
+							if (p.getItemInHand() != null && !p.getItemInHand().getType().equals(Material.AIR)){
+								ItemStack i = p.getItemInHand();
+								ItemMeta im = i.getItemMeta();
+								GamePlayer<GotchaPlayer> gp = root.getApi().getGamePlayer(p.getUniqueId());
+								GotchaPlayer g = gp.getType();
+								
+								if (g.getCooldown() == 0){
+									im.setDisplayName(Utils.AS("&aReady!"));
+									APIScheduler.REPEAT.stop("cooldown_" + p.getName());
+									g.setCooldown(-1);
+								} else {
+									im.setDisplayName(Utils.AS("&a" + g.getCooldown()));
+									g.setCooldown(g.getCooldown() - 1L);
+								}
+								
+								i.setItemMeta(im);
+							}
 						}
-					}
-				}
+					});
+					
+					Location eyeLocation = p.getLocation();
+					eyeLocation.setY(eyeLocation.getY() + 1.5);
+					Location frontLocation = eyeLocation.add(eyeLocation.getDirection());
+					
+					final SmallFireball fireball = (SmallFireball) p.getWorld().spawnEntity(frontLocation, EntityType.SMALL_FIREBALL);
+					fireball.setShooter(p);
+					fireball.setVelocity(p.getLocation().getDirection().multiply(2.2));
 				
-				if (form){
-					p.setScoreboard(board);
-				}
-				
-				if (sortedScores.get(0) > 30 && sortedScores.get(0) > sortedScores.get(1) + 3){
-					game.stop();
+					APIScheduler.REPEAT.start(root.getApi(), fireball.getUniqueId().toString(), 0L, 1L, new Runnable(){
+						public void run(){
+							if (!fireball.isDead()){
+								ParticleEffect.DRIP_WATER.display(0, 0, 0, 1, 100, fireball.getLocation(), 30);
+								ParticleEffect.RED_DUST.display(0, 0, 0, 1, 50, fireball.getLocation(), 30);
+							} else {
+								APIScheduler.REPEAT.stop(fireball.getUniqueId().toString());
+							}
+						}
+					});
 				}
 			}
 		}
 	}
-}*/
+}
