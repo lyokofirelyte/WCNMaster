@@ -75,7 +75,7 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 		for(int i = 0; i < toDivGame().getStringList("arenas." + current + ".monsterspawn").size(); i++){
 			Location loc = getLocation(locationType.RANDOMMOB);
 			boolean spawnedWitch = false;
-			for(int j = 0; j < currentPlayers.size() * 2 + round; j++){
+			for(int j = 0; j < startingPlayers.size() * 2 + round; j++){
 				EntityType random = mobs.get(new Random().nextInt(mobs.size()));
 
 				if(random.equals(EntityType.SKELETON)){

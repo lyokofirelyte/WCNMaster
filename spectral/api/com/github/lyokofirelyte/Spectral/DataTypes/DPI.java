@@ -940,7 +940,14 @@ public enum DPI {
 	 * @dataType String list
 	 */
 	
-	ROLLDICE_LIST("ROLLDICE_LIST");
+	ROLLDICE_LIST("ROLLDICE_LIST"),
+	
+	/**
+	 *	Stores a list of players who need to get a key because they signed up one of their friends but were not online to receive the key.
+	 *  @dataType String list
+	 */
+	
+	CRATE_PLAYER_LIST("CRATE_PLAYER_LIST");
 
 	DPI(String info){
 		this.info = info;

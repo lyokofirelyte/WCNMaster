@@ -24,7 +24,7 @@ public class MMClasses {
 		ItemStack[] armor = null;
 		ItemStack[] contents = null;
 		ItemStack health = new ItemStack(Material.POTION, 3, (short)8229);
-
+		ItemStack milk = new ItemStack(Material.MILK_BUCKET, 3);
 		
 		switch(type.toLowerCase()){
 		
@@ -41,7 +41,7 @@ public class MMClasses {
 				stick.addUnsafeEnchantment(Enchantment.KNOCKBACK, 1);
 
 				
-				contents = new ItemStack[]{stick, fireprot, strength, food, health};
+				contents = new ItemStack[]{stick, fireprot, strength, food, health, milk};
 
 				break;
 		
@@ -53,7 +53,7 @@ public class MMClasses {
 				ItemStack sword = new ItemStack(Material.IRON_SWORD);
 
 				
-				contents = new ItemStack[]{sword, leaping, food, health};
+				contents = new ItemStack[]{sword, leaping, food, health, milk};
 				
 				p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 60 * 1000, 0));
 				
@@ -68,7 +68,7 @@ public class MMClasses {
 				bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
 				ItemStack arrow = new ItemStack(Material.ARROW);
 
-				contents = new ItemStack[]{arrow, bow, food, health, new ItemStack(Material.WOOD_SWORD)};
+				contents = new ItemStack[]{arrow, bow, food, health, new ItemStack(Material.WOOD_SWORD), milk};
 							
 				break;
 				
@@ -87,7 +87,7 @@ public class MMClasses {
 					i.addEnchantment(Enchantment.DURABILITY, 1);
 				}
 				
-				contents = new ItemStack[]{regen, health, food, damage, sword};
+				contents = new ItemStack[]{regen, health, food, damage, sword, milk};
 				
 				break;
 				
@@ -99,7 +99,7 @@ public class MMClasses {
 				axe.addUnsafeEnchantment(Enchantment.KNOCKBACK, 1);
 				
 				
-				contents = new ItemStack[]{food, axe, health};
+				contents = new ItemStack[]{food, axe, health, milk};
 				
 				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 60 * 1000, 2));
 				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * 60 * 1000, 0));
@@ -115,7 +115,7 @@ public class MMClasses {
 				ItemStack tnt = new ItemStack(Material.TNT, 64);
 				damage = new ItemStack(Material.POTION, 8, (short)16396);
 
-				contents = new ItemStack[]{flint, tnt, food, damage, health, new ItemStack(Material.WOOD_SWORD)};
+				contents = new ItemStack[]{flint, tnt, food, damage, health, new ItemStack(Material.WOOD_SWORD), milk};
 
 				p.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 60 * 1000, 0));
 

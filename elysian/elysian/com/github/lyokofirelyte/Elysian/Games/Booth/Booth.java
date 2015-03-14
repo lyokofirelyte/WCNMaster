@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.Games.Booth;
+/*package com.github.lyokofirelyte.Elysian.Games.Booth;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -53,8 +53,8 @@ public class Booth implements AutoSave, AutoRegister, DivGame{
 	public void load() {}
 	
 }
-
-/*package com.github.lyokofirelyte.Elysian.Games.Booth;
+*/
+package com.github.lyokofirelyte.Elysian.Games.Booth;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -99,21 +99,37 @@ public class Booth implements AutoSave, AutoRegister, DivGame{
 	}
 	
 	public boolean isInBooth(Location l, String arena){
+		for(String arenaName : dg.getConfigurationSection("Booths.").getKeys(false)){
+			System.out.println("Arena: " + arenaName);
+			for(String booth : dg.getConfigurationSection("Booths." + arenaName).getKeys(false)){
+				System.out.println("Booth: " + booth);
+				String[] loc1 = dg.getString("Booths." + arenaName + "." + booth + "MAX_BLOCK").split(" ");
+				String[] loc2 = dg.getString("Booths." + arenaName + "." + booth + "MIN_BLOCK").split(" ");
+				Location max = new Location(Bukkit.getWorld(loc1[0]), Integer.parseInt(loc1[1]), Integer.parseInt(loc1[2]), Integer.parseInt(loc1[3]));
+				Location min = new Location(Bukkit.getWorld(loc2[0]), Integer.parseInt(loc2[1]), Integer.parseInt(loc2[2]), Integer.parseInt(loc2[3]));
+				if(isBetween(min, max, l)){
+					return true;
+				}
+			}
+		}
+		
 		return false;
 	}
-	
+		
 	public String getArena(Location l){
-		ConfigurationSection booths = dg.getConfigurationSection("Booths." + getCurrentArena());
-
-		for(String s : booths.getKeys(false)){
-			System.out.println("Checking " + s);
-			//if(dg.getString("Booths." + s + ".owner") != null && dg.getString("Booths." + s + ".owner").equals(p.getUniqueId().toString())){
-				//System.out.println("already has");
-				//p.teleport(root.locFromConfig("Booths." + s + ".location"));
-			//	hasHome = true;
-			//	return;
+		for(String arenaName : dg.getConfigurationSection("Booths.").getKeys(false)){
+			System.out.println("Arena: " + arenaName);
+			for(String booth : dg.getConfigurationSection("Booths." + arenaName).getKeys(false)){
+				System.out.println("Booth: " + booth);
+				String[] loc1 = dg.getString("Booths." + arenaName + "." + booth + "MAX_BLOCK").split(" ");
+				String[] loc2 = dg.getString("Booths." + arenaName + "." + booth + "MIN_BLOCK").split(" ");
+				Location max = new Location(Bukkit.getWorld(loc1[0]), Integer.parseInt(loc1[1]), Integer.parseInt(loc1[2]), Integer.parseInt(loc1[3]));
+				Location min = new Location(Bukkit.getWorld(loc2[0]), Integer.parseInt(loc2[1]), Integer.parseInt(loc2[2]), Integer.parseInt(loc2[3]));
+				if(isBetween(min, max, l)){
+					return arenaName;
+				}
 			}
-		//}
+		}
 		return null;
 	}
 	
@@ -126,6 +142,17 @@ public class Booth implements AutoSave, AutoRegister, DivGame{
 	
 	public boolean isBetween(int first, int second, int check){
 		return first < second ? check >= first && check <= second : check <= first && check >= second;
+	}
+	
+	public boolean isBetween(Location first, Location second, Location check){
+		if(isBetween(first.getBlockX(), second.getBlockX(), check.getBlockX())){
+			if(isBetween(first.getBlockY(), second.getBlockY(), check.getBlockY())){
+				if(isBetween(first.getBlockZ(), second.getBlockZ(), check.getBlockZ())){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	//-700
@@ -153,4 +180,3 @@ public class Booth implements AutoSave, AutoRegister, DivGame{
 	public void load() {}
 	
 }
-*/

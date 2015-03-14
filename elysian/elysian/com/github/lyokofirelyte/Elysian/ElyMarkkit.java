@@ -317,7 +317,7 @@ public class ElyMarkkit implements Listener, AutoRegister {
 				
 				if(totalAmount > 0){
 					Date d = new Date();
-					dp.getList(DPI.MARKKIT_LOG).add(d.getDate() + "/" + d.getMonth() + " " + d.getHours() + ":" + d.getMinutes() + " &bSold &6" + totalAmount + "&b of &6" + mat.name() + " &bworth &6" + totalPrice.get(e.getWhoClicked().getName()) + " &bshinies");
+					dp.getList(DPI.MARKKIT_LOG).add(d.getDate() + "/" + (d.getMonth() + 1) + " " + d.getHours() + ":" + d.getMinutes() + " &bSold &6" + totalAmount + "&b of &6" + mat.name() + " &bworth &6" + totalPrice.get(e.getWhoClicked().getName()) + " &bshinies");
 					List<String> actions = main.api.getDivSystem().getList(DPI.LAST_ACTION);
 					String toRemove = "";
 					for (String a : actions){

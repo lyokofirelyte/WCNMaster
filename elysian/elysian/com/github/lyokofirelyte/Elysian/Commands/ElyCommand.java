@@ -110,7 +110,7 @@ public class ElyCommand implements AutoRegister {
 	}
 	
 	
-	@DivCommand(aliases = {"tutorial"}, perm = "wa.member", desc = "Basic tutorial books for Worlds Apart!", help = "/tutorial", player = true)
+	@DivCommand(aliases = {"tutorial"}, perm = "wa.guest", desc = "Basic tutorial books for Worlds Apart!", help = "/tutorial", player = true)
 	public void onTutorial(Player p, String[] args){
 		
 		if(args.length == 0){

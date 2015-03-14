@@ -1,3 +1,4 @@
+/*
 package com.github.lyokofirelyte.Elysian.Games.Booth;
 
 import gnu.trove.map.hash.THashMap;
@@ -194,8 +195,8 @@ public class BoothCommand {
 	}
 		
 }
-
-/*package com.github.lyokofirelyte.Elysian.Games.Booth;
+*/
+package com.github.lyokofirelyte.Elysian.Games.Booth;
 
 import gnu.trove.map.hash.THashMap;
 
@@ -468,4 +469,3 @@ public class BoothCommand {
 	}
 		
 }
-*/

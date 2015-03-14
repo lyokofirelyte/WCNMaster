@@ -739,7 +739,6 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 			if (p.hasPotionEffect(PotionEffectType.FAST_DIGGING)){
 				for (PotionEffect eff : p.getActivePotionEffects()){
 					if (eff.getType().equals(PotionEffectType.FAST_DIGGING)){
-						System.out.println(eff.getAmplifier());
 						if (eff.getAmplifier() == 5000){
 							p.removePotionEffect(PotionEffectType.FAST_DIGGING);
 						}
