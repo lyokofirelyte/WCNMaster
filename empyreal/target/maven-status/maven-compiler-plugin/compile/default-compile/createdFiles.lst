@@ -6,6 +6,7 @@ com\github\lyokofirelyte\Empyreal\Command\Cmd.class
 com\github\lyokofirelyte\Empyreal\RefUtils$DataType.class
 com\github\lyokofirelyte\Empyreal\Modules\ConsolePlayer.class
 com\github\lyokofirelyte\Empyreal\RefUtils$PackageType.class
+com\github\lyokofirelyte\Empyreal\Listener\GenericSignListener.class
 com\github\lyokofirelyte\Empyreal\Listener\EmpyrealSocketListener.class
 com\github\lyokofirelyte\Empyreal\ParticleEffect$ParticleEffectPacket$PacketInstantiationException.class
 com\github\lyokofirelyte\Empyreal\ParticleEffect$ParticleEffectPacket.class
@@ -17,6 +18,7 @@ com\github\lyokofirelyte\Empyreal\Empyreal.class
 com\github\lyokofirelyte\Empyreal\Modules\GamePlayer.class
 com\github\lyokofirelyte\Empyreal\ParticleEffect.class
 com\github\lyokofirelyte\Empyreal\Modules\AutoRegister.class
+com\github\lyokofirelyte\Empyreal\FireworkShenans.class
 com\github\lyokofirelyte\Empyreal\Empyreal$2.class
 com\github\lyokofirelyte\Empyreal\Saveable.class
 com\github\lyokofirelyte\Empyreal\Listener\BungeeListener.class

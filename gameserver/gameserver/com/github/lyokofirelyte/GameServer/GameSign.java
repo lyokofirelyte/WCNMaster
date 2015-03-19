@@ -45,13 +45,16 @@ public class GameSign {
 	@Getter @Setter @Saveable
 	protected int Z;
 	
-	public GameSign(GameServer main, String serverName, String state, int x, int y, int z, String world, final Sign sign){
+	private GameServer main;
+	
+	public GameSign(GameServer i, String serverName, String state, int x, int y, int z, String world, final Sign sign){
 		setServerName(serverName);
 		setState(state);
 		setX(x);
 		setY(y);
 		setZ(z);
 		setWorld(world);
+		main = i;
 		
 		APIScheduler.DELAY.start(main.getApi(), x + y + z + "", 10L, new Runnable(){
 			public void run(){
@@ -107,9 +110,16 @@ public class GameSign {
 	}
 	
 	public void updateLine(int line, String msg){
-		Sign sign = (Sign) new Location(Bukkit.getWorld(world), X, Y, Z).getBlock().getState();
-		sign.setLine(line, Utils.AS(msg));
-		sign.update();
+		try {
+			Sign sign = (Sign) new Location(Bukkit.getWorld(world), X, Y, Z).getBlock().getState();
+			sign.setLine(line, Utils.AS(msg));
+			sign.update();
+		} catch (Exception e){
+			try {
+				main.getSigns().remove(getFullName());
+				delete();
+			} catch (Exception ee){}
+		}
 	}
 	
 	public void delete(){

@@ -144,6 +144,17 @@ public class Empyreal extends JavaPlugin {
 		}
 	}
 	
+	public static void saveJSON(String completePath, JSONMap map){
+		
+		JSONObject obj = new JSONObject();
+		
+		for (Object key : map.keySet()){
+			obj.put(key, map.get(key));
+		}
+		
+		saveJSON(completePath, obj);
+	}
+	
 	@SneakyThrows
 	public static void saveJSON(String completePath, JSONObject obj){
 		
@@ -163,6 +174,11 @@ public class Empyreal extends JavaPlugin {
 		writer.close();
 	}
 	
+	public String getTimeLeft(int secondsLeft){
+		String time = Math.round(secondsLeft/60) + ":" + (secondsLeft % 60);
+		return time.split(":")[1].length() == 1 ? time.replace(":", ":0") : time;
+	}
+	
 	public void deployServer(String scriptName){
 		
 		String ext = System.getProperty("os.name").contains("Windows") ? ".bat" : ".sh";
@@ -174,11 +190,15 @@ public class Empyreal extends JavaPlugin {
 		}
 	}
 	
-	public <T> AutoRegister<T> getInstance(Class<?> clazz){
+	public <T> AutoRegister<T> getInstance(Class<T> clazz){
 		return (AutoRegister<T>) clazzez.get(clazz.toString());
 	}
 	
 	public <T> GamePlayer<T> getGamePlayer(UUID uuid){
+		return (GamePlayer<T>) players.get(uuid);
+	}
+	
+	public <T> GamePlayer<T> getGamePlayer(UUID uuid, Class<T> clazz){
 		return (GamePlayer<T>) players.get(uuid);
 	}
 	

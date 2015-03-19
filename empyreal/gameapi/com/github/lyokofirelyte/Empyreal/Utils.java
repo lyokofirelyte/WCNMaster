@@ -377,7 +377,7 @@ public class Utils {
 		}
 	}
 	
-	public void lowerEffects(Location ll){
+	public static void lowerEffects(Location ll){
 		
 		List<Location> circleblocks = circle(ll, 3, 1, true, false, 0);
 
@@ -386,7 +386,7 @@ public class Utils {
 		}
 	}
  	
-	public void effects(Player q){
+	public static void effects(Player q){
 		
 		List<Location> circleblocks = circle(q.getLocation(), 3, 1, true, false, 0);
 		List<Location> circleblocks2 = circle(q.getLocation(), 3, 1, true, false, 1);

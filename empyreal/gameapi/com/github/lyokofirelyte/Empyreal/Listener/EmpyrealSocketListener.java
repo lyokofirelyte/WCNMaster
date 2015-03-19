@@ -62,8 +62,8 @@ public class EmpyrealSocketListener implements Runnable {
 					
 					case "globalcast":
 						
-						msg = Utils.AS(in.readLine());
-						Bukkit.broadcastMessage("&e\u26A1 &b&l" + msg);
+						msg = Utils.AS("&e\u26A1 &b&1" + in.readLine());
+						Bukkit.broadcastMessage(msg);
 						Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title @a title '" + msg + "'");
 						
 					break;

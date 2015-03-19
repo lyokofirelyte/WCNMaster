@@ -29,6 +29,7 @@
 	    <module>gameserver</module>
 		<module>creativeserver</module>
 	    <module>gotcha</module>
+	    <module>platform</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

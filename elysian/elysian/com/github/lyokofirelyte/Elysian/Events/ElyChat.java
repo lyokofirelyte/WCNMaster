@@ -1,14 +1,17 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -292,11 +295,20 @@ public class ElyChat implements Listener, AutoRegister {
 			
 			new Thread(new Runnable(){ public void run(){
 				
+				DivinityPlayer sentFrom = main.api.getDivPlayer(e.getPlayer());
+				String rawMsg = new String(e.getMessage());
+				List<String> words = YamlConfiguration.loadConfiguration(new File("./plugins/Divinity/system/words.yml")).getStringList("words");
+
+				if (sentFrom.getBool(DPI.DANK)){
+					for (String w : words){
+						rawMsg = rawMsg.replace(w.replace("-", "").trim(), "dank");
+						e.setMessage(e.getMessage().replace(w.replace("-", "").trim(), "dank"));
+					}
+				}
+				
 				for (Player p : Bukkit.getOnlinePlayers()){
 					
 					DivinityPlayer sendTo = main.api.getDivPlayer(p);
-					DivinityPlayer sentFrom = main.api.getDivPlayer(e.getPlayer());
-					String rawMsg = new String(e.getMessage());
 					sendTo.set(DPI.ELY, false);
 					sentFrom.set(DPI.ELY, false);
 					

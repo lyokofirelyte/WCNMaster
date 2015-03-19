@@ -32,13 +32,13 @@ public class CommandCreative implements AutoRegister<CommandCreative>, Listener 
 		
 		if (cs.isOp()){
 			main.setToWAPort(gp.getPlayer().getLocation());
-			gp.s("The block under you will send you to WA on click.");
+			gp.s("The block inside of you will send you to WA on click.");
 		} else {
 			gp.s("Sorry, only admins can use this command!");
 		}
 	}
 	
-	@GameCommand(aliases = { "time" }, desc = "Set the time of yourself", help = "/time <#>", player = true)
+	@GameCommand(min = 1, aliases = { "time" }, desc = "Set the time of yourself", help = "/time <#>", player = true)
 	public void onTimeSet(Player cs, GamePlayer<?> gp, String[] args){
 		if(Utils.isInteger(args[0])){
 			cs.setPlayerTime(Integer.parseInt(args[0]), false);
@@ -74,7 +74,21 @@ public class CommandCreative implements AutoRegister<CommandCreative>, Listener 
 				"/plotme add",
 				"/plotme remove",
 				"/plotme deny",
-				"/plotme undeny"
+				"/plotme undeny",
+				"/plot",
+				"/plot home",
+				"/plot auto",
+				"/plot info",
+				"/plot biome",
+				"/plot list",
+				"/plot tp",
+				"/plot dispose",
+				"/plot add",
+				"/plot remove",
+				"/plot deny",
+				"/plot undeny",
+				"/spawn",
+				"/s"
 			};
 			
 			String[] blockedCommands = new String[]{
@@ -94,7 +108,7 @@ public class CommandCreative implements AutoRegister<CommandCreative>, Listener 
 				if (e.getMessage().toLowerCase().startsWith(cmd)){
 					e.setCancelled(true);
 					e.getPlayer().setOp(true);
-					e.getPlayer().performCommand(e.getMessage());
+					e.getPlayer().performCommand(e.getMessage().substring(1));
 					e.getPlayer().setOp(false);
 					break;
 				}
