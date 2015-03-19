@@ -69,6 +69,9 @@ public class APIUsageExample /*extends JavaPlugin*/ implements GameModule {
 		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "server_boot_complete");
 		
 		
+		// When the game is stared and you don't want anyone else to be able to join
+		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "game_in_progress");
+		
 	}
 
 	@Override
