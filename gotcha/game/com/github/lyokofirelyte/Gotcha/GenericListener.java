@@ -58,9 +58,16 @@ public class GenericListener implements AutoRegister<GenericListener>, Listener 
 			"/s"
 		));
 		
-		if (!e.getPlayer().isOp() && !allowedCommands.contains(e.getMessage())){
-			e.setCancelled(true);
+		boolean found = false;
+		
+		for (String s : allowedCommands){
+			if (e.getMessage().startsWith(s)){
+				found = true;
+				break;
+			}
 		}
+		
+		e.setCancelled(!found);
 	}
 	
 	@EventHandler

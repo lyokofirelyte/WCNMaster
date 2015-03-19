@@ -179,6 +179,17 @@ public class Gotcha extends JavaPlugin implements GameModule {
 			p.setWalkSpeed(0.4f);
 			spawnPlayer(p);
 		}
+		
+		APIScheduler.REPEAT.start(api, "fall_catcher", 100L,  100L, new Runnable(){
+			public void run(){
+				for (Player p : Bukkit.getOnlinePlayers()){
+					if (p.getLocation().getBlockY() <= 0){
+						spawnPlayer(p);
+						Utils.bc("&6" + p.getName() + " &7&ofell into the void");
+					}
+				}
+			}
+		});
 	}
 	
 	public void endGame(){
@@ -232,9 +243,6 @@ public class Gotcha extends JavaPlugin implements GameModule {
 		for (Player p : Bukkit.getOnlinePlayers()){
 			for (GamePlayer<GotchaPlayer> gg : mappedScores.keySet()){
 				p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).getScore(gg.getName()).setScore(gg.getType().getScore());	
-			}
-			if (!p.isOp()){
-				p.closeInventory();
 			}
 		}
 		

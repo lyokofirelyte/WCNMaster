@@ -109,6 +109,12 @@ public class ElyCommand implements AutoRegister {
 		return false;
 	}
 	
+	@DivCommand(aliases = {"dank"}, perm = "wa.member", desc = "Dank Command", help = "/dank", player = true)
+	public void onDank(Player p, String[] args){
+		main.api.getDivPlayer(p).set(DPI.DANK, !main.api.getDivPlayer(p).getBool(DPI.DANK));
+		main.s(p, "Updated dank mode.");
+	}
+	
 	
 	@DivCommand(aliases = {"tutorial"}, perm = "wa.guest", desc = "Basic tutorial books for Worlds Apart!", help = "/tutorial", player = true)
 	public void onTutorial(Player p, String[] args){

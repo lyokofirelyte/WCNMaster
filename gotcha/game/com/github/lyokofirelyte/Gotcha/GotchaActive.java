@@ -16,6 +16,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -49,6 +50,13 @@ public class GotchaActive implements Listener, AutoRegister<GotchaActive> {
 	
 	@EventHandler
 	public void onIn(InventoryClickEvent e){
+		if (!e.getWhoClicked().isOp()){
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onIn(InventoryInteractEvent e){
 		if (!e.getWhoClicked().isOp()){
 			e.setCancelled(true);
 		}

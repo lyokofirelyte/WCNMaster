@@ -117,7 +117,7 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 			case "chat":
 				
 				msg = Utils.AS(in.readLine());
-				Bukkit.broadcastMessage(Utils.AS("&e\u26A1 ") + msg);
+				Bukkit.broadcastMessage(Utils.AS("&e\u26A1 " + msg));
 				
 				if (!serverName.equals("Creative")){
 					main.getApi().sendToSocket(main.getApi().getServerSockets().get("Creative"), "chat", msg);
@@ -127,8 +127,8 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 			
 			case "globalcast":
 				
-				msg = Utils.AS(in.readLine());
-				Bukkit.broadcastMessage(Utils.AS("&e\u26A1 &b&l") + msg);
+				msg = Utils.AS("&e\u26A1 &b&l" + in.readLine());
+				Bukkit.broadcastMessage(msg);
 				Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title @a title '" + msg + "'");
 				
 			break;
@@ -174,10 +174,11 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 							sign.updateLine(2, "&a&oLobby");
 						}
 					}
+					
+				} else {
+					System.out.println("We couldn't find anyone to send to " + serverName + "!");
 				}
 			    		
-				System.out.println("We couldn't find anyone to send to " + serverName + "!");
-						
 			break;
 			
 	    	case "server_shutdown":
@@ -195,7 +196,7 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 	    	
 	    	case "assign_socket":
 	
-	    		main.getApi().getServerSockets().put(serverName, socket);
+	    		main.getApi().getServerSockets().put(in.readLine(), socket);
 	    		
 	    	break;
 	    	

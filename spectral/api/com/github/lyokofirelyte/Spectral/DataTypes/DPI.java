@@ -2,6 +2,8 @@ package com.github.lyokofirelyte.Spectral.DataTypes;
 
 public enum DPI {
 	
+	DANK("DANK"),
+	
 	/**
 	 * Server name from BungeeCord
 	 * @dataType String

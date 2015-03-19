@@ -5,6 +5,7 @@ com\github\lyokofirelyte\Empyreal\Listener\PlayerConnectionListener$1.class
 com\github\lyokofirelyte\Empyreal\Modules\AutoRegister.class
 com\github\lyokofirelyte\Empyreal\ParticleEffect$ParticleEffectPacket$PacketSendingException.class
 com\github\lyokofirelyte\Empyreal\Modules\ConsolePlayer.class
+<<<<<<< HEAD
 com\github\lyokofirelyte\Empyreal\ParticleEffect$ParticleEffectPacket$VersionIncompatibleException.class
 com\github\lyokofirelyte\Empyreal\Listener\BungeeListener.class
 com\github\lyokofirelyte\Empyreal\Modules\GameModule.class
@@ -12,12 +13,23 @@ com\github\lyokofirelyte\Empyreal\Command\CommandEmpyreal.class
 com\github\lyokofirelyte\Empyreal\Empyreal$1.class
 com\github\lyokofirelyte\Empyreal\Listener\EmpyrealChatListener.class
 com\github\lyokofirelyte\Empyreal\APIScheduler.class
+=======
+com\github\lyokofirelyte\Empyreal\RefUtils$PackageType.class
+com\github\lyokofirelyte\Empyreal\Listener\GenericSignListener.class
+>>>>>>> FETCH_HEAD
 com\github\lyokofirelyte\Empyreal\Listener\EmpyrealSocketListener.class
 com\github\lyokofirelyte\Empyreal\Empyreal$2.class
 com\github\lyokofirelyte\Empyreal\ParticleEffect$ParticleEffectPacket$PacketInstantiationException.class
 com\github\lyokofirelyte\Empyreal\Modules\GamePlayer.class
+<<<<<<< HEAD
 com\github\lyokofirelyte\Empyreal\Command\Cmd.class
 com\github\lyokofirelyte\Empyreal\Listener\PlayerConnectionListener.class
+=======
+com\github\lyokofirelyte\Empyreal\ParticleEffect.class
+com\github\lyokofirelyte\Empyreal\Modules\AutoRegister.class
+com\github\lyokofirelyte\Empyreal\FireworkShenans.class
+com\github\lyokofirelyte\Empyreal\Empyreal$2.class
+>>>>>>> FETCH_HEAD
 com\github\lyokofirelyte\Empyreal\Saveable.class
 com\github\lyokofirelyte\Empyreal\JSONMap.class
 com\github\lyokofirelyte\Empyreal\RefUtils$PackageType.class
