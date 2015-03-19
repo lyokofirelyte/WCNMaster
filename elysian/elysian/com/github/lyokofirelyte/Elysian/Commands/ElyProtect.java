@@ -38,6 +38,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -94,6 +96,17 @@ public class ElyProtect implements Listener, AutoRegister {
 		"&c&oIf only that was really a command... &7&o/ely help&c&o.",
 		"&c&oHelp me help you help us all, by typing &6&o/ely help&c&o."
 	);
+	
+	@EventHandler(ignoreCancelled = false)
+	public void onOpen(InventoryOpenEvent e){
+		
+		if (!e.getPlayer().getWorld().getName().equals("world")){
+			if (e.getInventory().getType().equals(InventoryType.ENDER_CHEST)){
+				e.setCancelled(true);
+				main.s(e.getPlayer(), "&c&oSorry, enderchests can't be opened here.");
+			}
+		}
+	}
 	
 	@EventHandler
 	public void onSignChang(SignChangeEvent e){

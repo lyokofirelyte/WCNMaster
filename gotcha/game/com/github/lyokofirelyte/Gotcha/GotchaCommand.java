@@ -57,6 +57,8 @@ public class GotchaCommand implements AutoRegister<GotchaCommand> {
 					list += "&e" + main.getArenas().get(i) + (i == main.getArenas().size()-1 ? "" : "&f, ");
 				}
 				
+				gp.s(list);
+				
 			break;
 			
 			case "addarena":

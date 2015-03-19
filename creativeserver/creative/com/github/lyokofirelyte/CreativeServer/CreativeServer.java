@@ -1,6 +1,7 @@
 package com.github.lyokofirelyte.CreativeServer;
 
 import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.JSONMap;
@@ -67,7 +69,7 @@ public class CreativeServer extends JavaPlugin implements GameModule, Permission
 		Bukkit.getWorld("world").setSpawnLocation(0, 0, 0);
 		
 		File file = new File("./plugins/CreativeServer/port.json");
-		file.mkdirs();
+		new File("./plugins/CreativeServer").mkdirs();
 		
 		if (file.exists()){
 			JSONMap<Object, Object> map = Empyreal.loadJSON(file.getPath());
@@ -78,22 +80,29 @@ public class CreativeServer extends JavaPlugin implements GameModule, Permission
 	}
 	
 	@Override
-	public void closing(){
-		
-	}
+	public void closing(){}
 	
 	@Override
 	public void onPlayerJoin(Player p){
+		
 		Utils.s(p, "Welcome to the creative world! See /plotme help for options!");
-		getApi().registerPlayer(new CreativePlayer(p));
+		Utils.s(p, "This chat is connected to WA and GameServer.");
+		GamePlayer<CreativePlayer> cp = new CreativePlayer(p);
+		
+		if (p.isOp()){
+			cp.getPerms().add("gameserver.staff");
+			p.setOp(false);
+		}
+		
+		getApi().registerPlayer(cp);
 	}
 	
 	@Override
 	public void onPlayerQuit(Player p){
 		if (!movingServers.containsKey(p.getName())){
 			Utils.customBC("&4\u03E0 &7" + p.getDisplayName() + " &6<-> &edisconnect");
-			getApi().sendToSocket(getApi().getServerSockets().get("wa"), "chat", "&4\u072E &7" + p.getDisplayName() + " &6<-> &edisconnect");
-			getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "chat", "&4\u072E &7" + p.getDisplayName() + " &6<-> &edisconnect");
+			getApi().sendToSocket(getApi().getServerSockets().get("wa"), "chat", "&7" + p.getDisplayName() + " &6<-> &edisconnect");
+			getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "chat", "&7" + p.getDisplayName() + " &6<-> &edisconnect");
 		} else {
 			getMovingServers().remove(p.getName());
 		}
@@ -102,8 +111,8 @@ public class CreativeServer extends JavaPlugin implements GameModule, Permission
 	@Override
 	public void onPlayerChat(GamePlayer<?> gp, String msg){
 		Utils.bc("&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
-		getApi().sendToSocket(getApi().getServerSockets().get("wa"), "chat", "&e\u26A1 &7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
-		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "chat", "&e\u26A1 &7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+		getApi().sendToSocket(getApi().getServerSockets().get("wa"), "chat", "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "chat", "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
 	}
 	
 	@Override

@@ -118,9 +118,9 @@ public class API implements SpectralAPI {
 		}
 		
 		try{
-			serverSockets.put("GameServer", new Socket("127.0.0.1", 20000));
+			serverSockets.put("GameServer", new Socket("127.0.0.1", 24000));
 		} catch(Exception e){
-			System.out.println("Could not connect to socket 20000.");
+			System.out.println("Could not connect to socket.");
 		}
 		
 	}

@@ -1,6 +1,11 @@
 com\github\lyokofirelyte\Gotcha\GotchaCommand.class
+com\github\lyokofirelyte\Gotcha\GotchaActive$1.class
+com\github\lyokofirelyte\Gotcha\GotchaActive$2.class
 com\github\lyokofirelyte\Gotcha\GotchaPlayer.class
 com\github\lyokofirelyte\Gotcha\GotchaWords.class
 com\github\lyokofirelyte\Gotcha\Gotcha.class
 com\github\lyokofirelyte\Gotcha\GotchaArena.class
+com\github\lyokofirelyte\Gotcha\Gotcha$2.class
+com\github\lyokofirelyte\Gotcha\GotchaActive.class
 com\github\lyokofirelyte\Gotcha\Gotcha$1.class
+com\github\lyokofirelyte\Gotcha\GenericListener.class

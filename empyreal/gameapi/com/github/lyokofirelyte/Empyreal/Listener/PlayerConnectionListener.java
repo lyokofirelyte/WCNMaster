@@ -6,10 +6,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
+import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.google.common.collect.Iterables;
@@ -33,6 +35,10 @@ public class PlayerConnectionListener implements AutoRegister<PlayerConnectionLi
 		for (GameModule m : main.getGameModules()){
 			m.onPlayerJoin(e.getPlayer());
 		}
+		
+		if (!main.getServerName().equals("GameServer") && !main.getServerName().equals("Creative")){
+			Utils.s(e.getPlayer(), "This chat is not connected to other servers.");
+		}
 	}
 	
 	@EventHandler
@@ -48,6 +54,10 @@ public class PlayerConnectionListener implements AutoRegister<PlayerConnectionLi
 					}
 				}
 			});
+		}
+		
+		if (main.getGamePlayer(e.getPlayer().getUniqueId()).getPerms().contains("gameserver.staff")){
+			e.getPlayer().setOp(true);
 		}
 		
 		for (GameModule m : main.getGameModules()){

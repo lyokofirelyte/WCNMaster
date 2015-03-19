@@ -65,6 +65,16 @@ public class SignListener implements AutoRegister<SignListener>, Listener {
 					}
 					
 					sign.update();
+					
+				} else if (sign.getLine(0).contains("TO SERVER")){
+					main.getApi().sendToServer(e.getPlayer().getName(), ChatColor.stripColor(sign.getLine(1)));
+				} else if (sign.getLine(0).contains("> WARP <")){
+					for (String name : main.getWarps().keySet()){
+						if (sign.getLine(1).substring(2).equals(name)){
+							main.getWarps().get(name).teleport(e.getPlayer());
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -74,10 +84,28 @@ public class SignListener implements AutoRegister<SignListener>, Listener {
 	public void onSignCreate(SignChangeEvent e){
 		
 		if (e.getPlayer().isOp()){
-			if (e.getLine(0).equals("game") && e.getLine(1) != null && !e.getLine(1).equals("")){
-				Sign sign = ((Sign) e.getBlock().getState());
-				GameSign gs = new GameSign(main, e.getLine(1), "&e&oPre-Lobby", sign.getBlock().getX(), sign.getBlock().getY(), sign.getBlock().getZ(), sign.getWorld().getName(), sign);
-				main.getSigns().put(gs.getFullName(), gs);
+			
+			Sign sign = ((Sign) e.getBlock().getState());
+			
+			if (e.getLine(0) != null && !e.getLine(0).equals("")){
+				
+				switch (e.getLine(0)){
+				
+					case "game":
+						
+						GameSign gs = new GameSign(main, e.getLine(1), "&e&oPre-Lobby", sign.getBlock().getX(), sign.getBlock().getY(), sign.getBlock().getZ(), sign.getWorld().getName(), sign);
+						main.getSigns().put(gs.getFullName(), gs);
+						
+					break;
+					
+					case "warp":
+						
+						e.setLine(0, Utils.AS("&e> WARP <"));
+						e.setLine(1, Utils.AS("&f" + e.getLine(1)));
+						e.setLine(3, Utils.AS("&a[ PRESS ]"));
+						
+					break;
+				}
 			}
 		}
 	}

@@ -34,6 +34,9 @@ public class GameServer extends JavaPlugin implements GameModule {
 	private Map<String, GameSign> signs = new HashMap<String, GameSign>();
 	
 	@Getter
+	private Map<String, GameWarp> warps = new HashMap<String, GameWarp>();
+	
+	@Getter
 	private Map<String, Integer> socketPorts = new HashMap<String, Integer>();
 	
 	@Override
@@ -50,6 +53,9 @@ public class GameServer extends JavaPlugin implements GameModule {
 	@Override
 	public void onDisable(){
 		getApi().unregisterModule(this);
+		for (GameSign sign : signs.values()){
+			sign.save();
+		}
 	}
 	
 	@Override
@@ -58,7 +64,7 @@ public class GameServer extends JavaPlugin implements GameModule {
 		GamePlayer<GameServerPlayer> player = new GameServerPlayer(p);
 		getApi().registerPlayer(player);
 		
-		Utils.s(p, "Welcome to the Game Server!");
+		Utils.s(p, "Welcome to the Game Server! This chat is connected to WA and Creative.");
 	}
 	
 	@Override
@@ -92,12 +98,16 @@ public class GameServer extends JavaPlugin implements GameModule {
 			GameSign newSign = new GameSign(sign);
 			signs.put(newSign.getFullName(), newSign);
 		}
+		
+		file = new File("./plugins/GameServer/warps/");
+		file.mkdirs();
+		
+		for (File sign : file.listFiles()){
+			GameWarp newSign = new GameWarp(sign);
+			warps.put(newSign.getName(), newSign);
+		}
 	}
 	
 	@Override
-	public void closing(){
-		for (GameSign sign : signs.values()){
-			sign.save();
-		}
-	}
+	public void closing(){}
 }

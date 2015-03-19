@@ -10,10 +10,9 @@ import java.net.Socket;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
+import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
 
 public class ElysianSocketListener implements AutoRegister, Runnable {
 
@@ -21,7 +20,7 @@ public class ElysianSocketListener implements AutoRegister, Runnable {
 	private Socket socket;
 	private BufferedReader in;
 	private PrintWriter out;
-	int port = 20001;
+	int port = 24001;
 
 	public ElysianSocketListener(Elysian i){
 		
@@ -78,16 +77,30 @@ public class ElysianSocketListener implements AutoRegister, Runnable {
 							
 						break;
 						
+						case "setop":
+							
+							Bukkit.getOfflinePlayer(in.readLine()).setOp(true);
+							
+						break;
+						
+						case "globalcast":
+							
+							String msg = DivinityUtilsModule.AS(in.readLine());
+							Bukkit.broadcastMessage("&e\u26A1 &b&l" + msg);
+							Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title @a title '" + msg + "'");
+							
+						break;
+						
 						case "o":
 							
 							String oMsg = in.readLine();
 							
 							for (Player p : Bukkit.getOnlinePlayers()){
-								if (main.api.getDivPlayer(p).getList(DPI.PERMS).contains("wa.staff.intern")){
-									main.s(p, oMsg);
+								if (main.api.perms(p, "wa.staff.intern", true)){
+									p.sendMessage(DivinityUtilsModule.AS("&4\u273B " + oMsg));
 								}
 							}
-							
+
 						break;
 					}
 					

@@ -219,23 +219,23 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 					spawnRandomMobs();
 				}
 			}else{
-//				main.divinity.api.divUtils.bc("We have a winner!&6 " + currentPlayers.get(0) + " &bwon MobMondays!");
-//				main.divinity.api.divUtils.bc("Please leave the arena by going to spawn or some other place :)");
-//				Bukkit.getScheduler().cancelTask(timer);
-//				main.api.cancelTask("mobMondaysScore");		
-//				active = false;
-//				for(String s : currentPlayers){
-//					DivinityPlayer dp = main.api.getDivPlayer(s);
-//					dp.set(DPI.IN_GAME, false);
-//					Bukkit.getPlayer(s).getActivePotionEffects().clear();
-//					Bukkit.getPlayer(s).getInventory().clear();
-//					Bukkit.getPlayer(s).getInventory().setArmorContents(null);
-//					Bukkit.getPlayer(s).getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
-//					main.api.cancelTask("mobMondaysScore" + s);
-//				}
-//				startingPlayers.clear();
-//				scores.clear();
-//				currentPlayers.clear();
+				main.divinity.api.divUtils.bc("We have a winner!&6 " + currentPlayers.get(0) + " &bwon MobMondays!");
+				main.divinity.api.divUtils.bc("Please leave the arena by going to spawn or some other place :)");
+				Bukkit.getScheduler().cancelTask(timer);
+				main.api.cancelTask("mobMondaysScore");		
+				active = false;
+				for(String s : currentPlayers){
+					DivinityPlayer dp = main.api.getDivPlayer(s);
+					dp.set(DPI.IN_GAME, false);
+					Bukkit.getPlayer(s).getActivePotionEffects().clear();
+					Bukkit.getPlayer(s).getInventory().clear();
+					Bukkit.getPlayer(s).getInventory().setArmorContents(null);
+					Bukkit.getPlayer(s).getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
+					main.api.cancelTask("mobMondaysScore" + s);
+				}
+				startingPlayers.clear();
+				scores.clear();
+				currentPlayers.clear();
 			}
 			
 

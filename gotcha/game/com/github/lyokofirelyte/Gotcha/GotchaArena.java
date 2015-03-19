@@ -1,6 +1,7 @@
 package com.github.lyokofirelyte.Gotcha;
 
 import java.io.File;
+import java.io.FileReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.JSONMap;
@@ -77,6 +79,6 @@ public class GotchaArena {
 			}
 		}
 		
-		Empyreal.saveJSON("./plugins/Gotcha/areans/" + getName() + ".json", obj);
+		Empyreal.saveJSON("./plugins/Gotcha/arenas/" + getName() + ".json", obj);
 	}
 }

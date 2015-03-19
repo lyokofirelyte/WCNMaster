@@ -1,10 +1,8 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
@@ -288,9 +286,8 @@ public class ElyChat implements Listener, AutoRegister {
 		}
 		
 		if (!main.api.getDivPlayer(e.getPlayer()).getBool(DPI.MUTED)){
-			
 			try{
-				main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "chat", "&e\u26A1 &7" + e.getPlayer().getDisplayName() + "&f: " + e.getMessage());
+				main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "chat", "&7" + e.getPlayer().getDisplayName() + "&f: " + e.getMessage());
 			}catch(Exception ex){}
 			
 			new Thread(new Runnable(){ public void run(){

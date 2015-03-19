@@ -62,6 +62,8 @@ public class GameSign {
 				sign.update();
 			}
 		});
+		
+		save();
 	}
 	
 	public GameSign(File f){
@@ -76,9 +78,9 @@ public class GameSign {
 			setServerName((String) obj.get("SERVERNAME"));
 			setState((String) obj.get("STATE"));
 			setWorld((String) obj.get("WORLD"));
-			setX((int) obj.get("X"));
-			setY((int) obj.get("Y"));
-			setZ((int) obj.get("Z"));
+			setX(Integer.parseInt(obj.get("X") + ""));
+			setY(Integer.parseInt(obj.get("Y") + ""));
+			setZ(Integer.parseInt(obj.get("Z") + ""));
 		}
 	}
 	
@@ -94,7 +96,6 @@ public class GameSign {
 			try {
 				f.setAccessible(true);
 				if (f.getAnnotation(Saveable.class) != null){
-					System.out.println(f.get(this));
 					obj.put(f.getName().toUpperCase(), f.get(this));
 				}
 			} catch (Exception e){

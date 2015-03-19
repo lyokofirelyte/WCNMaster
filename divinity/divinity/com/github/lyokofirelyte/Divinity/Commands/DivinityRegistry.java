@@ -138,7 +138,7 @@ public class DivinityRegistry implements CommandExecutor {
 	    	
 	    	for (int x = 0; x < args.length; x++){
 	    		for (String filter : system.getList(DPI.FILTER)){
-	    			if (ChatColor.stripColor(DivinityUtilsModule.AS(args[x].toLowerCase())).contains(filter.split(" % ")[0])){
+	    			if (ChatColor.stripColor(DivinityUtilsModule.AS(args[x])).toLowerCase().contains(filter.split(" % ")[0].toLowerCase())){
 	    				filters.put(x, args[x].replace(filter.split(" % ")[0], filter.split(" % ")[1]));
 	    			}
 	    		}
