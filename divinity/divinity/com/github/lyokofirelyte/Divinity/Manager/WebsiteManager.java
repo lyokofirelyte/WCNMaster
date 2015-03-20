@@ -134,7 +134,7 @@ public class WebsiteManager implements Runnable {
 				json.put(key, map.get(key));
 			}
 			 
-			String url = "http://worldsapart.no-ip.org:9090" + folder;
+			String url = "http://worldscolli.de" + folder;
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 			con.setRequestMethod("POST");

@@ -278,7 +278,7 @@ public class ElyCommand implements AutoRegister {
 		sendMap.put("id", enc);
 		sendMap.put("staff", dp.getList(DPI.PERMS).contains("wa.staff.intern"));
 		sendMap.put("check", main.api.getDivSystem().getStr(DPI.WEB_CHECK));
-		result = (boolean) main.divinity.api.web.sendPost("/api/register_code", sendMap).get("success");
+		result = (boolean) main.divinity.api.web.sendPost("/api/register_code/", sendMap).get("success");
 		
 		if (result){
 			JSONChatMessage msg = new JSONChatMessage("");

@@ -95,7 +95,6 @@ public class Platform extends JavaPlugin implements GameModule {
 		
 		PlatformPlayer gp = new PlatformPlayer(p);
 		getApi().registerPlayer(gp);
-		gp.s("Welcome to pLatform. This chat is not connected to other servers.");
 		
 		updateList();
 		
