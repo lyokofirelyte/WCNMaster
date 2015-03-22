@@ -31,7 +31,7 @@ public class MMPlayer implements GamePlayer<MMPlayer>{
 	private int score = 0;
 	
 	@Getter @Setter
-	private String kit;
+	private String kit = "";
 	
 	public Player getPlayer(){
 		return Bukkit.getPlayer(UUID);
@@ -51,5 +51,11 @@ public class MMPlayer implements GamePlayer<MMPlayer>{
 		Utils.s(Bukkit.getPlayer(getUUID()), "&aMM &2// &c" + msg);
 	}
 	
+	public void prepareInventory(){
+		new MMClasses().setClass(Bukkit.getPlayer(getUUID()), getKit());
+	}
 	
+	public void giveRoundFourExtra(){
+		new MMClasses().addBonus(Bukkit.getPlayer(getUUID()), getKit());
+	}
 }

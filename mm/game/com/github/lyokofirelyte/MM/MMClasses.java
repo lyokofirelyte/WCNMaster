@@ -10,8 +10,41 @@ import org.bukkit.potion.PotionEffectType;
 
 public class MMClasses {
 		
+	public void addBonus(Player p, String type){
+		
+		p.getInventory().addItem(new ItemStack(Material.POTION, 1, (short)16417));
+		p.getInventory().addItem(new ItemStack(Material.POTION, 2, (short)16421));
+		
+		switch(type){
+		case "mage":
+			p.getInventory().addItem(new ItemStack(Material.COOKED_CHICKEN, 16));
+			break;
+			
+		case "pyro":
+			p.getInventory().addItem(new ItemStack(Material.GRILLED_PORK, 16));
+			break;
+			
+		case "barbarian":
+			p.getInventory().addItem(new ItemStack(Material.COOKED_CHICKEN, 16));
+			break;
+			
+		case "melee":
+			p.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 16));
+			break;
+			
+		case "healer":
+			p.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 4));
+			break;
+			
+		case "ranger":
+			p.getInventory().addItem(new ItemStack(Material.COOKED_MUTTON, 16));
+			break;
+
+		}
+	}
 	
-	public void assignClass(Player p, String type){
+	
+	public void setClass(Player p, String type){
 		
 		p.getInventory().clear();
 		

@@ -21,7 +21,7 @@ public class BoothEvent implements Listener {
 	
 	@EventHandler
 	public void onInteract(BlockPlaceEvent e){
-		System.out.println("placed");
+		//System.out.println("placed");
 	}
 	
 //	@EventHandler
