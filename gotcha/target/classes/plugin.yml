@@ -1,6 +1,0 @@
-name: Gotcha
-main: com.github.lyokofirelyte.Gotcha.Gotcha
-author: lyokofirelyte
-prefix: Gotcha
-depend: [Empyreal]
-version: 1

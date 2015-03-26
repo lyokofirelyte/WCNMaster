@@ -1,6 +1,0 @@
-name: Platform
-main: com.github.lyokofirelyte.Platform.Platform
-author: lyokofirelyte
-prefix: Platform
-depend: [Empyreal]
-version: 1

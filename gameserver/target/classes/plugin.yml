@@ -1,6 +1,0 @@
-name: GameServer
-main: com.github.lyokofirelyte.GameServer.GameServer
-author: lyokofirelyte
-prefix: GameServer
-depend: [Empyreal]
-version: 1
