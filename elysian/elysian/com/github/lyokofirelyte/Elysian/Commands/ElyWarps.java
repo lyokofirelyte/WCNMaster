@@ -169,7 +169,7 @@ public class ElyWarps implements AutoRegister, Listener {
 		
 		if (cmd.equals("creative")){
 			
-			main.api.event(new DivinityTeleportEvent(p, extractLoc("wacp")));
+			main.api.sendToServer(p.getName(), "Creative");
 			
 		} else if (args.length == 0 || DivinityUtilsModule.isInteger(args[0])){
 			

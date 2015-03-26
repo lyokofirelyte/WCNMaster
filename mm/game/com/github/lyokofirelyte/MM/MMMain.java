@@ -4,7 +4,6 @@ import gnu.trove.map.hash.THashMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -23,18 +22,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.DisplaySlot;
 
-import com.github.lyokofirelyte.Elysian.Games.MobMondays.MMMain.locationType;
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.JSONMap;
 import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
-import com.github.lyokofirelyte.Gotcha.GotchaPlayer;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
 
 public class MMMain extends JavaPlugin implements GameModule{
 	
@@ -262,7 +256,25 @@ public class MMMain extends JavaPlugin implements GameModule{
 			
 			Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable(){ public void run(){
 				
-				actuallyStart();
+				
+				boolean canStart = true;
+				StringBuilder notSelected = new StringBuilder();
+				
+				for(Player player : Bukkit.getOnlinePlayers()){
+					if(getApi().getGamePlayer(player.getUniqueId(), MMPlayer.class).getType().getKit() == ""){
+						canStart = false;
+						notSelected.append(player.getName() + ", ");
+					}
+				}
+				if(!canStart){
+					Utils.bc("Not everyone has selected a kit yet!");
+					Utils.bc("Player that need to select a kit: ");
+					Utils.bc(notSelected.toString());
+					//TODO: Restart the timer
+				}else{
+					actuallyStart();
+				}
+				
 				
 			}}, 5 * 20L);
 	}
@@ -306,37 +318,8 @@ public class MMMain extends JavaPlugin implements GameModule{
 					Utils.bc("Round " + round + " has started!");
 					
 					if(getRound() == 4){
-						for(String s : currentPlayers){
-							Player temp = Bukkit.getPlayer(s);
-							temp.getInventory().addItem(new ItemStack(Material.POTION, 1, (short)16417));
-							temp.getInventory().addItem(new ItemStack(Material.POTION, 2, (short)16421));
-
-							switch(selected.get(s)){
-							case "mage":
-								temp.getInventory().addItem(new ItemStack(Material.COOKED_CHICKEN, 16));
-								break;
-								
-							case "pyro":
-								temp.getInventory().addItem(new ItemStack(Material.GRILLED_PORK, 16));
-								break;
-								
-							case "barbarian":
-								temp.getInventory().addItem(new ItemStack(Material.COOKED_CHICKEN, 16));
-								break;
-								
-							case "melee":
-								temp.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 16));
-								break;
-								
-							case "healer":
-								temp.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 4));
-								break;
-								
-							case "ranger":
-								temp.getInventory().addItem(new ItemStack(Material.COOKED_MUTTON, 16));
-								break;
-
-							}
+						for(GamePlayer<?> players : getApi().getPlayers().values()){
+							MMPlayer mmp = players.getType();
 							
 						}
 					}

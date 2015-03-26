@@ -9,12 +9,9 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.scoreboard.DisplaySlot;
 
 import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatClickEventType;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatExtra;
 import com.github.lyokofirelyte.Divinity.JSON.JSONChatHoverEventType;
@@ -36,7 +33,7 @@ public class MMCommands {
 	
 	@DivCommand(aliases = {"mm", "mobmondays"}, desc = "MobMondays Game Command", help = "/mm help", player = true, min = 1)
 	public void onBooth(final Player p, String[] args){
-		GamePlayer<MMPlayer> mmp = root.getApi().getGamePlayer(p.getUniqueId());
+		MMPlayer mmp = root.getApi().getGamePlayer(p.getUniqueId(), MMPlayer.class).getType();
 
 		List<String> locations = null;
 		switch(args[0]){
@@ -54,6 +51,7 @@ public class MMCommands {
 				
 				mmp.getType().setKit(args[1].toLowerCase());
 				
+
 				//TODO: mmp.setKit(args[1].toLowerCase()); To set the current kit of the player.
 				//TODO: For loop through all the game players to see if everyone has selected a kit instead of checking the arra
 				break;
