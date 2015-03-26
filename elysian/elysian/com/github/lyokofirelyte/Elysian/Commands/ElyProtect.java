@@ -320,11 +320,11 @@ public class ElyProtect implements Listener, AutoRegister {
 			}
 			
 			if ((args[0].startsWith("//") && !e.getMessage().contains("schematic")) || args[0].startsWith("/wand") || args[0].equals("/j")){
-				if (p.getWorld().getName().equalsIgnoreCase("WACP") || e.getPlayer().getWorld().getName().equalsIgnoreCase("not_cylum") || main.api.perms(p, "wa.staff.mod2", false)){
+				if (p.getWorld().getName().equalsIgnoreCase("WACP") || e.getPlayer().getWorld().getName().equalsIgnoreCase("not_cylum") || e.getPlayer().getWorld().getName().equalsIgnoreCase("BCBW") || main.api.perms(p, "wa.staff.mod2", false)){
 					e.setCancelled(true);
 					op(p, e.getMessage());
 					if (p.getWorld().getName().equals("world")){
-						ElyChannel.CUSTOM.send("&6System", p.getDisplayName() + " used &6" + e.getMessage() + " &c&oin the main world.", "wa.staff.admin", main.api);
+						ElyChannel.CUSTOM.send("&6System", p.getDisplayName() + " used &6" + e.getMessage() + " &c&oin the " + e.getPlayer().getWorld().getName() + " world.", "wa.staff.admin", main.api);
 					}
 				}
 			}

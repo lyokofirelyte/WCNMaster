@@ -212,7 +212,7 @@ public class MMEvents implements Listener{
 	
 	@EventHandler
 	public void onDamge(EntityDamageByEntityEvent e){
-		if(((e.getCause() == DamageCause.ENTITY_EXPLOSION && !(e.getDamager() instanceof Creeper))|| (e.getCause() == DamageCause.ENTITY_ATTACK) && e.getEntity() instanceof Player && e.getDamager() instanceof Player)){
+		if(e.getEntity() instanceof Player && ((e.getCause() == DamageCause.ENTITY_EXPLOSION && !(e.getDamager() instanceof Creeper))|| (e.getCause() == DamageCause.ENTITY_ATTACK) && e.getEntity() instanceof Player && e.getDamager() instanceof Player)){
 			Player p = (Player) e.getEntity();
 			if(root.currentPlayers.contains(p.getName())){
 				e.setCancelled(true);

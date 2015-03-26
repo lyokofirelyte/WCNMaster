@@ -7,13 +7,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.UUID;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -72,6 +76,15 @@ public class Empyreal extends JavaPlugin {
 	
 	@Getter @Setter
 	private String serverName = "";
+	
+	@Getter @Setter
+	private int onlinePlayercount = 0;
+	
+	@Getter @Setter
+	private PrintStream out;
+	
+	@Getter @Setter
+	private PrintStream secondOut;
 
 	@Override @SneakyThrows
 	public void onEnable(){
@@ -98,6 +111,32 @@ public class Empyreal extends JavaPlugin {
 				}
 			}
 		});
+		
+		out = System.out;
+		
+		secondOut = new PrintStream("t"){
+	        @Override
+	        public void println(String txt){
+	        	
+	        	if (txt.equals("")){
+	        		return;
+	        	}
+
+				if (!serverName.equals("GameServer")){
+					sendToSocket(serverSockets.get("GameServer"), "wcn_logger", "&7(&6" + getServerName() + "&7) " + txt, "END");
+				} else {
+					for (String socket : serverSockets.keySet()){
+						if (socket.startsWith("WCNConsole")){
+							sendToSocket(serverSockets.get(socket), "wcn_logger", "&7(&6" + getServerName() + "&7) " + txt, "END");
+						}
+					}
+				}
+				
+				getOut().println(txt);
+	        }
+	    };
+		
+	    System.setOut(secondOut);
 	}
 	
 	private void registerSockets(){
@@ -305,6 +344,19 @@ public class Empyreal extends JavaPlugin {
 		}
 		
 		return map;
+	}
+	
+	public void requestPlayerCount(){
+		if (Bukkit.getOnlinePlayers().size() > 0){
+			try {
+				ByteArrayDataOutput out = ByteStreams.newDataOutput();
+				out.writeUTF("PlayerCount");
+				out.writeUTF("ALL");
+				Iterables.getFirst(Bukkit.getOnlinePlayers(), null).sendPluginMessage(this, "BungeeCord", out.toByteArray());
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void requestServerList(String player){

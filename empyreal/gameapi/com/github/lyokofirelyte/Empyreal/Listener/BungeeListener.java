@@ -36,14 +36,23 @@ public class BungeeListener implements AutoRegister<BungeeListener>, PluginMessa
 		    String subchannel = in.readUTF();
 		    
 		    switch (subchannel.toLowerCase()){
+		    
+		    	case "playercount":
+		    		
+		    		String server = in.readUTF();
+		    		main.setOnlinePlayercount(in.readInt());
+		    		
+		    	break;
 		    	
 		    	case "getservers":
+		    		
+		    		server = in.readUTF();
 		    		Utils.s(player, in.readUTF());
 		    	break;
 		    	
 		    	case "playerlist":
 		    		
-		    		String server = in.readUTF();
+		    		server = in.readUTF();
 		    		Utils.s(player, in.readUTF());
 		    		
 		    	break;

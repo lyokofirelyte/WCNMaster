@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 
 
 
+
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
@@ -30,9 +33,13 @@ public class EmpyrealSocketListener implements Runnable {
 		try {
 			
 			String text = "";
-			String serverName = in.readLine();
+			String serverName = "";
 			
 			while ((text = in.readLine()) != null){
+				
+				if (serverName.equals("")){
+					serverName = new String(text);
+				}
 				
 				switch (text){
 				
@@ -54,9 +61,21 @@ public class EmpyrealSocketListener implements Runnable {
 						
 					break;
 					
+					case "wcn_cmd":
+						
+						Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), in.readLine());
+						
+					break;
+					
 					case "chat":
 						
-						Bukkit.broadcastMessage(Utils.AS("&e\u26A1 " + in.readLine()));
+						msg = in.readLine();
+						
+						for (Player p : Bukkit.getOnlinePlayers()){
+							p.sendMessage(Utils.AS("&e\u26A1 " + msg));
+						}
+						
+						main.getOut().println(ChatColor.stripColor(Utils.AS("&e\u26A1 " + msg)));
 						
 					break;
 					
@@ -66,6 +85,19 @@ public class EmpyrealSocketListener implements Runnable {
 						Bukkit.broadcastMessage(msg);
 						Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title @a title '" + msg + "'");
 						
+					break;
+					
+					case "wcn_say":
+						
+						msg = in.readLine();
+						String user = in.readLine();
+						
+						for (Player p : Bukkit.getOnlinePlayers()){
+							p.sendMessage(Utils.AS("&e\u26A1 &7" + user + "&f: " + msg));
+						}
+						
+						main.getOut().println( user + ": " + msg);
+
 					break;
 					
 					case "END": break;

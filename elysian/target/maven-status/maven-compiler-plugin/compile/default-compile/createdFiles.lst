@@ -57,6 +57,7 @@ com\github\lyokofirelyte\Elysian\Commands\ElyProtect.class
 com\github\lyokofirelyte\Elysian\Commands\ElyToggle.class
 com\github\lyokofirelyte\Elysian\Games\Cranked\CrankedData.class
 com\github\lyokofirelyte\Elysian\Patrols\PatrolEvents.class
+com\github\lyokofirelyte\Elysian\Elysian$1.class
 com\github\lyokofirelyte\Elysian\Commands\ElySpectate.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefData.class
 com\github\lyokofirelyte\Elysian\Events\ElyLogger$2.class
@@ -127,6 +128,7 @@ com\github\lyokofirelyte\Elysian\Games\Hellwave\HellwaveCommands.class
 com\github\lyokofirelyte\Elysian\Events\ElysianSocketListener.class
 com\github\lyokofirelyte\Elysian\Games\Spleef\SpleefStorage.class
 com\github\lyokofirelyte\Elysian\Games\Gotcha\GotchaData.class
+com\github\lyokofirelyte\Elysian\AutoCrafter.class
 com\github\lyokofirelyte\Elysian\Commands\ElyStaff.class
 com\github\lyokofirelyte\Elysian\Events\ElyLogger$4.class
 com\github\lyokofirelyte\Elysian\Gui\GuiFriendlyReminder.class

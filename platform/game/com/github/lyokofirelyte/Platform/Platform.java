@@ -27,6 +27,7 @@ import com.github.lyokofirelyte.Platform.Data.PlatformGameData;
 import com.github.lyokofirelyte.Platform.Rounds.PR0;
 import com.github.lyokofirelyte.Platform.Rounds.PR1;
 import com.github.lyokofirelyte.Platform.Rounds.PR10;
+import com.github.lyokofirelyte.Platform.Rounds.PR11;
 import com.github.lyokofirelyte.Platform.Rounds.PR2;
 import com.github.lyokofirelyte.Platform.Rounds.PR3;
 import com.github.lyokofirelyte.Platform.Rounds.PR4;
@@ -71,7 +72,7 @@ public class Platform extends JavaPlugin implements GameModule {
 		gameData = api.getInstance(PlatformGameData.class).getType();
 		pah = api.getInstance(PlatformActionHandler.class).getType();
 		
-		List<PlatformRound> rounds = Arrays.asList(new PR0(this), new PR1(this), new PR2(this), new PR3(this), new PR4(this), new PR5(this), new PR6(this), new PR7(this), new PR8(this), new PR9(this), new PR10(this));
+		List<PlatformRound> rounds = Arrays.asList(new PR0(this), new PR1(this), new PR2(this), new PR3(this), new PR4(this), new PR5(this), new PR6(this), new PR7(this), new PR8(this), new PR9(this), new PR10(this), new PR11(this));
 		int x = 0;
 		
 		for (PlatformRound r : rounds){
@@ -110,12 +111,12 @@ public class Platform extends JavaPlugin implements GameModule {
 		
 		p.teleport(new Location(Bukkit.getWorld("world"), gameData.getCenter().getBlockX(), gameData.getCenter().getBlockY() + 100, gameData.getCenter().getBlockZ()));
 		
-		if (!isGameStarted() && Bukkit.getOnlinePlayers().size() >= 2){
+		if (!isGameStarted() && Bukkit.getOnlinePlayers().size() >= 3){
 			
-			APIScheduler.DELAY.start(getApi(), "platform_delay", 20*5L, new Runnable(){
+			APIScheduler.DELAY.start(getApi(), "platform_delay", 20*60L, new Runnable(){
 				public void run(){
 					
-					if (Bukkit.getOnlinePlayers().size() >= 2){
+					if (Bukkit.getOnlinePlayers().size() >= 3){
 						start();
 					} else {
 						Utils.bc("&c&oToo many players left! Waiting for players...");
@@ -160,7 +161,9 @@ public class Platform extends JavaPlugin implements GameModule {
 	
 	public void updateScores(){
 		for (Player p : Bukkit.getOnlinePlayers()){
-			p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).getScore(p.getName()).setScore(api.getGamePlayer(p.getUniqueId(), PlatformPlayer.class).getType().getScore());
+			for (Player pp : Bukkit.getOnlinePlayers()){
+				p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).getScore(pp.getName()).setScore(api.getGamePlayer(pp.getUniqueId(), PlatformPlayer.class).getType().getScore());
+			}
 		}
 	}
 	

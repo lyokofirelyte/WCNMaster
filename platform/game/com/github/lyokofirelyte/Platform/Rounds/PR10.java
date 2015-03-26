@@ -7,6 +7,7 @@ import org.bukkit.Material;
 
 import com.github.lyokofirelyte.Platform.Change;
 import com.github.lyokofirelyte.Platform.Platform;
+import com.github.lyokofirelyte.Platform.Events.RoundEndEvent;
 
 public class PR10 extends PlatformRound {
 
@@ -45,35 +46,25 @@ public class PR10 extends PlatformRound {
 	
 	public void restate(){
 		
-		main.gMsg("&bEnd of game so far! Hope you enjoyed.");
-		main.gameData.setActive(false);
+		main.gMsg("&bFinal found so far! This is a mostly untested round. Good luck. :)");
 		
-		long delay = 60L;
+		long delay = 0L;
 		
-		for (int y = 1; y < 65; y++){
-			main.pah.changeLater(Change.GRID, y, Material.STAINED_GLASS, 4, delay);
+		for (int y = 0; y < 65; y++){
+			main.pah.changeLater(Change.GRID, y, Material.WOOL, 0, delay);
 			delay+= 2L;
 		}
 		
-		Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){ public void run(){ 
-			
-			main.gMsg("&bReturning to lobby in 10 seconds...");
-			main.setSecondsLeft(10);
-			
-		}}, delay);
+		for (int y = 0; y < 4; y++){
+			main.pah.changeLater(Change.COLUMN, y, Material.AIR, 0, delay);
+			main.pah.changeLater(Change.ROW, y, Material.AIR, 0, delay);
+		}
 		
-		delay += 200L;
-
-		Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){ public void run(){ 
-			
-			end();
-			
-		}}, delay);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){ public void run(){ end(); }}, delay);
 	}
 	
 	@Override
 	public void end(){
-		//main.pm.callEvent(new RoundEndEvent(null, Round.ELEVEN));
-		main.getApi().sendAllToServer("GameServer");
+		Bukkit.getPluginManager().callEvent(new RoundEndEvent(null, Round.ELEVEN));
 	}
 }

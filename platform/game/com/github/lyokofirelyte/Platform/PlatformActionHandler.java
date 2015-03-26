@@ -212,6 +212,7 @@ public class PlatformActionHandler implements AutoRegister<PlatformActionHandler
 				
 				public void run(){
 					
+					l.getBlock().setType(Material.AIR);
 					entityFormBlock(l, Material.WOOL);
 					main.data.setId("formCounter", main.data.getId("formCounter") + 1);
 					

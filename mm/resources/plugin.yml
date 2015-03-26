@@ -1,0 +1,6 @@
+name: MM
+main: com.github.lyokofirelyte.MM.MM
+author: msnijder30
+prefix: MM
+depend: [Empyreal]
+version: 1

@@ -81,7 +81,7 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 						((ElyMMO) main.api.getInstance(ElyMMO.class)).soulSplit.stop(pl, p);
 					}
 					
-					List<String> users = new ArrayList<String>(main.api.getDivSystem().getStringList("PRE_APPROVED"));
+					List<String> users = new ArrayList<String>(main.api.getDivSystem().getList(DPI.PRE_APPROVED));
 					if(users.contains(pl.getName())){
 						main.api.getDivPlayer(pl.getName()).getList(DPI.PERMS).add("wa.member");
 						main.api.getPlayer(pl.getName()).performCommand("rankup");
@@ -89,9 +89,18 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 						p.s("You have been pre-approved by WA Staff! Enjoy!");
 						
 						users.remove(pl.getName());
-						main.api.getDivSystem().set("PRE_APPROVED", users);
+						main.api.getDivSystem().set(DPI.PRE_APPROVED, users);
 					 }
 					 
+					List<String> rewardPlayers = new ArrayList<String>(main.api.getDivSystem().getList(DPI.CRATE_PLAYER_LIST));
+					if(rewardPlayers.contains(pl.getName())){
+						pl.getInventory().addItem(new ElyCrate(main).getKey(512));
+						main.s(pl, "You were given a crate key as thank you for signing up a new member!");
+						
+						rewardPlayers.remove(pl.getName());
+						main.api.getDivSystem().set(DPI.CRATE_PLAYER_LIST, rewardPlayers);
+					}
+					
 					if (!p.getStr(DPI.RING_LOC).equals("none")){
 						main.api.event(new DivinityTeleportEvent(pl, p.getLoc(DPI.RING_LOC)));
 						p.set(DPI.RING_LOC, "none");

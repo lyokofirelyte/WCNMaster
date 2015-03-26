@@ -115,8 +115,21 @@ public class ElyCommand implements AutoRegister {
 		main.s(p, "Updated dank mode.");
 	}
 	
+	@DivCommand(aliases = { "wcnconsole" }, desc = "Console Register Command", help = "/wcnconsole", player = true)
+	public void onWCNConsole(Player p, String[] args){
+		
+		DivinityPlayer dp = main.api.getDivPlayer(p);
+		
+		if (dp.getStr(DPI.WCN_CONSOLE).equals("none")){
+			
+			main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "wcnconsole_uuid", p.getUniqueId().toString());
+			
+		} else {
+			
+		}
+	}
 	
-	@DivCommand(aliases = {"tutorial"}, perm = "wa.member", desc = "Basic tutorial books for Worlds Apart!", help = "/tutorial", player = true)
+	@DivCommand(aliases = {"tutorial"}, perm = "wa.guest", desc = "Basic tutorial books for Worlds Apart!", help = "/tutorial", player = true)
 	public void onTutorial(Player p, String[] args){
 		
 		if(args.length == 0){

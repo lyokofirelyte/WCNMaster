@@ -12,7 +12,8 @@ public enum Round {
 	SEVEN("7"),
 	EIGHT("8"),
 	NINE("9"),
-	TEN("10");
+	TEN("10"),
+	ELEVEN("11");
 	
 	String round;
 	

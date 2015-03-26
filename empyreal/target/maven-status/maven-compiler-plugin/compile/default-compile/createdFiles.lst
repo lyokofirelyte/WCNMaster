@@ -27,5 +27,6 @@ com\github\lyokofirelyte\Empyreal\Listener\EmpyrealChatListener.class
 com\github\lyokofirelyte\Empyreal\ParticleEffect$ParticleEffectPacket$PacketSendingException.class
 com\github\lyokofirelyte\Empyreal\Command\CommandEmpyreal.class
 com\github\lyokofirelyte\Empyreal\Command\CommandRegistry.class
+com\github\lyokofirelyte\Empyreal\Empyreal$3.class
 com\github\lyokofirelyte\Empyreal\Listener\PlayerConnectionListener.class
 com\github\lyokofirelyte\Empyreal\Modules\GameModule.class

@@ -148,7 +148,7 @@ public class ElyWarps implements AutoRegister, Listener {
 		
 	}
 	
-	@DivCommand(aliases = {"s", "spawn"}, desc = "Elysian Spawn Command", help = "/s", player = true)
+	@DivCommand(perm = "wa.guest", aliases = {"s", "spawn"}, desc = "Elysian Spawn Command", help = "/s", player = true)
 	public void onSpawn(Player p, String[] args){
 		String[] loc = main.api.getDivSystem().getStr(DPI.SPAWN_POINT).split("%SPLIT%");
 		Location spawn = new Location(Bukkit.getWorld(loc[0]), Float.parseFloat(loc[1]), Float.parseFloat(loc[2]), Float.parseFloat(loc[3]), Float.parseFloat(loc[4]), Float.parseFloat(loc[5]));

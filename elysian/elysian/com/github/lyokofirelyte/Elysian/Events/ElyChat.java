@@ -366,7 +366,8 @@ public class ElyChat implements Listener, AutoRegister {
 				String msg = (String) main.divinity.api.web.sendPost("/api/chat", map).get("message").toString();
 				main.divinity.api.web.messages.add(msg);*/
 				
-				Bukkit.getConsoleSender().sendMessage(main.AS(e.getPlayer().getDisplayName() + "&f: " + e.getMessage()));
+				main.getDefaultOut().println(ChatColor.stripColor(main.AS(e.getPlayer().getDisplayName() + ": " + e.getMessage())));
+				main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "wcn_logger", "&7(&6wa&7) " + e.getPlayer().getDisplayName() + " &f: " + e.getMessage(), "END");
 				
 			}}).start();
 		} else {

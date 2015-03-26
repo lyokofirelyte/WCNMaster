@@ -30,6 +30,7 @@
 		<module>creativeserver</module>
 	    <module>gotcha</module>
 	    <module>platform</module>
+	    <module>wcn</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

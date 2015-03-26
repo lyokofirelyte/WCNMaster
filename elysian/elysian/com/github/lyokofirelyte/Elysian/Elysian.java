@@ -1,10 +1,14 @@
 package com.github.lyokofirelyte.Elysian;
 
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
@@ -53,13 +57,34 @@ public class Elysian extends JavaPlugin {
 	public Map<Object, String> spellTasks = new THashMap<Object, String>();
 	public boolean hasSunDayBeenPerformedBefore = false;
 	
-	@Override
+	@Getter @Setter
+	private PrintStream defaultOut;
+	
+	@Getter @Setter
+	private PrintStream newout;
+	
+	@Override @SneakyThrows
 	public void onEnable(){
+		
+		defaultOut = System.out;
 		setup = new ElySetup(this);
 		setup.start();
 		divinity.getServer().getMessenger().registerIncomingPluginChannel(divinity, "BungeeCord", (ElyProxy) api.getInstance(ElyProxy.class));
 		divinity.getServer().getMessenger().registerOutgoingPluginChannel(divinity, "BungeeCord");
 		api.getDivSystem().set(DPI.REBOOT_INIT, false);
+		
+		newout = new PrintStream("t"){
+	        @Override
+	        public void println(String txt){
+	        	if (txt.equals("")){
+	        		return;
+	        	}
+	        	divinity.api.sendToSocket(divinity.api.getServerSockets().get("GameServer"), "wcn_logger", "&7(&6wa&7) " + txt, "END");
+	        	getDefaultOut().println(txt);
+	        }
+	    };
+	    
+	    System.setOut(newout);
 	}
 	
 	@Override

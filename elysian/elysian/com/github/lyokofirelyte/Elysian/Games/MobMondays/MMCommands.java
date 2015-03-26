@@ -149,6 +149,11 @@ public class MMCommands {
 				break;
 			
 			case "leave":
+				if(!root.allowedToJoin){
+					dp.err("Mob mondays is not active!");
+					return;
+				}
+				
 				if(root.currentPlayers.contains(p.getName())){
 					root.currentPlayers.remove(p.getName());
 					main.api.cancelTask("mobMondaysScore" + p.getName());
@@ -168,20 +173,19 @@ public class MMCommands {
 						
 					}, 5L);
 					
-				}
 				
-				if(root.selected.containsKey(p.getName())){
-					root.selected.remove(p.getName());
+					if(root.selected.containsKey(p.getName())){
+						root.selected.remove(p.getName());
+					}
+	
+					dp.set(DPI.IN_GAME, false);
+					p.getActivePotionEffects().clear();
+					p.getInventory().clear();
+					p.getInventory().setArmorContents(null);
+					p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
+					root.msg(dp.name() + " &b has left MobMondays!");
 				}
 
-				dp.set(DPI.IN_GAME, false);
-				p.getActivePotionEffects().clear();
-				p.getInventory().clear();
-				p.getInventory().setArmorContents(null);
-				p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
-				main.api.cancelTask("mobMondaysScore" + p.getName());
-				root.msg(dp.name() + " &b has left MobMondays!");
-				
 				break;
 				
 				

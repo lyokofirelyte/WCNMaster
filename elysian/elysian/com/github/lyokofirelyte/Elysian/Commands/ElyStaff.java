@@ -740,7 +740,6 @@ public class ElyStaff implements Listener, AutoRegister {
 	 public void onStaff(CommandSender p, String[] args){
 		 
 		 main.s(p, "Online Staff:");
-		 main.s(p, "");
 		 
 		 String interns = "";
 		 String mods = "";
