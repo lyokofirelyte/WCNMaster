@@ -1,6 +1,6 @@
 package com.github.lyokofirelyte.Elysian.Gui;
 
-import static com.github.lyokofirelyte.Divinity.Manager.DivInvManager.createItem;
+import static com.github.lyokofirelyte.Empyreal.Gui.DivInvManager.createItem;
 
 import java.util.List;
 
@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.github.lyokofirelyte.Divinity.DivGui;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
+import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.Gui.DivGui;
 
 public class GuiSolarSpells extends DivGui {
 

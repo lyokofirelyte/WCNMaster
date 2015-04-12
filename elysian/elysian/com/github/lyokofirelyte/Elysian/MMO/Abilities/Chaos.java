@@ -9,17 +9,16 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
 import com.github.lyokofirelyte.Elysian.MMO.Magics.SpellTasks;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
-import com.github.lyokofirelyte.Spectral.Public.ParticleEffect;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
+import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
 
 public class Chaos {
 	
@@ -79,7 +78,7 @@ public class Chaos {
 			lastEnt.setCustomName(main.AS("&k| &4&lchA0t!c &k|"));
 			lastEnt.setCustomNameVisible(true);
 			
-			main.api.repeat(this, "check", 0L, 20L, "chaosCheck" + dp.name(), lastEnt, "chaosCheck" + dp.name(), dp);
+			main.api.repeat(this, "check", 0L, 20L, "chaosCheck" + dp.getName(), lastEnt, "chaosCheck" + dp.getName(), dp);
 			
 		} catch (Exception e){}
 	}

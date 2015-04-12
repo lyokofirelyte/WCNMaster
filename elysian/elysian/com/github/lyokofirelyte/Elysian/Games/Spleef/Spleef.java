@@ -1,22 +1,25 @@
-package com.github.lyokofirelyte.Elysian.Games.Spleef;
+/*package com.github.lyokofirelyte.Elysian.Games.Spleef;
 import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
+
 import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
-import com.github.lyokofirelyte.Divinity.Storage.DivinityStorageModule;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Games.Spleef.SpleefData.SpleefDataType;
 import com.github.lyokofirelyte.Elysian.Games.Spleef.SpleefData.SpleefGameData;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoSave;
-import com.github.lyokofirelyte.Spectral.Identifiers.DivGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityGame;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorage;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class Spleef implements AutoSave, AutoRegister, DivGame {
+public class Spleef implements AutoRegister<Spleef> {
 
 	public Elysian main;
 	public SpleefModule module;
 	public SpleefCommandMain commandMain;
 	public SpleefActive active;
+	
+	@Getter
+	private Spleef type = this;
 	
 	public Spleef(Elysian i){
 		main = i;
@@ -44,13 +47,6 @@ public class Spleef implements AutoSave, AutoRegister, DivGame {
 		return null;
 	}
 
-	@Override
-	public void save() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void load() {
 		
 		update();
@@ -72,4 +68,4 @@ public class Spleef implements AutoSave, AutoRegister, DivGame {
 			active
 		};
 	}
-}
+}*/

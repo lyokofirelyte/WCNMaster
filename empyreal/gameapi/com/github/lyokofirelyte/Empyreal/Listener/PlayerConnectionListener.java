@@ -11,9 +11,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 import com.google.common.collect.Iterables;
 
 public class PlayerConnectionListener implements AutoRegister<PlayerConnectionListener>, Listener {

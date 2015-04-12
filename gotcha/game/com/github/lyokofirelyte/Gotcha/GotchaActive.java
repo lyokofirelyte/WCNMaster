@@ -25,10 +25,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.projectiles.ProjectileSource;
 
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
-import com.github.lyokofirelyte.Empyreal.ParticleEffect;
-import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
 public class GotchaActive implements Listener, AutoRegister<GotchaActive> {
 

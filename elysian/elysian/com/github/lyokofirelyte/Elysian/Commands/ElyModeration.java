@@ -4,25 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatClickEventType;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatExtra;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatHoverEventType;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatClickEventType;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatExtra;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatHoverEventType;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatMessage;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElyModeration implements AutoRegister {
+public class ElyModeration implements AutoRegister<ElyModeration> {
 
 	 private Elysian main;
+	 
+	 @Getter
+	 private ElyModeration type = this;
 	 
 	 public ElyModeration(Elysian i){
 		 main = i;
@@ -70,7 +75,7 @@ public class ElyModeration implements AutoRegister {
 			 message = message + " " + s;
 		 }
 		 DivinityUtilsModule.bc(kicker + " &4&ohas kicked " + who.getStr(DPI.DISPLAY_NAME) + " &e&o(&6&o" + message.replace(args[0], "").trim() + "&e&o)");
-		 Bukkit.getPlayer(who.uuid()).kickPlayer(main.AS("&e&o(&6&o" + message.replace(args[0], "").trim() + "&e&o)"));
+		 Bukkit.getPlayer(who.getName()).kickPlayer(main.AS("&e&o(&6&o" + message.replace(args[0], "").trim() + "&e&o)"));
 	 }
 	 
 	 @DivCommand(perm = "wa.staff.mod2", aliases = {"kill"}, desc = "Kill someone!", help = "/kill <player>", player = false, min = 1)
@@ -259,9 +264,9 @@ public class ElyModeration implements AutoRegister {
 			 		p.sendMessage("");
 			 		
 			 		if (duration.equals("forever")){
-			 			msg.addExtra(em("&aCONFIRM BAN " + snow, "&c&oCONFIRM BAN!", "/eban " + args[0] + " #confirm " + banned.name() + " " + type + " " + reason + " " + proof));
+			 			msg.addExtra(em("&aCONFIRM BAN " + snow, "&c&oCONFIRM BAN!", "/eban " + args[0] + " #confirm " + banned.getName() + " " + type + " " + reason + " " + proof));
 			 		} else {
-			 			msg.addExtra(em("&aCONFIRM BAN" + snow, "&c&oCONFIRM BAN!", "/eban " + args[0] + " #confirm " + banned.name() + " " + type + " " + reason + " " + proof + " " + duration));
+			 			msg.addExtra(em("&aCONFIRM BAN" + snow, "&c&oCONFIRM BAN!", "/eban " + args[0] + " #confirm " + banned.getName() + " " + type + " " + reason + " " + proof + " " + duration));
 			 		}
 			 		
 			 		msg.addExtra(em("&7&oCANCEL ", "&7&oExit the ban module.", "/eban " + args[0] + " #cancel"));

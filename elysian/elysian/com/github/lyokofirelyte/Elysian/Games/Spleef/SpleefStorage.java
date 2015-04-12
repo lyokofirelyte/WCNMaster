@@ -1,22 +1,23 @@
-package com.github.lyokofirelyte.Elysian.Games.Spleef;
+/*package com.github.lyokofirelyte.Elysian.Games.Spleef;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
-import com.github.lyokofirelyte.Divinity.Storage.DivinityStorageModule;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Games.Spleef.SpleefData.SpleefDataType;
 import com.github.lyokofirelyte.Elysian.Games.Spleef.SpleefData.SpleefGame;
 import com.github.lyokofirelyte.Elysian.Games.Spleef.SpleefData.SpleefGameData;
 import com.github.lyokofirelyte.Elysian.Games.Spleef.SpleefData.SpleefPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityGame;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorage;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 
 public class SpleefStorage extends THashMap<Enum<?>, Object> {
 	
@@ -203,4 +204,4 @@ public class SpleefStorage extends THashMap<Enum<?>, Object> {
 		
 		return game;
 	}
-}
+}*/

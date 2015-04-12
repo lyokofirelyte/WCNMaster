@@ -7,28 +7,32 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.net.Socket;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.UUID;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
 import org.bukkit.craftbukkit.libs.com.google.gson.GsonBuilder;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonElement;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonParser;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -39,12 +43,28 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.github.lyokofirelyte.Empyreal.Command.CommandRegistry;
+import com.github.lyokofirelyte.Empyreal.Database.EmpyrealSQL;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityAlliance;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRegion;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRing;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
+import com.github.lyokofirelyte.Empyreal.Events.CountdownEndEvent;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatMessage;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONManager;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONManager.JSONClickType;
 import com.github.lyokofirelyte.Empyreal.Listener.BungeeListener;
 import com.github.lyokofirelyte.Empyreal.Listener.EmpyrealSocketListener;
+import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
+import com.github.lyokofirelyte.Empyreal.Listener.SocketObject;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.ConsolePlayer;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
+import com.github.lyokofirelyte.GameServer.Listener.SQLQueue;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -70,7 +90,13 @@ public class Empyreal extends JavaPlugin {
 	
 	@Getter @Setter
 	private Map<String, Socket> serverSockets = new HashMap<String, Socket>();
-
+	
+	@Getter @Setter
+	private Map<Object, Object> tempVars = new HashMap<Object, Object>();
+	
+	@Getter @Setter
+	private Map<String, Integer> activeTasks = new HashMap<String, Integer>();
+	
 	@Getter @Setter
 	private CommandRegistry commandRegistry;
 	
@@ -81,10 +107,13 @@ public class Empyreal extends JavaPlugin {
 	private int onlinePlayercount = 0;
 	
 	@Getter @Setter
-	private PrintStream out;
+	private boolean reconnectInProgress = false;
 	
 	@Getter @Setter
-	private PrintStream secondOut;
+	private Map<String, DivinityStorageModule> onlineModules = new HashMap<String, DivinityStorageModule>();
+	
+	@Getter @Setter
+	private Map<String, DivinityPlayer> lastCheckedUser = new HashMap<String, DivinityPlayer>();
 
 	@Override @SneakyThrows
 	public void onEnable(){
@@ -103,8 +132,7 @@ public class Empyreal extends JavaPlugin {
 		
 		APIScheduler.REPEAT.start(this, "server_check", 1200L, 1200L, new Runnable(){
 			public void run(){
-
-				if (!getServerName().equals("GameServer") && !getServerName().equals("") && !getServerName().equals("Creative")){
+				if (!getServerName().equals("GameServer") && !getServerName().equals("") && !getServerName().equals("Creative") && !getServerName().equals("wa")){
 					if (Bukkit.getOnlinePlayers().size() <= 0){
 						Bukkit.getServer().shutdown();
 					}
@@ -112,61 +140,51 @@ public class Empyreal extends JavaPlugin {
 			}
 		});
 		
-		out = System.out;
-		
-		secondOut = new PrintStream("t"){
-	        @Override
-	        public void println(String txt){
-	        	
-	        	if (txt.equals("")){
-	        		return;
-	        	}
-
-				if (!serverName.equals("GameServer")){
-					sendToSocket(serverSockets.get("GameServer"), "wcn_logger", "&7(&6" + getServerName() + "&7) " + txt, "END");
-				} else {
-					for (String socket : serverSockets.keySet()){
-						if (socket.startsWith("WCNConsole")){
-							sendToSocket(serverSockets.get(socket), "wcn_logger", "&7(&6" + getServerName() + "&7) " + txt, "END");
+		if (getServerName().equals("GameServer")){
+			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, getInstance(SQLQueue.class).getType(), 0L, 20L);
+		} else {
+			APIScheduler.REPEAT.start(this, "gameserver_keep_alive", 200L, 100L, new Runnable(){
+				public void run(){
+					if (getServerSockets().get("GameServer").isClosed()){
+						if (!reconnectInProgress){
+							Utils.bc("&c&oLost connection to GameServer & Chat Module, attempting to reconnect...");
+							reconnectInProgress = true;
+							registerSockets();
 						}
+					} else if (reconnectInProgress){
+						reconnectInProgress = false;
+						Utils.bc("Connection with GameServer & Chat re-established.");
 					}
 				}
-				
-				getOut().println(txt);
-	        }
-	    };
-		
-	    System.setOut(secondOut);
+			});
+		}
 	}
 	
 	private void registerSockets(){
 		
 		try {
 		
-			System.out.println("Registering sockets for " + getServerName() + "...");
+			System.out.println("Auto-registering sockets for " + getServerName() + "...");
+			
+			serverSockets.put("Bungee", new Socket("127.0.0.1", 10000));
 			
 			if (!serverName.equals("GameServer")){
 				serverSockets.put("GameServer", new Socket("127.0.0.1", 24000));
-			}
-
-			serverSockets.put("wa", new Socket("127.0.0.1", 24001));
-			
-			if (!serverName.equals("GameServer")){
 				assignSocket();
 			}
 			
 			System.out.println("Sockets registered!");
 			
 		} catch (Exception e){
-			System.out.println("Failed to register sockets. Retrying in 2 seconds...");
-			APIScheduler.DELAY.start(this, "init", 40L, new Runnable(){
+			System.out.println("Failed to register sockets. Retrying in 5 seconds...");
+			APIScheduler.DELAY.start(this, "init", 100L, new Runnable(){
 				public void run(){
 					registerSockets();
 				}
 			});
 		}
 	}
-	
+
 	@Override
 	public void onDisable(){
 		
@@ -179,6 +197,48 @@ public class Empyreal extends JavaPlugin {
 		if (!serverName.equals("GameServer")){
 			sendToSocket(getServerSockets().get("GameServer"), "server_shutdown");
 			sendToSocket(getServerSockets().get("GameServer"), "remove_socket");
+		}
+	}
+	
+	public boolean perms(CommandSender p, String perm){
+		return perms(p, perm, true);
+	}
+	
+	public boolean perms(CommandSender p, String perm, boolean silent){
+		boolean result = p.isOp() || p instanceof Player == false || getGamePlayer(((Player) p).getUniqueId()).getPerms().contains(perm);
+		if (!silent){
+			Utils.s(p, "&c&oNo permissions!");
+		}
+		return result;
+	}
+	
+	public void event(Event e){
+		Bukkit.getPluginManager().callEvent(e);
+	}
+	
+	public void cancelTask(String name){
+		if (activeTasks.containsKey(name)){
+			Bukkit.getScheduler().cancelTask(activeTasks.get(name));
+		}
+	}
+	
+	public void schedule(Object clazz, String method, long delay, String taskName, Object... args){
+		
+		for (Method m : clazz.getClass().getMethods()){
+			if (m.getName().equals(method)){
+				activeTasks.put(taskName, Bukkit.getScheduler().scheduleSyncDelayedTask(this, args != null ? new DivinityScheduler(clazz, m, args) : new DivinityScheduler(clazz, m), delay));
+				return;
+			}
+		}
+	}
+	
+	public void repeat(Object clazz, String method, long delay, long period, String taskName, Object... args){
+		
+		for (Method m : clazz.getClass().getMethods()){
+			if (m.getName().equals(method)){
+				activeTasks.put(taskName, Bukkit.getScheduler().scheduleSyncRepeatingTask(this, args != null ? new DivinityScheduler(clazz, m, args) : new DivinityScheduler(clazz, m), delay, period));
+				return;
+			}
 		}
 	}
 	
@@ -310,16 +370,43 @@ public class Empyreal extends JavaPlugin {
 			}
 		}
 	}
+
+	public void sendToSocket(String server, Handler handler, String... msgs){
+		String[] strs = new String[msgs.length+1];
+		strs[0] = handler.toString();
+		for (int i = 0; i < msgs.length; i++){
+			strs[i+1] = msgs[i];
+		}
+		sendToSocket(getServerSockets().get(server), strs);
+	}
 	
-	@SneakyThrows
-	public void sendToSocket(Socket socket, String... msgs){
+	public void sendObjectToSocket(String server, SocketObject obj){
 		
-		PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(getServerSockets().get(server).getOutputStream());
+			oos.writeObject(obj);
+			oos.flush();
+		} catch (Exception e){}
+	}
+	
+	private void sendToSocket(Socket socket, String... msgs){
 		
-		pw.println(getServerName());
+		try {
 		
-		for (String msg : msgs){
-			pw.println(msg);
+			PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+			pw.println(getServerName());
+			
+			for (String msg : msgs){
+				pw.println(msg);
+			}
+			
+		} catch (Exception e){
+			for (String name : getServerSockets().keySet()){
+				if (getServerSockets().get(name).getPort() == (socket.getPort())){
+					System.out.println("Could not send socket data from " + getServerName() + " to " + name + "!");
+					break;
+				}
+			}
 		}
 	}
 	
@@ -444,6 +531,33 @@ public class Empyreal extends JavaPlugin {
 		}
 	}
 	
+	public void startCountdown(final int initialSeconds, final int secondsReducedPerSecond, final String displayNameBeforeCounter, final String countdownName){
+		
+		tempVars.put(countdownName, initialSeconds);
+		
+		APIScheduler.REPEAT.start(this, countdownName, 0L, new Runnable(){
+			public void run(){
+				
+				int timeLeft = (int) tempVars.get(countdownName);
+				
+				for (Player p : Bukkit.getOnlinePlayers()){
+					if (p.getScoreboard() != null){
+						p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).setDisplayName(Utils.AS(displayNameBeforeCounter + " " + getTimeLeft(timeLeft)));
+					}
+				}
+				
+				if (timeLeft <= 0){
+					APIScheduler.REPEAT.stop(countdownName);
+					tempVars.remove(countdownName);
+					Bukkit.getPluginManager().callEvent(new CountdownEndEvent(countdownName));
+				} else {
+					timeLeft -= secondsReducedPerSecond;
+					tempVars.put(countdownName, timeLeft);
+				}
+			}
+		});
+	}
+	
 	public void updateScoreBoard(GamePlayer<?> player, String displayName, String... scoreNames){
 		
 		displayName = Utils.AS(displayName);
@@ -504,11 +618,193 @@ public class Empyreal extends JavaPlugin {
 		first.setDisplayName(Utils.AS(displayName));
 	}
 	
-	@SneakyThrows
 	private void assignSocket(){
+		try {
+			sendToSocket(getServerSockets().get("GameServer"), "assign_socket", getServerName());
+			BufferedReader in = new BufferedReader(new InputStreamReader(getServerSockets().get("GameServer").getInputStream()));
+			new Thread(new EmpyrealSocketListener(this, in, new PrintWriter(getServerSockets().get("GameServer").getOutputStream()))).start();
+			new Thread(new EmpyrealSocketListener(this, new ObjectInputStream(getServerSockets().get("GameServer").getInputStream()))).start();
+		} catch (Exception e){}
+	}
+	
+	public DivinityPlayer getDivPlayer(String name){
+		return searchForPlayer(name);
+	}
+	
+	public DivinityPlayer getDivPlayer(Player p){
+		return getDivPlayer(p.getUniqueId());
+	}
+	
+	public DivinityPlayer getDivPlayer(UUID uuid){
 		
-		sendToSocket(getServerSockets().get("GameServer"), "assign_socket", getServerName());
-		BufferedReader in = new BufferedReader(new InputStreamReader(getServerSockets().get("GameServer").getInputStream()));
-		new Thread(new EmpyrealSocketListener(this, in)).start();
+		if (getOnlineModules().containsKey(uuid.toString())){
+			return (DivinityPlayer) getOnlineModules().get(uuid.toString());
+		}
+		
+		DivinityPlayer newPlayer = new DivinityPlayer(uuid, this);
+		
+		if (Bukkit.getPlayer(uuid).hasPlayedBefore()){
+			newPlayer.fill(getInstance(EmpyrealSQL.class).getType().getMapFromDatabase("users", uuid.toString()));
+		} else {
+			YamlConfiguration yaml = YamlConfiguration.loadConfiguration(this.getResource("newUser.yml"));
+			for (String key : yaml.getKeys(false)){
+				newPlayer.set(key, yaml.get(key));
+			}
+		}
+		
+		getOnlineModules().put(uuid.toString(), newPlayer);
+		return newPlayer;
+	}
+	
+	public DivinityAlliance getDivAlliance(String name){
+		
+		if (getOnlineModules().containsKey("ALLIANCE_" + name)){
+			return (DivinityAlliance) getOnlineModules().get("ALLIANCE_" + name);
+		}
+		
+		return null;
+	}
+	
+	public DivinityRegion getDivRegion(String name){
+		
+		if (getOnlineModules().containsKey("REGION_" + name)){
+			return (DivinityRegion) getOnlineModules().get("REGION_" + name);
+		}
+		
+		return null;
+	}
+	
+	public DivinityRing getDivRing(String name){
+		
+		if (getOnlineModules().containsKey("RING_" + name)){
+			return (DivinityRing) getOnlineModules().get("RING_" + name);
+		}
+		
+		return null;
+	}
+	
+	public DivinitySystem getDivSystem(){
+		
+		if (getOnlineModules().containsKey("SYSTEM")){
+			return (DivinitySystem) getOnlineModules().get("SYSTEM");
+		}
+		
+		DivinitySystem sys = new DivinitySystem(this, "system");
+		sys.fill(getInstance(EmpyrealSQL.class).getType().getMapFromDatabase("system", "system"));
+		getOnlineModules().put("SYSTEM", sys);
+		
+		return sys;
+	}
+	
+	public Player getPlayer(String name){
+		return Bukkit.getPlayer(getOnlineModules().get(name).getUuid());
+	}
+	
+	public DivinityPlayer searchForPlayer(String name){
+		
+		DivinityPlayer ret = null;
+		
+		if (getLastCheckedUser().containsKey(name) || doesPartialPlayerExist(name)){
+			ret = getLastCheckedUser().get(name);
+			getLastCheckedUser().remove(name);
+		}
+		
+		return ret;
+	}
+	
+	public boolean doesPartialPlayerExist(String name){
+		
+		for (DivinityStorageModule m : getOnlineModules().values()){
+			if (m.getTable().equals("users")){
+				if (m.getName().toLowerCase().contains(name.toLowerCase())){
+					getLastCheckedUser().put(name, (DivinityPlayer) m);
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean doesRegionExist(String name){
+		
+		for (DivinityStorageModule m : getOnlineModules().values()){
+			if (m.getTable().equals("regions") && m.getName().equals(name)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean doesRingExist(String name){
+			
+		for (DivinityStorageModule m : getOnlineModules().values()){
+			if (m.getTable().equals("rings") && m.getName().equals(name)){
+				return true;
+			}
+		}
+			
+		return false;
+	}
+	
+	@SneakyThrows
+	public void loadAllDivinityPlayers(){
+		
+		ResultSet rs = getInstance(EmpyrealSQL.class).getType().getResult("users", "uuid", "ALL");
+		int i = 0;
+		
+		while (rs.next()){
+			UUID uuid = (UUID) rs.getObject("uuid");
+			DivinityPlayer dp = new DivinityPlayer(uuid, this);
+			dp.fill(getInstance(EmpyrealSQL.class).getType().getMapFromDatabase("users", uuid.toString()));
+			getOnlineModules().put(uuid.toString(), dp);
+			i++;
+		}
+		
+		System.out.println("Loaded " + i + " users!");
+	}
+	
+	@SneakyThrows
+	public void loadAllDivinityModules(String table){
+		
+		if (table.equals("users")){
+			loadAllDivinityPlayers();
+		} else {
+			ResultSet rs = getInstance(EmpyrealSQL.class).getType().getResult(table, "name", "ALL");
+			int i = 0;
+			
+			while (rs.next()){
+				String name = rs.getString("name");
+				DivinityRing dp = new DivinityRing(name, this);
+				dp.fill(getInstance(EmpyrealSQL.class).getType().getMapFromDatabase(table, name));
+				getOnlineModules().put(table.substring(0, table.length()-1).toUpperCase() + "_" + name, dp);
+				i++;
+			}
+			
+			System.out.println("Loaded " + i + " " + table + "s!");
+		}
+	}
+	
+	public void loadAllDivinityModules(){
+		for (String table : new String[]{ "users", "alliances", "rings", "regions" }){
+			loadAllDivinityModules(table);
+		}
+	}
+	
+	public boolean isOnline(Player p){
+		return p.isOnline();
+	}
+	
+	public boolean isOnline(String p){
+		return Bukkit.getPlayer(p) != null;
+	}
+	
+	public JSONChatMessage createJSON(String message, ImmutableMap<String, ImmutableMap<JSONClickType, String[]>> jsonValue){
+		return getInstance(JSONManager.class).getType().create(message, jsonValue);
+	}
+	
+	public String AS(String msg){
+		return ChatColor.translateAlternateColorCodes('&', msg);
 	}
 }

@@ -1,5 +1,7 @@
 package com.github.lyokofirelyte.Elysian.MMO;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -7,21 +9,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -45,18 +45,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
-import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
-import com.github.lyokofirelyte.Divinity.Events.SkillExpGainEvent;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatExtra;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatHoverEventType;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
-import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Commands.ElyEffects;
+import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Events.ElyLogger;
+import com.github.lyokofirelyte.Elysian.Events.ScoreboardUpdateEvent;
+import com.github.lyokofirelyte.Elysian.Events.SkillExpGainEvent;
 import com.github.lyokofirelyte.Elysian.MMO.Abilities.Bezerk;
 import com.github.lyokofirelyte.Elysian.MMO.Abilities.Chaos;
 import com.github.lyokofirelyte.Elysian.MMO.Abilities.LifeForce;
@@ -66,17 +60,21 @@ import com.github.lyokofirelyte.Elysian.MMO.Abilities.SuperBreaker;
 import com.github.lyokofirelyte.Elysian.MMO.Abilities.TreeFeller;
 import com.github.lyokofirelyte.Elysian.MMO.Magics.SpellEvents;
 import com.github.lyokofirelyte.Elysian.MMO.Magics.SpellTasks;
-import com.github.lyokofirelyte.Elysian.Patrols.ElyPatrolChat;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.Identifiers.DivGame;
-import com.github.lyokofirelyte.Spectral.Public.ParticleEffect;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
+import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.APIScheduler;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatExtra;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatHoverEventType;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatMessage;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
 
-public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoRegister, DivGame {
+public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoRegister<ElyMMO> {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -85,13 +83,15 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 	public SuperBreaker superBreaker;
 	public SkyBlade skyBlade;
 	public LifeForce life;
-	public ElyPatrolChat patrols;
 	public ElyAutoRepair repair;
 	public SoulSplit soulSplit;
 	public SpellEvents spellEvents;
 	public SpellTasks spellTasks;
 	public Bezerk bezerk;
 	public Chaos chaos;
+	
+	@Getter
+	private ElyMMO type = this;
 	
 	public Map<String, List<Item>> noPickup = new THashMap<>();
 	public Map<SmallFireball, String> potions = new THashMap<>();
@@ -102,26 +102,20 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		superBreaker = new SuperBreaker(main);
 		skyBlade = new SkyBlade(main);
 		life = new LifeForce(main);
-		patrols = new ElyPatrolChat(main);
-		repair = new ElyAutoRepair(main);
 		soulSplit = new SoulSplit(main);
-		spellEvents = new SpellEvents(main);
-		spellTasks = new SpellTasks(main);
 		bezerk = new Bezerk(main);
 		chaos = new Chaos(main);
 		fillMap();
-	}
-	
-	@Override
-	public Object[] registerSubClasses(){
 		
-		return new Object[]{
-			patrols,
-			repair,
-			spellEvents,
-			spellTasks
-		};
+		APIScheduler.DELAY.start(main.gameAPI, "ElyMMO", 200L, new Runnable(){
+			public void run(){
+				repair = main.gameAPI.getInstance(ElyAutoRepair.class).getType();
+				spellEvents = main.gameAPI.getInstance(SpellEvents.class).getType();
+				spellTasks = main.gameAPI.getInstance(SpellTasks.class).getType();
+			}
+		});
 	}
+
 	//Material -> Skill -> [XP, LevelRequirement]
 	public void fillMap(){
 		sm(Material.LOG, ElySkill.WOODCUTTING, 125, 0);
@@ -582,20 +576,22 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 			return;
 		}
 		
-		Map<Integer, List<DivinityStorage>> players = new THashMap<>();
+		Map<Integer, List<DivinityStorageModule>> players = new THashMap<>();
 		
-		for (DivinityStorage dp : main.divinity.api.getAllPlayers()){
+		for (DivinityStorageModule dp : main.api.getOnlineModules().values()){
 			
-			int total = 0;
-			
-			for (ElySkill skill : ElySkill.values()){
-				total = (checkSkill != null && checkSkill.equals(skill)) || s.equals("total") ? total + ((DivinityPlayer)dp).getLevel(skill) : total;
-			}
-			
-			if (!players.containsKey(total)){
-				players.put(total, new ArrayList<DivinityStorage>(Arrays.asList(dp)));
-			} else {
-				players.get(total).add(dp);
+			if (dp.getTable().equals("users")){
+				int total = 0;
+				
+				for (ElySkill skill : ElySkill.values()){
+					total = (checkSkill != null && checkSkill.equals(skill)) || s.equals("total") ? total + ((DivinityPlayer)dp).getLevel(skill) : total;
+				}
+				
+				if (!players.containsKey(total)){
+					players.put(total, new ArrayList<DivinityStorageModule>(Arrays.asList(dp)));
+				} else {
+					players.get(total).add(dp);
+				}
 			}
 		}
 		
@@ -616,7 +612,7 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 			JSONChatExtra extra = null;
 			int loops = 0;
 			
-			for (DivinityStorage ds : players.get(values.get(i))){
+			for (DivinityStorageModule ds : players.get(values.get(i))){
 
 				String hoverText = "&3Skill Layout";
 				int total = 0;
@@ -821,29 +817,6 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		
 		String[] results = dp.getStr(e.getSkill()).split(" ");
 		int level = Integer.parseInt(results[0]);
-		
-		if (!dp.getBool(DPI.IGNORE_XP) && !dp.getBool(DPI.SHARE_XP)){
-			try {
-				if (patrols.doesPatrolExistWithPlayer(p)){
-					for (String member : patrols.getPatrolWithPlayer(p).getMembers()){
-						if (!member.equals(p.getName())){
-							Location l = main.api.getPlayer(member).getLocation();
-							Location l2 = e.getPlayer().getLocation();
-							if (l.getWorld().getName().equals(l2.getWorld().getName()) && (l.getBlockX() >= l2.getBlockX()-50 && l.getBlockX() <= l2.getBlockX()+50)){
-								if (l.getBlockZ() >= l2.getBlockZ()-50 && l.getBlockZ() <= l2.getBlockZ()+50){
-									if (l.getBlockY() >= l2.getBlockY()-50 && l.getBlockY() <= l2.getBlockY()+50){
-										main.api.getDivPlayer(member).set(DPI.IGNORE_XP, true);
-										main.api.event(new SkillExpGainEvent(main.api.getPlayer(member), e.getSkill(), Math.round(e.getXp()/5)));
-									}
-								}
-							}
-						}
-					}
-				}
-			} catch (Exception ee){}
-		}
-		
-		dp.set(DPI.IGNORE_XP, false);
 		
 		if (level < 99){
 			
@@ -1091,11 +1064,5 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 				
 			break;
 		}
-	}
-	
-	@Override
-	public DivinityGame toDivGame() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

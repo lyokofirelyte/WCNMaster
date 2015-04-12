@@ -10,8 +10,8 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
 public class MMPlayer implements GamePlayer<MMPlayer>{
 

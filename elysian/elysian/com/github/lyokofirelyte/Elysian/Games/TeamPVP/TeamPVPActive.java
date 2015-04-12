@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.Games.TeamPVP;
+/*package com.github.lyokofirelyte.Elysian.Games.TeamPVP;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,8 +10,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Games.TeamPVP.TeamPVPData.TeamPVPGame;
 import com.github.lyokofirelyte.Elysian.Games.TeamPVP.TeamPVPData.TeamPVPPlayer;
 
@@ -85,4 +85,4 @@ public class TeamPVPActive implements Listener {
 			}
 		}
 	}
-}
+}*/

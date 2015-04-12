@@ -1,11 +1,13 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,27 +20,30 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.Events.DivinityPluginMessageEvent;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatClickEventType;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatExtra;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatHoverEventType;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
-import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
-import com.github.lyokofirelyte.Divinity.Manager.JSONManager.JSONClickType;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElyChannel;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
+import com.github.lyokofirelyte.Elysian.api.ElyChannel;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatClickEventType;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatExtra;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatHoverEventType;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatMessage;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONManager.JSONClickType;
+import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.TitleExtractor;
 import com.google.common.collect.ImmutableMap;
 
-public class ElyChat implements Listener, AutoRegister {
+public class ElyChat implements Listener, AutoRegister<ElyChat> {
 	
 	private Elysian main;
+	
+	@Getter
+	private ElyChat type = this;
 	
 	public ElyChat(Elysian i){
 		main = i;
@@ -62,7 +67,7 @@ public class ElyChat implements Listener, AutoRegister {
 	@DivCommand(name = "PM", aliases = {"tell", "pm", "msg", "message", "t", "r"}, desc = "Private Message Command", help = "/tell <player> <message>", min = 1, player = false)
 	public void onPrivateMessage(CommandSender cs, String[] args, String cmd){
 
-		DivinityStorage dp = cs instanceof Player ? main.divinity.api.divManager.getStorage(DivinityManager.dir, ((Player)cs).getUniqueId().toString()) : main.divinity.api.divManager.getStorage(DivinityManager.sysDir, "system");
+		DivinityStorageModule dp = cs instanceof Player ? main.api.getDivPlayer((Player) cs) : main.getDivSystem();
 		String sendTo = !cmd.equals("r") ? args[0] : dp.getStr(DPI.PREVIOUS_PM);
 		String message = !cmd.equals("r") ? args[1] : args[0];
 		int start = !cmd.equals("r") ? 2 : 1;
@@ -79,7 +84,7 @@ public class ElyChat implements Listener, AutoRegister {
 					String sendToMessage = main.AS("&3<- " + dp.getStr(DPI.DISPLAY_NAME) + "&f: " + main.api.getDivPlayer(sendTo).getStr(DPI.PM_COLOR) + message);
 					String sendMeMessage = main.AS(("&3-> " + main.api.getDivPlayer(sendTo).getStr(DPI.DISPLAY_NAME)) + "&f: " + dp.getStr(DPI.PM_COLOR) + message);
 					
-					main.divinity.api.createJSON("", ImmutableMap.of(		
+					main.api.createJSON("", ImmutableMap.of(		
 						sendToMessage, ImmutableMap.of(
 							JSONClickType.CLICK_SUGGEST, new String[]{
 								"/tell " + cs.getName() + " ",
@@ -89,7 +94,7 @@ public class ElyChat implements Listener, AutoRegister {
 					)).sendToPlayer(main.api.getPlayer(sendTo));
 					
 					if(cs instanceof Player){
-						main.divinity.api.createJSON("", ImmutableMap.of(		
+						main.api.createJSON("", ImmutableMap.of(		
 								sendMeMessage, ImmutableMap.of(
 									JSONClickType.CLICK_SUGGEST, new String[]{
 										"/tell " + main.api.getPlayer(sendTo).getName() + " ",
@@ -103,12 +108,12 @@ public class ElyChat implements Listener, AutoRegister {
 					}
 
 					
-					main.api.getDivPlayer(sendTo).set(DPI.PREVIOUS_PM, dp.name());
+					main.api.getDivPlayer(sendTo).set(DPI.PREVIOUS_PM, dp.getName());
 					
 				} else {
 					Bukkit.getConsoleSender().sendMessage(main.AS(("&3<- " + dp.getStr(DPI.DISPLAY_NAME) + "&f: " + message)));
 					cs.sendMessage(main.AS(("&3-> " + "&6Console" + "&f: " + dp.getStr(DPI.PM_COLOR) + message)));
-					main.api.getDivSystem().set(DPI.PREVIOUS_PM, dp.name());
+					main.api.getDivSystem().set(DPI.PREVIOUS_PM, dp.getName());
 					dp.set(DPI.PREVIOUS_PM, "console");
 				}
 				
@@ -290,7 +295,7 @@ public class ElyChat implements Listener, AutoRegister {
 		
 		if (!main.api.getDivPlayer(e.getPlayer()).getBool(DPI.MUTED)){
 			try{
-				main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "chat", "&7" + e.getPlayer().getDisplayName() + "&f: " + e.getMessage());
+				main.api.sendToSocket("GameServer", Handler.GLOBAL_CHAT, "&7" + e.getPlayer().getDisplayName() + "&f: " + e.getMessage());
 			}catch(Exception ex){}
 			
 			new Thread(new Runnable(){ public void run(){
@@ -341,7 +346,7 @@ public class ElyChat implements Listener, AutoRegister {
 					
 					for (String message : rawMsg.split(" ")){
 						if (linkCheck(message)){
-							extra = new JSONChatExtra(main.AS(" &6&o" + main.divinity.api.title.getPageTitle(message) + globalColor), null, null);
+							extra = new JSONChatExtra(main.AS(" &6&o" + main.api.getInstance(TitleExtractor.class).getType().getPageTitle(message) + globalColor), null, null);
 							extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&7&oNavigate to URL"));
 							extra.setClickEvent(JSONChatClickEventType.OPEN_URL, message);
 						} else if (message.startsWith("cmd:")){
@@ -365,10 +370,7 @@ public class ElyChat implements Listener, AutoRegister {
 				map.put("type", "minecraft_insert");
 				String msg = (String) main.divinity.api.web.sendPost("/api/chat", map).get("message").toString();
 				main.divinity.api.web.messages.add(msg);*/
-				
-				main.getDefaultOut().println(ChatColor.stripColor(main.AS(e.getPlayer().getDisplayName() + ": " + e.getMessage())));
-				main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "wcn_logger", "&7(&6wa&7) " + e.getPlayer().getDisplayName() + " &f: " + e.getMessage(), "END");
-				
+								
 			}}).start();
 		} else {
 			main.s(e.getPlayer(), "muted");

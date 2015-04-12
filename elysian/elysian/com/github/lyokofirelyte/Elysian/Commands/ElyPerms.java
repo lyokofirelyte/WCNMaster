@@ -1,24 +1,29 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
 import org.bukkit.command.CommandSender;
 
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElyPerms implements AutoRegister {
+public class ElyPerms implements AutoRegister<ElyPerms> {
 
 	 Elysian main;
+	 
+	 @Getter
+	 private ElyPerms type = this;
 	 
 	 public ElyPerms(Elysian i){
 		 main = i;

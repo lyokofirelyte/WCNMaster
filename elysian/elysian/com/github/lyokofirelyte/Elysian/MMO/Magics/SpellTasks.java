@@ -3,6 +3,8 @@ package com.github.lyokofirelyte.Elysian.MMO.Magics;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
@@ -11,14 +13,19 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
-import com.github.lyokofirelyte.Divinity.Events.SkillExpGainEvent;
-import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
-import com.github.lyokofirelyte.Spectral.Public.ParticleEffect;
 
-public class SpellTasks {
+import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.Events.SkillExpGainEvent;
+import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
+
+public class SpellTasks implements AutoRegister<SpellTasks> {
 
 	private Elysian main;
+	
+	@Getter
+	private SpellTasks type = this;
 	
 	public SpellTasks(Elysian i) {
 		main = i;

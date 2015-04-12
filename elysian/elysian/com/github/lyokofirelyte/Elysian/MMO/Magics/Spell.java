@@ -12,12 +12,11 @@ import org.bukkit.entity.SmallFireball;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.github.lyokofirelyte.Divinity.Events.SkillExpGainEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Elysian.MMO.ElyMMO;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
-import com.github.lyokofirelyte.Spectral.Public.ParticleEffect;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Elysian.Events.SkillExpGainEvent;
+import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
 
 public enum Spell {
 

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -20,16 +22,19 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
+import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElyWarps implements AutoRegister, Listener {
+public class ElyWarps implements AutoRegister<ElyWarps>, Listener {
 
 	private Elysian main;
+	
+	@Getter
+	private ElyWarps type = this;
 	
 	public ElyWarps(Elysian i){
 		main = i;

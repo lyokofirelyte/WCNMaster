@@ -2,20 +2,25 @@ package com.github.lyokofirelyte.Elysian.Commands;
 
 import java.util.List;
 
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElySpectate implements AutoRegister {
+public class ElySpectate implements AutoRegister<ElySpectate> {
 
 	private Elysian main;
+	
+	@Getter
+	private ElySpectate type = this;
 	
 	public ElySpectate(Elysian i){
 		main = i;

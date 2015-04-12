@@ -1,0 +1,62 @@
+package com.github.lyokofirelyte.Creator.Events.Listeners.Player;
+
+import java.util.HashMap;
+
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.util.Vector;
+
+import com.github.lyokofirelyte.Creator.VTParser;
+import com.github.lyokofirelyte.Creator.VariableTriggers;
+import com.github.lyokofirelyte.Creator.Identifiers.AR;
+import com.github.lyokofirelyte.Creator.Identifiers.VTMap;
+
+public class PlayerTriggerPressurePlate extends VTMap<Object, Object> implements AR {
+
+	private VariableTriggers main;
+	
+	public PlayerTriggerPressurePlate(VariableTriggers i){
+		main = i;
+		makePath("./plugins/VariableTriggers/events/player", "PlayerTriggerPressurePlate.yml");
+		load();
+	}
+	
+	@EventHandler (ignoreCancelled = false)
+	public void onClick(PlayerInteractEvent e){
+		
+		if (getList("Worlds").contains(e.getPlayer().getWorld().getName())){
+			if (getLong("ActiveCooldown") <= System.currentTimeMillis()){
+				if (getBool("Cancelled")){
+					e.setCancelled(true);
+				}
+				if (getList("main").size() > 0 && e.getAction() == Action.PHYSICAL){
+					new VTParser(main, "PlayerTriggerPressurePlate.yml", "main", getList("main"), e.getClickedBlock().getLocation(), getCustoms(e), e.getPlayer().getName()).start();
+					cooldown();
+				}
+			}
+		}
+	}
+	
+	private HashMap<String, String> getCustoms(PlayerInteractEvent e){
+		
+		Vector loc = e.getClickedBlock().getLocation().toVector();
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("<clicktype>", e.getAction().name());
+		map.put("<blockid>", e.getClickedBlock().getType().getId() + "");
+		map.put("<blockdata>", e.getClickedBlock().getData() + "");
+		map.put("<blocktype>", e.getClickedBlock().getType().getId() + ":" + e.getClickedBlock().getData());
+		map.put("<blockmaterial>", e.getClickedBlock().getType().name());
+		map.put("<blocklocation>", e.getClickedBlock().getLocation().getWorld().getName() + " " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
+		
+		return map;
+	}
+	
+	public void loadAll(){
+		load();
+	}
+	
+	public void saveAll(){
+		save();
+	}
+}

@@ -13,6 +13,8 @@ import java.util.Random;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -28,28 +30,32 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.json.simple.JSONObject;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatClickEventType;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatExtra;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatHoverEventType;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
-import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
-import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRoot;
-import com.github.lyokofirelyte.Spectral.DataTypes.DAI;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElyChannel;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.Public.Direction;
-import com.github.lyokofirelyte.Spectral.Public.ParticleEffect;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
+import com.github.lyokofirelyte.Elysian.api.ElyChannel;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatClickEventType;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatExtra;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatHoverEventType;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatMessage;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.Direction;
+import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
+import com.github.lyokofirelyte.Empyreal.Utils.WebsiteManager;
 
-public class ElyCommand implements AutoRegister {
+public class ElyCommand implements AutoRegister<ElyCommand> {
 
 	private Elysian main;
+	
+	@Getter
+	private ElyCommand type = this;
 	
 	public ElyCommand(Elysian i){
 		main = i;
@@ -73,7 +79,7 @@ public class ElyCommand implements AutoRegister {
 
 	private void fillMap(List<String> perms, boolean all){
 		help.clear();
-		for (Object o : main.divinity.commandMap.values()){
+		for (Object o : main.api.commandMap.values()){
 			for (Method m : o.getClass().getMethods()){
 				if (m.getAnnotation(DivCommand.class) != null){
 					DivCommand anno = m.getAnnotation(DivCommand.class);
@@ -113,20 +119,6 @@ public class ElyCommand implements AutoRegister {
 	public void onDank(Player p, String[] args){
 		main.api.getDivPlayer(p).set(DPI.DANK, !main.api.getDivPlayer(p).getBool(DPI.DANK));
 		main.s(p, "Updated dank mode.");
-	}
-	
-	@DivCommand(aliases = { "wcnconsole" }, desc = "Console Register Command", help = "/wcnconsole", player = true)
-	public void onWCNConsole(Player p, String[] args){
-		
-		DivinityPlayer dp = main.api.getDivPlayer(p);
-		
-		if (dp.getStr(DPI.WCN_CONSOLE).equals("none")){
-			
-			main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "wcnconsole_uuid", p.getUniqueId().toString());
-			
-		} else {
-			
-		}
 	}
 	
 	@DivCommand(aliases = {"tutorial"}, perm = "wa.guest", desc = "Basic tutorial books for Worlds Apart!", help = "/tutorial", player = true)
@@ -291,7 +283,7 @@ public class ElyCommand implements AutoRegister {
 		sendMap.put("id", enc);
 		sendMap.put("staff", dp.getList(DPI.PERMS).contains("wa.staff.intern"));
 		sendMap.put("check", main.api.getDivSystem().getStr(DPI.WEB_CHECK));
-		result = (boolean) main.divinity.api.web.sendPost("/api/register_code/", sendMap).get("success");
+		result = (boolean) main.api.getInstance(WebsiteManager.class).getType().sendPost("/api/register_code/", sendMap).get("success");
 		
 		if (result){
 			JSONChatMessage msg = new JSONChatMessage("");
@@ -445,7 +437,7 @@ public class ElyCommand implements AutoRegister {
 				
 				case "rem":
 					
-					if (args.length == 2 && (ds.contains("Effects." + args[1])) || (ds.contains("LetterEffects." + args[1]))){
+					if (args.length == 2 && (ds.containsKey("Effects." + args[1])) || (ds.containsKey("LetterEffects." + args[1]))){
 						ds.remEffect(args[1]);
 						main.s(p, "Removed.");
 					} else {
@@ -465,11 +457,11 @@ public class ElyCommand implements AutoRegister {
 				
 				case "list":
 					
-					for (String s : ds.getConfigurationSection("Effects").getKeys(false)){
+					for (String s : ds.getList("Effects")){
 						main.s(p, s);
 					}
 					
-					for (String s : ds.getConfigurationSection("LetterEffects").getKeys(false)){
+					for (String s : ds.getList("LetterEffects")){
 						main.s(p, s);
 					}
 					
@@ -707,7 +699,7 @@ public class ElyCommand implements AutoRegister {
 			if(player.getLong(DPI.RAIN_TOGGLE) == 0 || player.getLong(DPI.RAIN_TOGGLE) <= System.currentTimeMillis() - 3 * 60 * 60 * 1000){
 				player.set(DPI.RAIN_TOGGLE, System.currentTimeMillis());
 				w.setStorm(false);
-				main.divinity.api.divUtils.bc(player.getStr(DPI.DISPLAY_NAME) + " &bhas turned off the rain!");
+				Utils.bc(player.getStr(DPI.DISPLAY_NAME) + " &bhas turned off the rain!");
 			}else{
 				player.s("You have to wait " + ((player.getLong(DPI.RAIN_TOGGLE) + 1000 * 60 * 60 * 3) - System.currentTimeMillis()) / 1000 / 60 + " more minutes");
 			}
@@ -749,7 +741,7 @@ public class ElyCommand implements AutoRegister {
 		
 	@DivCommand(aliases = {"setprice"}, desc = "Set the item price for your personal markkit.", help = "/setprice <price>", player = true, min = 1)
 	public void onPrice(Player p, String[] args){
-		if(!main.divinity.api.divUtils.isInteger(args[0])) return;
+		if(!Utils.isInteger(args[0])) return;
 		if(p.getItemInHand().getType() == null) return;
 		
 		int price = Integer.parseInt(args[0]);
@@ -858,47 +850,32 @@ public class ElyCommand implements AutoRegister {
 	@DivCommand(perm = "wa.staff.admin", aliases = {"modify"}, desc = "Divinity Modification Command", help = "/modify list, /modify <player/alliance> <stat> <value>", player = false, min = 1)
 	public void onModify(CommandSender p, String[] args){
 		
+		String dispName = p instanceof Player ? ((Player) p).getDisplayName() : "&6Console";
+		
 		if (args[0].equals("list")){
 			
-			main.s(p, "&3Player Values");
+			String list = "";
 			
-			for (DPI i : DPI.values()){
-				main.s(p, i.s());
+			for (DivinityStorageModule m : main.api.getOnlineModules().values()){
+				list += list.equals("") ? "&6" + m.getName() : "&b, &6" + m.getName();
 			}
 			
-			main.s(p, "&3Alliance Values");
-			
-			for (DAI i : DAI.values()){
-				main.s(p, i.s());
-			}
+			main.s(p, list);
 			
 		} else if (args.length >= 3){
-			if (main.api.doesPartialPlayerExist(args[0])){
-				for (DPI i : DPI.values()){
-					if (i.s().equalsIgnoreCase(args[1])){
-						try {
-							String dispName = p instanceof Player ? ((Player) p).getDisplayName() : "&6Console";
-							main.api.getDivPlayer(args[0]).set(i, DivinityUtilsModule.createString(args, 2));
-							ElyChannel.STAFF.send("&6System", dispName + " &cmodified " + i.s() + " for " + main.api.getDivPlayer(args[0]).getStr(DPI.DISPLAY_NAME) + "&c!", main.api);
-						} catch (Exception e){
-							main.s(p, "&c&oModification failed. Try a different value or stat.");
+			
+			try {
+				for (DivinityStorageModule m : main.api.getOnlineModules().values()){
+					if (m.getName().contains(args[0])){
+						if (m.containsKey(args[1])){
+							m.put(args[1], Utils.createString(args, 2));
+							ElyChannel.STAFF.send("&6System", dispName + " &cmodified &6" + args[1].toUpperCase() + " &cfor " + m.getName() + "&c!", main.api);
+							break;
 						}
 					}
 				}
-			} else if (main.divinity.api.divManager.getMap(DivinityManager.allianceDir).containsKey(args[0])){
-				for (DAI i : DAI.values()){
-					if (i.s().equalsIgnoreCase(args[1])){
-						try {
-							String dispName = p instanceof Player ? ((Player) p).getDisplayName() : "&6Console";
-							main.api.getDivAlliance(args[0]).set(i,  DivinityUtilsModule.createString(args, 2));
-							ElyChannel.STAFF.send("&6System", dispName + " &cmodified " + i.s() + " for " + args[0] + "&c!", main.api);
-						} catch (Exception e){
-							main.s(p, "&c&oModification failed. Try a different value or stat.");
-						}
-					}
-				}
-			} else {
-				main.s(p, "playerNotFound");
+			} catch (Exception e){
+				main.s(p, "&c&oCouldn't find that value or the player.");
 			}
 			
 		} else {
@@ -1047,9 +1024,14 @@ public class ElyCommand implements AutoRegister {
 				case "save":
 					
 					if (main.api.perms(p, "wa.staff.admin", true)){
-						main.api.saveAllFiles();
-						DivinityUtilsModule.bc("Divinity has saved.");
-						DivinityUtilsModule.bc("&7&o" + main.api.getAllPlayers().size() + " users, " + main.divinity.api.divManager.getMap(DivinityManager.allianceDir).size() + " alliances, and " + main.divinity.api.divManager.getMap(DivinityManager.regionsDir).size() + " regions.");
+						for (DivinityStorageModule m : main.api.getOnlineModules().values()){
+							try {
+								m.save();
+							} catch (Exception e){
+								System.out.println("Failed to save " + m.getName() + "!");
+							}
+						}
+						Utils.bc("Empyreal has saved.");
 					}
 					
 				break;
@@ -1059,10 +1041,8 @@ public class ElyCommand implements AutoRegister {
 					if (main.api.perms(p, "wa.staff.admin", false)){
 					
 						try {
-							main.api.loadAllFiles(true);
-							main.api.loadAllFiles(false);
-							DivinityUtilsModule.bc("Divinity has reloaded.");
-							DivinityUtilsModule.bc("&7&o" + main.api.getAllPlayers().size() + " users, " + main.divinity.api.divManager.getMap(DivinityManager.allianceDir).size() + " alliances, and " + main.divinity.api.divManager.getMap(DivinityManager.regionsDir).size() + " regions.");
+							main.api.loadAllDivinityModules();
+							DivinityUtilsModule.bc("Empyreal has reloaded.");
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -1072,10 +1052,7 @@ public class ElyCommand implements AutoRegister {
 				
 				case "backup":
 					
-					if (main.api.perms(p, "wa.staff.admin", true)){
-						 main.api.backup();
-						 main.s(p, "Backup Complete!");
-					}
+					main.s(p, "Coming soon(TM) but not really.");
 					
 				break;
 			}

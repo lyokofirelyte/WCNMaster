@@ -17,7 +17,7 @@ import org.json.simple.parser.JSONParser;
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.Saveable;
-import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
 public class GameSign {
 

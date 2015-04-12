@@ -1,6 +1,7 @@
 package com.github.lyokofirelyte.Elysian.Gui;
 
 import java.util.ArrayList;
+
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -8,13 +9,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.ChatColor;
 
-import com.github.lyokofirelyte.Divinity.DivGui;
-import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Gui.DivGui;
+import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
 
-import static com.github.lyokofirelyte.Divinity.Manager.DivInvManager.*;
+import static com.github.lyokofirelyte.Empyreal.Gui.DivInvManager.*;
 
 public class GuiCloset extends DivGui {
 	
@@ -91,7 +92,7 @@ public class GuiCloset extends DivGui {
 					
 					if (buyer.getInt(DPI.BALANCE) >= price){
 						
-						if (!seller.uuid().equals(buyer.uuid())){
+						if (!seller.getUuid().equals(buyer.getUuid())){
 							buyer.set(DPI.BALANCE, buyer.getInt(DPI.BALANCE) - price);
 							seller.set(DPI.BALANCE, seller.getInt(DPI.BALANCE) + price);
 						}

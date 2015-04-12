@@ -1,17 +1,17 @@
 package com.github.lyokofirelyte.Elysian.Gui;
 
-import static com.github.lyokofirelyte.Divinity.Manager.DivInvManager.createItem;
+import static com.github.lyokofirelyte.Empyreal.Gui.DivInvManager.createItem;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Divinity.DivGui;
-import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Events.ElyFriendlyReminder;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Gui.DivGui;
+import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
 
 public class GuiFriendlyReminder extends DivGui{
 	

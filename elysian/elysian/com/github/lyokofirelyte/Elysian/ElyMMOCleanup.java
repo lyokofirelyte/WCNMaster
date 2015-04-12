@@ -1,14 +1,20 @@
 package com.github.lyokofirelyte.Elysian;
 
 import java.util.ArrayList;
-import com.github.lyokofirelyte.Elysian.MMO.MMO;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElyTask;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
 
-public class ElyMMOCleanup implements Runnable, AutoRegister {
+import lombok.Getter;
+
+import com.github.lyokofirelyte.Elysian.MMO.MMO;
+import com.github.lyokofirelyte.Elysian.api.ElyTask;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+
+public class ElyMMOCleanup implements Runnable, AutoRegister<ElyMMOCleanup> {
 	
 	private Elysian main;
+	
+	@Getter
+	private ElyMMOCleanup type = this;
 	
 	public ElyMMOCleanup(Elysian i){
 		main = i;

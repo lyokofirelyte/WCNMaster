@@ -195,7 +195,7 @@ public class BoothCommand {
 	}
 		
 }
-*/
+
 package com.github.lyokofirelyte.Elysian.Games.Booth;
 
 import gnu.trove.map.hash.THashMap;
@@ -210,13 +210,13 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityGame;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorage;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 
@@ -468,4 +468,4 @@ public class BoothCommand {
 		
 	}
 		
-}
+}*/

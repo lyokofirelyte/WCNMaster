@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.MM;
+/*package com.github.lyokofirelyte.MM;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +138,7 @@ public class MMCommands {
 				}
 
 				break;
-				*/
+				
 
 			case "addarena":
 				if(!mmp.getPerms().contains("gameserver.staff")) return;
@@ -333,4 +333,4 @@ public class MMCommands {
 			counter++;
 		}
 	}
-}
+}*/

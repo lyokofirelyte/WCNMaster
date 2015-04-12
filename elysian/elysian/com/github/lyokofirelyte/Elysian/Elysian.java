@@ -1,6 +1,7 @@
 package com.github.lyokofirelyte.Elysian;
 
-import java.io.PrintStream;
+import gnu.trove.map.hash.THashMap;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,34 +20,38 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.github.lyokofirelyte.Divinity.Divinity;
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.Events.DivinityPluginMessageEvent;
-import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
-import com.github.lyokofirelyte.Divinity.Storage.DivinityStorageModule;
 import com.github.lyokofirelyte.Elysian.Commands.ElyProxy;
+import com.github.lyokofirelyte.Elysian.Events.DivinityPluginMessageEvent;
+import com.github.lyokofirelyte.Elysian.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Gui.GuiCloset;
-import com.github.lyokofirelyte.Elysian.Patrols.ElyPatrol;
-import com.github.lyokofirelyte.Spectral.SpectralAPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.DAI;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElyTask;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
+import com.github.lyokofirelyte.Elysian.api.ElyTask;
+import com.github.lyokofirelyte.Empyreal.Empyreal;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DAI;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatMessage;
+import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
+import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.FireworkShenans;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
-public class Elysian extends JavaPlugin {
+public class Elysian extends JavaPlugin implements GameModule {
 	
-	public SpectralAPI api;
-	public Divinity divinity;
+	public Empyreal api;
 	public WorldEditPlugin we;
 	public ElySetup setup;
+	public Empyreal gameAPI;
+	
+	@Getter
+	private String packageName = "Elysian";
+	
+	@Getter
+	private String jarName = "Elysian-1.0.jar";
 
 	public Map<ElyTask, Integer> tasks = new THashMap<ElyTask, Integer>();
 	public Map<Location, List<List<String>>> queue = new THashMap<Location, List<List<String>>>();
@@ -58,44 +62,62 @@ public class Elysian extends JavaPlugin {
 	public boolean hasSunDayBeenPerformedBefore = false;
 	
 	@Getter @Setter
-	private PrintStream defaultOut;
-	
-	@Getter @Setter
-	private PrintStream newout;
+	private DivinitySystem divSystem;
 	
 	@Override @SneakyThrows
 	public void onEnable(){
 		
-		defaultOut = System.out;
+		gameAPI = (Empyreal) Bukkit.getPluginManager().getPlugin("Empyreal");
+		gameAPI.registerModule(this);
 		setup = new ElySetup(this);
 		setup.start();
-		divinity.getServer().getMessenger().registerIncomingPluginChannel(divinity, "BungeeCord", (ElyProxy) api.getInstance(ElyProxy.class));
-		divinity.getServer().getMessenger().registerOutgoingPluginChannel(divinity, "BungeeCord");
-		api.getDivSystem().set(DPI.REBOOT_INIT, false);
+		getServer().getMessenger().registerIncomingPluginChannel(api, "BungeeCord", (ElyProxy) api.getInstance(ElyProxy.class));
+		getServer().getMessenger().registerOutgoingPluginChannel(api, "BungeeCord");
 		
-		newout = new PrintStream("t"){
-	        @Override
-	        public void println(String txt){
-	        	if (txt.equals("")){
-	        		return;
-	        	}
-	        	divinity.api.sendToSocket(divinity.api.getServerSockets().get("GameServer"), "wcn_logger", "&7(&6wa&7) " + txt, "END");
-	        	getDefaultOut().println(txt);
-	        }
-	    };
-	    
-	    System.setOut(newout);
+		setDivSystem(api.getDivSystem());
+		getDivSystem().set(DPI.REBOOT_INIT, false);
 	}
 	
 	@Override
 	public void onDisable(){
 		
-		for (DivinityStorageModule dp : divinity.api.getAllPlayers()){
+		for (DivinityStorageModule dp : api.getOnlineModules().values()){
 			dp.set(DPI.DIS_ENTITY, "none");
 			dp.set(DPI.IS_DIS, false);
+			dp.save();
 		}
 		
 		Bukkit.getScheduler().cancelTasks(this);
+	}
+	
+	@Override
+	public void onRegister(){
+		
+	}
+	
+	@Override
+	public void closing(){
+		
+	}
+	
+	@Override
+	public void onPlayerJoin(Player p){
+		
+	}
+	
+	@Override
+	public void onPlayerQuit(Player p){
+		
+	}
+	
+	@Override
+	public void onPlayerChat(GamePlayer<?> gp, String msg){
+		
+	}
+	
+	@Override
+	public void shutdown(){
+		Bukkit.getServer().shutdown();
 	}
 	
 	public void cancelTask(ElyTask task){
@@ -152,7 +174,7 @@ public class Elysian extends JavaPlugin {
 
 	public void fw(World w, Location l, Type type, Color color){
 		try {
-			divinity.api.fw.playFirework(w, l, FireworkEffect.builder().with(type).withColor(color).build());
+			api.getInstance(FireworkShenans.class).getType().playFirework(w, l, FireworkEffect.builder().with(type).withColor(color).build());
 		} catch (Exception e){}
 	}
 	

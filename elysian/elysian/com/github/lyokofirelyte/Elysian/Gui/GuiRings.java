@@ -1,5 +1,7 @@
 package com.github.lyokofirelyte.Elysian.Gui;
 
+import static com.github.lyokofirelyte.Empyreal.Gui.DivInvManager.createItem;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,17 +13,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.github.lyokofirelyte.Divinity.DivGui;
-import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
-import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
-import com.github.lyokofirelyte.Divinity.Storage.DivinityStorageModule;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Commands.ElyRings;
-import com.github.lyokofirelyte.Spectral.DataTypes.DRS;
-import com.github.lyokofirelyte.Spectral.DataTypes.RingsType;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityRing;
-
-import static com.github.lyokofirelyte.Divinity.Manager.DivInvManager.createItem;
+import com.github.lyokofirelyte.Elysian.api.RingsType;
+import com.github.lyokofirelyte.Empyreal.Database.DRS;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRing;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Gui.DivGui;
+import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
 
 public class GuiRings extends DivGui {
 	
@@ -42,7 +41,14 @@ public class GuiRings extends DivGui {
 	@Override
 	public void create(){
 		
-		Collection<DivinityStorageModule> rings = main.divinity.api.divManager.getMap(DivinityManager.ringsDir).values();
+		Collection<DivinityStorageModule> rings = new ArrayList<DivinityStorageModule>();
+		
+		for (DivinityStorageModule m : main.api.getOnlineModules().values()){
+			if (m.getTable().equals("rings")){
+				rings.add(m);
+			}
+		}
+		
 		List<DivinityStorageModule> ringz = new ArrayList<DivinityStorageModule>(rings);
 		List<DivinityRing> systemRings = new ArrayList<DivinityRing>();
 		List<DivinityRing> allianceRings = new ArrayList<DivinityRing>();
@@ -75,8 +81,8 @@ public class GuiRings extends DivGui {
 				String disp = "&7&o" + (type.equals(RingsType.SYSTEM) ? "System" : type.equals(RingsType.ALLIANCE) ? "Alliance" : "Server") + " Ring";
 
 				for (DivinityRing ring : type.equals(RingsType.SYSTEM) ? systemRings : type.equals(RingsType.ALLIANCE) ? allianceRings : serverRings){
-					if (!ring.name().equals(name)){
-						addButton(x, createItem("&e" + ring.name(), new String[] { "&6&oTeleport to &b&o" + ring.name(), disp}, Material.STAINED_GLASS, 1, y));
+					if (!ring.getName().equals(name)){
+						addButton(x, createItem("&e" + ring.getName(), new String[] { "&6&oTeleport to &b&o" + ring.getName(), disp}, Material.STAINED_GLASS, 1, y));
 						y++;
 						x++;
 						if (y > 16){

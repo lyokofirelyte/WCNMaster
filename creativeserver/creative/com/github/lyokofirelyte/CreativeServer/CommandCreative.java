@@ -11,10 +11,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
 public class CommandCreative implements AutoRegister<CommandCreative>, Listener {
 

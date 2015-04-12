@@ -1,5 +1,7 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
+
 import org.apache.commons.math3.util.Precision;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -35,20 +38,22 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.Events.PlayerMoneyChangeEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElyChannel;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
+import com.github.lyokofirelyte.Elysian.api.ElyChannel;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElyLogger implements Listener, Runnable, AutoRegister {
+public class ElyLogger implements Listener, Runnable, AutoRegister<ElyLogger> {
 	
 	private Elysian main;
+	
+	@Getter
+	private ElyLogger type = this;
 
 	public ElyLogger(Elysian i){
 		main = i;
@@ -200,9 +205,9 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 					failedNames.add(s);
 				} else if (s.equals("view")){
 					String users = "";
-					for (DivinityStorage d : main.divinity.api.getAllPlayers()){
-						if (d.getList(DPI.OWNED_CHESTS).contains(loc)){
-							users = users + "&3" + d.name() + " ";
+					for (DivinityStorageModule d : main.api.getOnlineModules().values()){
+						if (d.getTable().equals("users") && (d.getList(DPI.OWNED_CHESTS).contains(loc))){
+							users = users + "&3" + d.getName() + " ";
 						}
 					}
 					users = users.trim();
@@ -211,9 +216,9 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 					dp.set(DPI.CHEST_NAMES, new ArrayList<String>());
 					return;
 				} else if (s.equals("release")){
-					for (DivinityStorage d : main.divinity.api.getAllPlayers()){
-						if (d.getList(DPI.OWNED_CHESTS).contains(loc)){
-							d.getList(DPI.OWNED_CHESTS).remove(loc);
+					for (DivinityStorageModule DP : main.api.getOnlineModules().values()){
+						if (DP.getTable().equals("users") && DP.getList(DPI.OWNED_CHESTS).contains(loc)){
+							DP.getList(DPI.OWNED_CHESTS).remove(loc);
 						}
 					}
 					main.s(e.getPlayer(), "Released to the public!");
@@ -273,8 +278,8 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 			} else {
 				
 				if (!dp.getList(DPI.OWNED_CHESTS).contains(loc) && !main.api.perms(e.getPlayer(), "wa.staff.mod2", true)){
-					for (DivinityStorage DP : main.divinity.api.getAllPlayers()){
-						if (DP.getList(DPI.OWNED_CHESTS).contains(loc)){
+					for (DivinityStorageModule DP : main.api.getOnlineModules().values()){
+						if (DP.getTable().equals("users") && DP.getList(DPI.OWNED_CHESTS).contains(loc)){
 							e.setCancelled(true);
 							main.s(e.getPlayer(), "none", "&c&oThat is not your storage unit!");
 							return;
@@ -369,8 +374,8 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 						for (Location l : DivinityUtilsModule.circle(p.getLocation(), radius, radius, false, false, 0)){
 							if (protectedMats.contains(l.getBlock().getType())){
 								String loc = l.getWorld().getName() + " " + l.toVector().getBlockX() + " " + l.toVector().getBlockY() + " " + l.toVector().getBlockZ();
-								for (DivinityStorage div : main.divinity.api.getAllPlayers()){
-									if (div.getList(DPI.OWNED_CHESTS).contains(loc)){
+								for (DivinityStorageModule div : main.api.getOnlineModules().values()){
+									if (div.getTable().equals("users") && div.getList(DPI.OWNED_CHESTS).contains(loc)){
 										div.getList(DPI.OWNED_CHESTS).remove(loc);
 										released = released.equals("") ? div.getStr(DPI.DISPLAY_NAME) : released + "&6, " + div.getStr(DPI.DISPLAY_NAME);
 									}
@@ -416,8 +421,8 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 			Location l = e.getBlock().getLocation();
 			String loc = l.getWorld().getName() + " " + l.toVector().getBlockX() + " " + l.toVector().getBlockY() + " " + l.toVector().getBlockZ();
 			if (!dp.getList(DPI.OWNED_CHESTS).contains(loc) && !main.api.perms(e.getPlayer(), "wa.staff.mod2", false)){
-				for (DivinityStorage DP : main.divinity.api.getAllPlayers()){
-					if (DP.getList(DPI.OWNED_CHESTS).contains(loc)){
+				for (DivinityStorageModule DP : main.api.getOnlineModules().values()){
+					if (DP.getTable().equals("users") && DP.getList(DPI.OWNED_CHESTS).contains(loc)){
 						e.setCancelled(true);
 						main.s(e.getPlayer(), "none", "&c&oThat is not your storage unit!");
 						ElyChannel.STAFF.send("&6System", e.getPlayer().getDisplayName() + " &cattempted to destroy a storage unit!", main.api);
@@ -425,8 +430,8 @@ public class ElyLogger implements Listener, Runnable, AutoRegister {
 					}
 				}
 			} else {
-				for (DivinityStorage DP : main.divinity.api.getAllPlayers()){
-					if (DP.getList(DPI.OWNED_CHESTS).contains(loc)){
+				for (DivinityStorageModule DP : main.api.getOnlineModules().values()){
+					if (DP.getTable().equals("users") && DP.getList(DPI.OWNED_CHESTS).contains(loc)){
 						DP.getList(DPI.OWNED_CHESTS).remove(loc);
 					}
 				}

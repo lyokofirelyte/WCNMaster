@@ -15,8 +15,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
-import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 import com.github.lyokofirelyte.GameServer.GameServer;
 import com.github.lyokofirelyte.GameServer.GameSign;
 

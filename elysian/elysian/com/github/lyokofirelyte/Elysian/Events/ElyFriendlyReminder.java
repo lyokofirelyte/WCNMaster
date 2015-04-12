@@ -1,5 +1,7 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
 import org.apache.commons.math3.util.Precision;
 import org.bukkit.Location;
@@ -25,9 +27,9 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
 /**
  * 
@@ -35,9 +37,13 @@ import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
  *
  */
 
-public class ElyFriendlyReminder implements Listener, AutoRegister {
+public class ElyFriendlyReminder implements Listener, AutoRegister<ElyFriendlyReminder> {
 	
 	private Elysian main;
+	
+	@Getter
+	private ElyFriendlyReminder type = this;
+	
 	private Map<DPI, List<String>> messages = new THashMap<DPI, List<String>>();
 	
 	public ElyFriendlyReminder(Elysian i) {

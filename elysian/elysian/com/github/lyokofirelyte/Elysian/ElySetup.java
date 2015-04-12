@@ -13,16 +13,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 
-import com.github.lyokofirelyte.Divinity.Divinity;
-import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
-import com.github.lyokofirelyte.Divinity.Manager.RecipeHandler;
-import com.github.lyokofirelyte.Elysian.Events.ElyCrate;
 import com.github.lyokofirelyte.Elysian.Events.ElyLogger;
 import com.github.lyokofirelyte.Elysian.Gui.GuiCloset;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRoot;
-import com.github.lyokofirelyte.Elysian.Patrols.ElyPatrol;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElyTask;
+import com.github.lyokofirelyte.Elysian.api.ElyTask;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
+import com.github.lyokofirelyte.Empyreal.Utils.RecipeHandler;
+import com.github.lyokofirelyte.Empyreal.Utils.SpreadSheetReader;
+import com.github.lyokofirelyte.Empyreal.Utils.WebsiteManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class ElySetup {
@@ -35,11 +34,7 @@ public class ElySetup {
 	
 	public void start(){
 		
-		main.divinity = (Divinity) Bukkit.getPluginManager().getPlugin("Divinity");
 		main.we = (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
-		main.api = main.divinity.api;
-		
-		main.api.registerAll(main);
 		
 		closet();
 		tasks();
@@ -48,12 +43,12 @@ public class ElySetup {
 		main.numerals = new ArrayList<String>(YamlConfiguration.loadConfiguration(main.getResource("numerals.yml")).getStringList("Numerals"));
 
 		try {
-			main.api.loadAllFiles(false);
+			main.api.loadAllDivinityModules();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		main.divinity.api.sheets.fetch(false, true);
+		main.api.getInstance(SpreadSheetReader.class).getType().fetch(false, true);
 		
 		if (main.api.getDivSystem().getList(DPI.EMOTE_LIST).size() <= 0){
 			YamlConfiguration yaml = YamlConfiguration.loadConfiguration(main.getResource("emotes.yml"));
@@ -67,9 +62,8 @@ public class ElySetup {
 		main.tasks.put(ElyTask.MMO_BLOCKS, Bukkit.getScheduler().scheduleSyncRepeatingTask(main, (ElyMMOCleanup) main.api.getInstance(ElyMMOCleanup.class), 0L, 432000L));
 		main.tasks.put(ElyTask.LOGGER, Bukkit.getScheduler().scheduleSyncRepeatingTask(main, (ElyLogger) main.api.getInstance(ElyLogger.class), 300L, 300L));
 		main.tasks.put(ElyTask.WATCHER, Bukkit.getScheduler().scheduleSyncRepeatingTask(main, (ElyWatch) main.api.getInstance(ElyWatch.class), 500L, 500L));
-		main.tasks.put(ElyTask.WEBSITE, Bukkit.getScheduler().scheduleSyncRepeatingTask(main, main.divinity.api.web, 100L, 100L));
+		main.tasks.put(ElyTask.WEBSITE, Bukkit.getScheduler().scheduleSyncRepeatingTask(main, main.api.getInstance(WebsiteManager.class).getType(), 100L, 100L));
 		main.tasks.put(ElyTask.AUTO_SAVE, Bukkit.getScheduler().scheduleSyncRepeatingTask(main, (ElyAutoSave) main.api.getInstance(ElyAutoSave.class), 24000L, 24000L));
-		main.tasks.put(ElyTask.PATROL,  Bukkit.getScheduler().scheduleSyncRepeatingTask(main, (ElyPatrol) main.api.getInstance(ElyPatrol.class), 40L, 144000L));
 	}
 	
 	private void closet(){
@@ -163,6 +157,5 @@ public class ElySetup {
 		rh.setIngredient('3', DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, 12));
 		rh.setIngredient('4', DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, 5));
 		main.getServer().addRecipe(rh.getShapedRecipe());
-		
 	}
 }

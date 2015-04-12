@@ -1,0 +1,6 @@
+name: Creator
+main: com.github.lyokofirelyte.Creator.Creator
+author: lyokofirelyte
+prefix: Creator
+depend: [Empyreal]
+version: 1

@@ -1,21 +1,26 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
+import lombok.Getter;
+
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatClickEventType;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatExtra;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatHoverEventType;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatClickEventType;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatExtra;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatHoverEventType;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatMessage;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElyToggle implements AutoRegister {
+public class ElyToggle implements AutoRegister<ElyToggle> {
 
 	 Elysian main;
+	 
+	 @Getter
+	 private ElyToggle type = this;
 	 
 	 public ElyToggle(Elysian i){
 		 main = i;

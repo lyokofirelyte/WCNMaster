@@ -4,10 +4,11 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Divinity.DivGui;
-import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import static com.github.lyokofirelyte.Divinity.Manager.DivInvManager.*;
+import com.github.lyokofirelyte.Empyreal.Gui.DivGui;
+import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
+
+import static com.github.lyokofirelyte.Empyreal.Gui.DivInvManager.*;
 
 public class GuiChat extends DivGui {
 	

@@ -2,13 +2,14 @@ package com.github.lyokofirelyte.Elysian.Commands;
 
 import gnu.trove.map.hash.THashMap;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,27 +46,30 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
-import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.DRF;
-import com.github.lyokofirelyte.Spectral.DataTypes.DRI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElyChannel;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityRegion;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
+import com.github.lyokofirelyte.Elysian.api.ElyChannel;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Database.DRF;
+import com.github.lyokofirelyte.Empyreal.Database.DRI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRegion;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldedit.regions.RegionSelector;
 
-public class ElyProtect implements Listener, AutoRegister {
+public class ElyProtect implements Listener, AutoRegister<ElyProtect> {
 
 	private Elysian main;
+	
+	@Getter
+	private ElyProtect type = this;
+	
 	private String signText = "&3/&f*&3/ &bToggle &3/&f*&3/";
 	public ElyProtect(Elysian i){
 		main = i;
@@ -228,7 +232,6 @@ public class ElyProtect implements Listener, AutoRegister {
 
 				if (!region.equals("none")){
 					boolean isAllowed = !main.api.getDivRegion(region).getBool(DRF.valueOf(toggle));
-					System.out.println(isAllowed);
 					main.api.getDivRegion(region).set(DRF.valueOf(toggle), isAllowed);
 					main.s(p, "Flag &6" + toggle + " &bfor &6" + region + " &bchanged to &6" + isAllowed);
 				}else{
@@ -511,7 +514,14 @@ public class ElyProtect implements Listener, AutoRegister {
 			
 			case "list":
 				
-				List<String> regions = new ArrayList<String>(main.divinity.api.divManager.getMap(DivinityManager.regionsDir).keySet());
+				List<String> regions = new ArrayList<String>();
+				
+				for (DivinityStorageModule m : main.api.getOnlineModules().values()){
+					if (m.getTable().equals("regions")){
+						regions.add(m.getName());
+					}
+				}
+				
 				String rgColor = regions.size() > 0 && !main.api.getDivRegion(regions.get(0)).isDisabled() ? "&a" : "&c";
 				String msg = regions.size() > 0 ? rgColor + regions.get(0) : "&c&oNo regions are defined.";
 				
@@ -635,9 +645,7 @@ public class ElyProtect implements Listener, AutoRegister {
 			
 			case "remove":
 
-				main.divinity.api.divManager.getMap(DivinityManager.regionsDir).remove(args[1].toLowerCase());
-				File file = new File("./plugins/Divinity/regions/" + args[1].toLowerCase() + ".yml");
-				file.delete();
+				main.api.getOnlineModules().remove("REGION_" + args[1].toLowerCase());
 				main.s(p, "Deleted &6" + args[1] + "&b.");
 				
 			break;
@@ -855,8 +863,8 @@ public class ElyProtect implements Listener, AutoRegister {
 		
 		Map<Integer, DivinityRegion> foundRegions = new THashMap<Integer, DivinityRegion>();
 		
-		for (DivinityStorage rg : main.divinity.api.divManager.getMap(DivinityManager.regionsDir).values()){
-			if (isInRegion(l, rg.name())){
+		for (DivinityStorageModule rg : main.api.getOnlineModules().values()){
+			if (rg.getTable().equals("regions") && isInRegion(l, rg.getName())){
 				foundRegions.put(((DivinityRegion)rg).getPriority(), (DivinityRegion)rg);
 			}
 		}
@@ -865,7 +873,7 @@ public class ElyProtect implements Listener, AutoRegister {
 			List<Integer> priority = new ArrayList<Integer>(foundRegions.keySet());
 			Collections.sort(priority);
 			Collections.reverse(priority);
-			return foundRegions.get(priority.get(0)).name();
+			return foundRegions.get(priority.get(0)).getName();
 		}
 		
 		return "none";

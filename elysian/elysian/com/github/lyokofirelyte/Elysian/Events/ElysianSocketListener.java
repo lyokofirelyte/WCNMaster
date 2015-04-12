@@ -1,34 +1,32 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.UUID;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.ChatColor;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElysianSocketListener implements AutoRegister, Runnable {
+public class ElysianSocketListener implements AutoRegister<ElysianSocketListener>, Runnable {
 
 	private Elysian main;
 	private Socket socket;
 	private BufferedReader in;
 	private PrintWriter out;
 	int port = 24001;
+	
+	@Getter
+	private ElysianSocketListener type = this;
 	
 	@SneakyThrows
 	public ElysianSocketListener(Elysian i){
@@ -84,12 +82,7 @@ public class ElysianSocketListener implements AutoRegister, Runnable {
 						case "chat":
 							
 							String msg = in.readLine();
-							
-							for (Player p : Bukkit.getOnlinePlayers()){
-								p.sendMessage(DivinityUtilsModule.AS("&e\u26A1 " + msg));
-							}
-							
-							main.getDefaultOut().println(ChatColor.stripColor(main.AS(msg)));
+							Bukkit.broadcastMessage(DivinityUtilsModule.AS("&e\u26A1 " + msg));
 							
 						break;
 						
@@ -117,92 +110,6 @@ public class ElysianSocketListener implements AutoRegister, Runnable {
 								}
 							}
 
-						break;
-						
-						case "wcnconsole_user":
-
-							user = in.readLine();
-							
-							File file = new File("./plugins/Divinity/users/" + Bukkit.getOfflinePlayer(user).getUniqueId().toString() + ".yml");
-							
-							if (file.exists()){
-
-								YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-								
-								if (!yaml.contains("WCN_CONSOLE_2") || yaml.getString("WCN_CONSOLE_2").equals("none")){
-									if (Bukkit.getPlayer(user) != null){
-										String id = UUID.randomUUID().toString().substring(0, 5);
-										yaml.set("WCN_CONSOLE_2", id);
-										DivinityUtilsModule.s(Bukkit.getPlayer(user), "Your WCNConsole ID is " + id);
-										main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "wcnconsole_continue_user", user);
-										yaml.save(file);
-									} else {
-										main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "wcnconsole_invalid_notonline", user);
-									}
-								} else {
-									main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "wcnconsole_continue_user", user);
-								}
-							} else {
-								main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "wcnconsole_invalid_notonline", user);
-							}
-
-						break;
-						
-						case "wcnconsole_pass":
-							
-							String pass = in.readLine();
-							out = new PrintWriter(socket.getOutputStream(), true);
-							
-							file = new File("./plugins/Divinity/users/" + Bukkit.getOfflinePlayer(user).getUniqueId().toString() + ".yml");
-							YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-							
-							if (yaml.contains("WCN_CONSOLE_2") && yaml.getString("WCN_CONSOLE_2").equals(pass)){
-								main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "wcnconsole_accepted_pass", user);
-							} else {
-								main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "wcnconsole_denied_pass", user);
-							}
-							
-						break;
-						
-						case "wcn_say":
-							
-							msg = in.readLine();
-							
-							for (Player p : Bukkit.getOnlinePlayers()){
-								p.sendMessage(DivinityUtilsModule.AS("&e\u26A1 &7" + user + "&f: " + msg));
-							}
-							
-							main.getDefaultOut().println(user + ": " + msg);
-							
-						break;
-						
-						case "wcn_cmd":
-							
-							String command = in.readLine();
-							boolean perms = false;
-							
-							Command cmd = main.getCommand(command);
-							
-							if (cmd != null){
-								
-								if (Bukkit.getPlayer(user) != null){
-									perms = main.api.getDivPlayer(Bukkit.getPlayer(user)).getStr(DPI.PERMS).contains(cmd.getPermission());
-								} else {
-									file = new File("./plugins/Divinity/users/" + Bukkit.getOfflinePlayer(user).getUniqueId().toString() + ".yml");
-									yaml = YamlConfiguration.loadConfiguration(file);
-									perms = yaml.contains("PERMS") && yaml.getStringList("PERMS").contains(cmd.getPermission());
-								}
-								
-								if (perms){
-									Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
-								} else {
-									out.println("wcn_no_perms");
-								}
-								
-							} else {
-								Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
-							}
-							
 						break;
 					}
 				}

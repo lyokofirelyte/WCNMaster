@@ -1,38 +1,42 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.Getter;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DAI;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.DRF;
-import com.github.lyokofirelyte.Spectral.DataTypes.DRI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElyChannel;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityAlliance;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityRegion;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
+import com.github.lyokofirelyte.Elysian.api.ElyChannel;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DAI;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Database.DRF;
+import com.github.lyokofirelyte.Empyreal.Database.DRI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityAlliance;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRegion;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldedit.regions.RegionSelector;
 
-public class ElyAlliance implements AutoRegister {
+public class ElyAlliance implements AutoRegister<ElyAlliance> {
 
 	 Elysian main;
+	 
+	 @Getter
+	 private ElyAlliance type = this;
 	 
 	 public ElyAlliance(Elysian i){
 		 main = i;
@@ -52,10 +56,10 @@ public class ElyAlliance implements AutoRegister {
 				 if (args[0].length() > 11){
 					 args[0] = args[0].substring(0, 11);
 				 }
+				 Utils.bc("Display Name Change: &7" + p.getDisplayName() + " &6-> &7" + nick(dp, ChatColor.stripColor(main.AS(args[0]))));
 				 p.setDisplayName(nick(dp, ChatColor.stripColor(main.AS(args[0]))));
 				 dp.set(DPI.DISPLAY_NAME, (nick(dp, ChatColor.stripColor(main.AS(args[0])))));
 				 p.setPlayerListName(main.AS(dp.getStr(DPI.DISPLAY_NAME)));
-				 main.s(p, "none", "Display name changed to " + main.AS(p.getDisplayName()) + "&b.");
 			 }
 			 
 		 } else {
@@ -112,7 +116,7 @@ public class ElyAlliance implements AutoRegister {
 		 		
 		 		if (args.length >= 3){
 		 			if (doesAllianceExist(args[1])){
-		 				if (main.api.getDivAlliance(args[1]).getStr(DAI.LEADER).equals(dp.uuid().toString())){
+		 				if (main.api.getDivAlliance(args[1]).getStr(DAI.LEADER).equals(dp.getUuid().toString())){
 			 				main.api.getDivAlliance(args[1]).set(DAI.DESC, DivinityUtilsModule.createString(args, 3));
 			 				dp.s("Updated desc!");
 		 				} else {
@@ -192,7 +196,7 @@ public class ElyAlliance implements AutoRegister {
 		 					if (p1.getBool(DPI.ALLIANCE_LEADER) && (dp.getStr(DPI.ALLIANCE_NAME).equals(p1.getStr(DPI.ALLIANCE_NAME)) || main.api.perms(p, "wa.staff.admin", true))){
 		 						p1.set(DPI.ALLIANCE_LEADER, false);
 		 						p2.set(DPI.ALLIANCE_LEADER, true);
-		 						main.api.getDivAlliance(p1.getStr(DPI.ALLIANCE_NAME)).set(DAI.LEADER, p2.uuid().toString());
+		 						main.api.getDivAlliance(p1.getStr(DPI.ALLIANCE_NAME)).set(DAI.LEADER, p2.getUuid().toString());
 		 						DivinityUtilsModule.bc(p2.getStr(DPI.DISPLAY_NAME) + " &bis now the leader of " + main.coloredAllianceName(p1.getStr(DPI.ALLIANCE_NAME)) + "&b!");
 		 					} else {
 		 						main.s(p, "&c&oThe first player must be the leader.");
@@ -230,12 +234,12 @@ public class ElyAlliance implements AutoRegister {
 		 				alliance.set(DAI.COLOR_1, args[2]);
 		 				alliance.set(DAI.COLOR_2, args[3]);
 		 				alliance.set(DAI.NAME, args[1]);
-		 				alliance.set(DAI.LEADER, leader.uuid().toString());
+		 				alliance.set(DAI.LEADER, leader.getUuid().toString());
 		 				alliance.set(DAI.CENTER, v.getBlockX() + " " + v.getBlockY() + " " + v.getBlockZ());
-		 				alliance.getList(DAI.MEMBERS).add(leader.uuid().toString());
+		 				alliance.getList(DAI.MEMBERS).add(leader.getUuid().toString());
 
-		 				Bukkit.getPlayer(leader.uuid()).performCommand("nick " + ChatColor.stripColor(main.AS(Bukkit.getPlayer(leader.uuid()).getDisplayName())));
-		 				leader.set(DPI.DISPLAY_NAME, Bukkit.getPlayer(leader.uuid()).getDisplayName());
+		 				Bukkit.getPlayer(leader.getUuid()).performCommand("nick " + ChatColor.stripColor(main.AS(Bukkit.getPlayer(leader.getUuid()).getDisplayName())));
+		 				leader.set(DPI.DISPLAY_NAME, Bukkit.getPlayer(leader.getUuid()).getDisplayName());
 		 				
 		 				DivinityRegion region = main.api.getDivRegion(args[1].toLowerCase());
 		 				
@@ -262,7 +266,7 @@ public class ElyAlliance implements AutoRegister {
 		 	case "-disband":
 		 		
 		 		if (args.length == 2){
-		 			if (doesAllianceExist(args[1]) && (main.api.getDivAlliance(args[1]).name().equalsIgnoreCase(dp.getStr(DPI.ALLIANCE_NAME)) && dp.getBool(DPI.ALLIANCE_LEADER))|| main.api.perms(p, "wa.staff.admin", true)){
+		 			if (doesAllianceExist(args[1]) && (main.api.getDivAlliance(args[1]).getName().equalsIgnoreCase(dp.getStr(DPI.ALLIANCE_NAME)) && dp.getBool(DPI.ALLIANCE_LEADER))|| main.api.perms(p, "wa.staff.admin", true)){
 		 				
 		 				DivinityUtilsModule.bc(main.coloredAllianceName(args[1]) + " &bhas been disbanded.");
 		 				DivinityAlliance alliance = main.api.getDivAlliance(args[1]);
@@ -270,14 +274,13 @@ public class ElyAlliance implements AutoRegister {
 		 				main.s(p, "Alliance funds transferred to you.");
 		 				dp.set(DPI.BALANCE, dp.getInt(DPI.BALANCE) + alliance.getInt(DAI.BALANCE));
 		 				
-		 				for (DivinityStorage gone : main.divinity.api.getAllPlayers()){
-		 					if (gone.getStr(DPI.ALLIANCE_NAME).equalsIgnoreCase(args[1])){
-		 						removeFromAlliance((DivinityPlayer)gone, gone.getStr(DPI.ALLIANCE_NAME));
+		 				for (DivinityStorageModule gone : main.api.getOnlineModules().values()){
+		 					if (gone.getTable().equals("users") && gone.getStr(DPI.ALLIANCE_NAME).equalsIgnoreCase(args[1])){
+		 						removeFromAlliance((DivinityPlayer) gone, gone.getStr(DPI.ALLIANCE_NAME));
 		 					}
 		 				}
 		 				
-		 				main.divinity.api.divManager.getMap(DivinityManager.allianceDir).remove(args[1].toLowerCase());
-		 				new File("./plugins/Divinity/alliances/" + args[1].toLowerCase() + ".yml").delete();
+		 				main.api.getOnlineModules().remove("ALLIANCE_" + args[1].toLowerCase());
 		 				
 		 			} else {
 		 				main.s(p, "&c&oNo permissions, or that alliance does not exist.");
@@ -334,11 +337,11 @@ public class ElyAlliance implements AutoRegister {
 		 			DivinityPlayer them = main.api.getDivPlayer(args[1]);
 		 			String theirAlliance = new String(them.getStr(DPI.ALLIANCE_NAME));
 		 			
-		 			if (dp.getBool(DPI.ALLIANCE_LEADER) || main.api.perms(p, "wa.staff.admin", false)){
+		 			if (dp.getBool(DPI.ALLIANCE_LEADER) || main.api.perms(p, "wa.staff.admin", true)){
 		 				
 			 			if (!them.getBool(DPI.ALLIANCE_LEADER)){
 			 				
-			 				if (theirAlliance.equalsIgnoreCase(args[1]) || main.api.perms(p, "wa.staff.admin", false)){
+			 				if (theirAlliance.equalsIgnoreCase(dp.getStr(DPI.ALLIANCE_NAME)) || main.api.perms(p, "wa.staff.admin", false)){
 			 					removeFromAlliance(them, theirAlliance);
 					 			DivinityUtilsModule.bc(them.getStr(DPI.DISPLAY_NAME) + " has been kicked from " + main.coloredAllianceName(theirAlliance) + "&b!");
 			 				} else {
@@ -358,8 +361,8 @@ public class ElyAlliance implements AutoRegister {
 		 		List<String> alliances = new ArrayList<String>();
 		 		String msg = "&6";
 		 		
-		 		for (DivinityStorage player : main.divinity.api.getAllPlayers()){
-		 			if (player.getBool(DPI.ALLIANCE_LEADER)){
+		 		for (DivinityStorageModule player : main.api.getOnlineModules().values()){
+		 			if (player.getTable().equals("users") && player.getBool(DPI.ALLIANCE_LEADER)){
 		 				alliances.add(main.coloredAllianceName(player.getStr(DPI.ALLIANCE_NAME)));
 		 			}
 		 		}
@@ -438,13 +441,13 @@ public class ElyAlliance implements AutoRegister {
 		 			if (dp.getStr(DPI.ALLIANCE_NAME).equals("none")){
 		 				
 		 				DivinityAlliance alliance = main.api.getDivAlliance(inv.split(" ")[0]);
-		 				alliance.getList(DAI.MEMBERS).add(dp.uuid().toString());
+		 				alliance.getList(DAI.MEMBERS).add(dp.getUuid().toString());
 		 				
 		 				dp.set(DPI.ALLIANCE_INVITE, "none");
-		 				dp.set(DPI.ALLIANCE_NAME, alliance.name());
+		 				dp.set(DPI.ALLIANCE_NAME, alliance.getName());
 		 				dp.set(DPI.ALLIANCE_COLOR_1, alliance.getStr(DAI.COLOR_1));
 		 				dp.set(DPI.ALLIANCE_COLOR_2, alliance.getStr(DAI.COLOR_2));
-		 				dp.getList(DPI.PERMS).add("wa.alliance." + alliance.name());
+		 				dp.getList(DPI.PERMS).add("wa.alliance." + alliance.getName());
 
 		 				p.performCommand("nick " + ChatColor.stripColor(main.AS(p.getDisplayName())));
 		 				dp.set(DPI.DISPLAY_NAME, p.getDisplayName());
@@ -522,8 +525,8 @@ public class ElyAlliance implements AutoRegister {
 
 	 private void removeFromAlliance(DivinityPlayer player, String alliance){
 		 
-		 if (main.divinity.api.divManager.getMap(DivinityManager.allianceDir).containsKey(alliance)){
-			 main.api.getDivAlliance(alliance).getList(DAI.MEMBERS).remove(player.uuid().toString());
+		 if (doesAllianceExist(alliance)){
+			 main.api.getDivAlliance(alliance).getList(DAI.MEMBERS).remove(player.getUuid().toString());
 		 }
 		 
 		 player.getList(DPI.PERMS).remove("wa.alliance." + alliance);
@@ -533,9 +536,9 @@ public class ElyAlliance implements AutoRegister {
 		 player.set(DPI.ALLIANCE_COLOR_2, "&7");
 		 player.set(DPI.DISPLAY_NAME, ChatColor.stripColor(main.AS(player.getStr(DPI.DISPLAY_NAME))));
 		 
-		 if (main.api.isOnline(player.name())){
-			 main.api.getPlayer(player.name()).setDisplayName("&7" + player.getStr(DPI.DISPLAY_NAME));
-			 main.api.getPlayer(player.name()).setPlayerListName(main.AS("&7" + player.getStr(DPI.DISPLAY_NAME)));
+		 if (main.api.isOnline(player.getName())){
+			 main.api.getPlayer(player.getName()).setDisplayName("&7" + player.getStr(DPI.DISPLAY_NAME));
+			 main.api.getPlayer(player.getName()).setPlayerListName(main.AS("&7" + player.getStr(DPI.DISPLAY_NAME)));
 		 }
 	 }
 	 
@@ -546,6 +549,6 @@ public class ElyAlliance implements AutoRegister {
 	 }
 	 
 	 private boolean doesAllianceExist(String alliance){
-		 return main.divinity.api.divManager.getMap(DivinityManager.allianceDir).containsKey(alliance.toLowerCase());
+		 return main.api.getDivAlliance(alliance) != null;
 	 }
 }

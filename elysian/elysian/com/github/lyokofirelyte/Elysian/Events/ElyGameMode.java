@@ -2,6 +2,8 @@ package com.github.lyokofirelyte.Elysian.Events;
 
 import java.util.ArrayList;
 
+import lombok.Getter;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -10,13 +12,16 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElyGameMode implements Listener, AutoRegister {
+public class ElyGameMode implements Listener, AutoRegister<ElyGameMode> {
 	
 	private Elysian main;
+	
+	@Getter
+	private ElyGameMode type = this;
 	
 	public ElyGameMode(Elysian i){
 		main = i;

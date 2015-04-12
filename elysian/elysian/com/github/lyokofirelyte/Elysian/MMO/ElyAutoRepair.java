@@ -1,11 +1,13 @@
 package com.github.lyokofirelyte.Elysian.MMO;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,15 +22,19 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElyAutoRepair implements Listener {
+public class ElyAutoRepair implements AutoRegister<ElyAutoRepair>, Listener {
 	
 	Elysian main;
+	
+	@Getter
+	private ElyAutoRepair type = this;
 
 	public ElyAutoRepair(Elysian i) {
 		main = i;
@@ -301,7 +307,7 @@ public class ElyAutoRepair implements Listener {
 					} else {
 						i.setType(Material.AIR);
 					}
-					Bukkit.getPlayer(dp.uuid()).updateInventory();
+					Bukkit.getPlayer(dp.getUuid()).updateInventory();
 				}
 				return true;
 			}

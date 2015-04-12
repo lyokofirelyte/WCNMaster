@@ -7,12 +7,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
-import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
 public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 	
@@ -55,10 +54,10 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 	public void onGC(CommandSender cs, GamePlayer<?> gp, String[] args){
 		
 		if (!main.getServerName().equals("GameServer")){
-			main.sendToSocket(main.getServerSockets().get("GameServer"), "forward", "globalcast", Utils.createString(args, 0));
-			main.sendToSocket(main.getServerSockets().get("GameServer"), "globalcast", Utils.createString(args, 0));
+			main.sendToSocket("GameServer", Handler.FORWARD, "GLOBAL_BROADCAST", Utils.createString(args, 0));
+			main.sendToSocket("GameServer", Handler.GLOBAL_BROADCAST, Utils.createString(args, 0));
 		} else {
-			main.sendToAllServerSockets("globalcast", Utils.createString(args, 0));
+			main.sendToAllServerSockets("GLOBAL_BROADCAST", Utils.createString(args, 0));
 			Utils.customBC(Utils.createString(args, 0));
 			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title @a title '" + Utils.createString(args, 0) + "'");
 		}
@@ -69,8 +68,8 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 	public void onSetOP(CommandSender cs, GamePlayer<?> gp, String[] args){
 		
 		if (!main.getServerName().equals("GameServer")){
-			main.sendToSocket(main.getServerSockets().get("GameServer"), "forward", "setop", args[0]);
-			main.sendToSocket(main.getServerSockets().get("GameServer"), "setop", args[0]);
+			main.sendToSocket("GameServer", Handler.FORWARD, "SET_OP", args[0]);
+			main.sendToSocket("GameServer", Handler.SET_OP, args[0]);
 		} else {
 			main.sendToAllServerSockets("setop", args[0]);
 			Bukkit.getOfflinePlayer(args[0]).setOp(true);
@@ -96,8 +95,8 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 		if (p.isOp() || gp.getPerms().contains("gameserver.staff")){
 			
 			if (!main.getServerName().equals("GameServer")){
-				main.sendToSocket(main.getServerSockets().get("GameServer"), "forward", "o", "&7" + p.getDisplayName() + "&f: &c&o" + Utils.createString(args, 0));
-				main.sendToSocket(main.getServerSockets().get("GameServer"), "o", "&c" + p.getDisplayName() + "&f: &c&o" + Utils.createString(args, 0));
+				main.sendToSocket("GameServer", Handler.FORWARD, "O_CHAT", "&7" + p.getDisplayName() + "&f: &c&o" + Utils.createString(args, 0));
+				main.sendToSocket("GameServer", Handler.O_CHAT, "&c" + p.getDisplayName() + "&f: &c&o" + Utils.createString(args, 0));
 			} else {
 				for (Player player : Bukkit.getOnlinePlayers()){
 					if (player.isOp()){

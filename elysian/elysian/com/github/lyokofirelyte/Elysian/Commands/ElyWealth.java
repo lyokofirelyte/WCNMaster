@@ -1,11 +1,16 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
-import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
+import lombok.Getter;
 
-public class ElyWealth implements AutoRegister {
+import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+
+public class ElyWealth implements AutoRegister<ElyWealth> {
 
 	private Elysian main;
+	
+	@Getter
+	private ElyWealth type = this;
 	
 	public ElyWealth(Elysian i){
 		main = i;

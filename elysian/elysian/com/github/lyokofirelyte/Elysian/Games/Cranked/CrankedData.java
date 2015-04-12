@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.Games.Cranked;
+/*package com.github.lyokofirelyte.Elysian.Games.Cranked;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
 
@@ -11,4 +11,4 @@ public class CrankedData {
 		root = i;
 		main = root.main;
 	}
-}
+}*/

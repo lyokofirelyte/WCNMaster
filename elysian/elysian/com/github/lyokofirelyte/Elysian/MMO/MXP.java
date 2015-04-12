@@ -7,7 +7,7 @@ import gnu.trove.map.hash.THashMap;
 
 import org.bukkit.Material;
 
-import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
+import com.github.lyokofirelyte.Elysian.api.ElySkill;
 
 public class MXP extends THashMap<ElySkill, Integer[]>{
 

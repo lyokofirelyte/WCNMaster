@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import lombok.Getter;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -15,12 +17,15 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.Public.ParticleEffect;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
 
-public class HolidayStuff implements AutoRegister, Listener {
+public class HolidayStuff implements AutoRegister<HolidayStuff>, Listener {
 
 	private Elysian main;
+	
+	@Getter
+	private HolidayStuff type = this;
 	
 	Random rand = new Random();
 	List<Material> valid = new ArrayList<Material>();

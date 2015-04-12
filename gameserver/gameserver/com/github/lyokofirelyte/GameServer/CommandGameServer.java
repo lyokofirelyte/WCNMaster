@@ -6,10 +6,10 @@ import org.bukkit.Location;
 
 import lombok.Getter;
 
-import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 public class CommandGameServer implements AutoRegister<CommandGameServer> {
 
 	@Getter

@@ -21,10 +21,11 @@ import org.bukkit.scoreboard.DisplaySlot;
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.JSONMap;
-import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 import com.github.lyokofirelyte.Gotcha.GotchaPlayer;
 
 // implement GameModule. I commented out JavaPlugin so it won't run live.
@@ -66,11 +67,11 @@ public class APIUsageExample /*extends JavaPlugin*/ implements GameModule {
 		
 		// Now, if your plugin is ready to accept people, tell the API to allow people to click on the sign to join.
 		// The person who booted up the server will be moved over automatically after this.
-		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "server_boot_complete");
+		getApi().sendToSocket("GameServer", Handler.SERVER_BOOT_COMPLETE);
 		
 		
 		// When the game is stared and you don't want anyone else to be able to join
-		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "game_in_progress");
+		getApi().sendToSocket("GameServer", Handler.GAME_IN_PROGRESS);
 		
 	}
 
@@ -180,8 +181,8 @@ public class APIUsageExample /*extends JavaPlugin*/ implements GameModule {
 		getApi().sendAllToServer("GameServer");
 		
 		
-		// Send a request to the game server
-		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "reason", "message");
+		// Send a request to the game server  -- choose the handler you need...
+		getApi().sendToSocket("GameServer", Handler.GLOBAL_BROADCAST, "message");
 		// You would then have to go into InnerSignListener from GameServer and add a reason case, and then in.readLine() would be the message.
 		
 		

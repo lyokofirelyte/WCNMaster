@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.MM;
+/*package com.github.lyokofirelyte.MM;
 
 import gnu.trove.map.hash.THashMap;
 
@@ -220,4 +220,4 @@ public class MMEvents implements Listener{
 		}
 	}
 	
-}
+}*/

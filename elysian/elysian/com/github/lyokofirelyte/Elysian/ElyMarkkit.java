@@ -1,12 +1,14 @@
 package com.github.lyokofirelyte.Elysian;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,11 +29,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.github.lyokofirelyte.Divinity.Manager.ElyMarkkitItem;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
+import com.github.lyokofirelyte.Elysian.api.ElyMarkkitItem;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
 /**
  * 
@@ -39,7 +41,7 @@ import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
  *
  */
 
-public class ElyMarkkit implements Listener, AutoRegister {
+public class ElyMarkkit implements Listener, AutoRegister<ElyMarkkit> {
 
 	private Elysian main;
 	private DivinitySystem system;
@@ -50,6 +52,9 @@ public class ElyMarkkit implements Listener, AutoRegister {
 	private Map<String, Integer> showPrice = new THashMap<String, Integer>();
 	private Map<String, Location> chestLocation = new THashMap<String, Location>();
 	private Map<ItemStack, Integer> toRemove = new THashMap<ItemStack, Integer>();
+	
+	@Getter
+	private ElyMarkkit type = this;
 	
 	public ElyMarkkit(Elysian i){
 		main = i;
@@ -184,7 +189,7 @@ public class ElyMarkkit implements Listener, AutoRegister {
 		}else if(e.getInventory().getName().contains("items stocked") || e.getInventory().getName().contains("Double price!")){
 			e.setCancelled(true);
 			String name = invName.get(e.getWhoClicked().getName());
-			ElyMarkkitItem mi = new ElyMarkkitItem(main.divinity.api, e.getInventory().getItem(4).getType(), e.getInventory().getItem(4).getDurability());
+			ElyMarkkitItem mi = new ElyMarkkitItem(main.api, e.getInventory().getItem(4).getType(), e.getInventory().getItem(4).getDurability());
 
 			if(e.getCurrentItem() != null){
 				if(!sellCart.contains(e.getRawSlot()) && !buyCart.contains(e.getRawSlot()) &&!itemSlot.contains(e.getRawSlot()) && e.getCurrentItem().getTypeId() == mi.getMaterialID() && e.getCurrentItem().getDurability() == mi.getDurability()){
@@ -551,7 +556,7 @@ public class ElyMarkkit implements Listener, AutoRegister {
 				return;
 			}
 			
-			ElyMarkkitItem im = new ElyMarkkitItem(main.divinity.api, name);
+			ElyMarkkitItem im = new ElyMarkkitItem(main.api, name);
 			Material mat = im.getMaterial();
 			short damage = (short) im.getDurability();
 			

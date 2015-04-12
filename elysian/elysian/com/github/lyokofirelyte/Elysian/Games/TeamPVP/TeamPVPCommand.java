@@ -1,13 +1,13 @@
-package com.github.lyokofirelyte.Elysian.Games.TeamPVP;
+/*package com.github.lyokofirelyte.Elysian.Games.TeamPVP;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Games.TeamPVP.TeamPVPData.TeamPVPGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityGame;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 
 public class TeamPVPCommand {
 
@@ -108,4 +108,4 @@ public class TeamPVPCommand {
 			break;
 		}
 	}
-}
+}*/

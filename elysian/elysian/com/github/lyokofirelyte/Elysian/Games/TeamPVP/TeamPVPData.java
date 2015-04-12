@@ -1,9 +1,9 @@
-package com.github.lyokofirelyte.Elysian.Games.TeamPVP;
+/*package com.github.lyokofirelyte.Elysian.Games.TeamPVP;
 
 import java.util.List;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 
 public class TeamPVPData {
 
@@ -45,4 +45,4 @@ public class TeamPVPData {
 		public DivinityPlayer toDp();
 		public String name();
 	}
-}
+}*/

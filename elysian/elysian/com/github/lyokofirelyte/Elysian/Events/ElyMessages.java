@@ -1,18 +1,19 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
+import lombok.Getter;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import com.github.lyokofirelyte.Divinity.Events.DivinityPluginMessageEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElyMessages implements Listener, AutoRegister {
+public class ElyMessages implements Listener, AutoRegister<ElyMessages> {
 	
 	private Elysian main;
 	private String h = "&3Elysian &7\u2744 &b";
@@ -20,6 +21,9 @@ public class ElyMessages implements Listener, AutoRegister {
 	private Player p;
 	private CommandSender cs;
 	private DivinityPlayer dp;
+	
+	@Getter
+	private ElyMessages type = this;
 	
 	public ElyMessages(Elysian i){
 		main = i;

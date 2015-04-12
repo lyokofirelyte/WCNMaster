@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.Games.MobMondays;
+/*package com.github.lyokofirelyte.Elysian.Games.MobMondays;
 
 import gnu.trove.map.hash.THashMap;
 
@@ -28,11 +28,11 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Games.MobMondays.MMMain.locationType;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Elysian.api.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
 
 public class MMEvents implements Listener{
 
@@ -228,4 +228,4 @@ public class MMEvents implements Listener{
 		}
 	}
 	
-}
+}*/

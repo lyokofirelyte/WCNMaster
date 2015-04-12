@@ -2,17 +2,23 @@ package com.github.lyokofirelyte.Elysian;
 
 import java.util.List;
 
-import org.bukkit.command.CommandSender;
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElyTask;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
+import lombok.Getter;
 
-public class ElyAnnouncer implements Runnable, AutoRegister {
+import org.bukkit.command.CommandSender;
+
+import com.github.lyokofirelyte.Elysian.api.ElyTask;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+
+public class ElyAnnouncer implements Runnable, AutoRegister<ElyAnnouncer> {
 	
 	private Elysian main;
+	
+	@Getter
+	private ElyAnnouncer type = this;
 	
 	public ElyAnnouncer(Elysian i){
 		main = i;

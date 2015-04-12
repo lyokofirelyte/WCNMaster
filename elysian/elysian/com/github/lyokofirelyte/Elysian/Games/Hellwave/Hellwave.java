@@ -1,10 +1,10 @@
-package com.github.lyokofirelyte.Elysian.Games.Hellwave;
+/*package com.github.lyokofirelyte.Elysian.Games.Hellwave;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.api.DivinityGame;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
 import com.github.lyokofirelyte.Spectral.Identifiers.AutoSave;
 import com.github.lyokofirelyte.Spectral.Identifiers.DivGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
 
 public class Hellwave implements AutoSave, AutoRegister, DivGame{
 	public Elysian main;
@@ -36,4 +36,4 @@ public class Hellwave implements AutoSave, AutoRegister, DivGame{
 	@Override
 	public void load() {}
 
-}
+}*/

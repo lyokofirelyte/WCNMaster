@@ -1,27 +1,31 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
+import gnu.trove.map.hash.THashMap;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-
-public class ElyEconomy implements AutoRegister {
+public class ElyEconomy implements AutoRegister<ElyEconomy> {
 
 	 Elysian main;
+	 
+	 @Getter
+	 private ElyEconomy type = this;
 	 
 	 public ElyEconomy(Elysian i){
 		 main = i;
@@ -46,8 +50,8 @@ public class ElyEconomy implements AutoRegister {
 					 
 					 main.s(p, "none", "You sent &6" + bal + " &bto " + who.getStr(DPI.DISPLAY_NAME) + "&b.");
 					 
-					 if (Bukkit.getPlayer(who.uuid()) != null){
-			 			main.s(Bukkit.getPlayer(who.uuid()), "none", "You were paid &6" + bal + " &bby " + p.getDisplayName() + "&b.");
+					 if (Bukkit.getPlayer(who.getUuid()) != null){
+			 			main.s(Bukkit.getPlayer(who.getUuid()), "none", "You were paid &6" + bal + " &bby " + p.getDisplayName() + "&b.");
 					 }
 					 
 				 }else{
@@ -114,8 +118,8 @@ public class ElyEconomy implements AutoRegister {
 						 			
 						 			main.s(p, "none", "Set the balance of &6" + who.getStr(DPI.DISPLAY_NAME) + " &bto &6" + who.getStr(DPI.BALANCE) + "&b.");
 						 			
-						 			if (Bukkit.getPlayer(who.uuid()) != null){
-						 				main.s(Bukkit.getPlayer(who.uuid()), "none", "Your balance was set to &6" + who.getStr(DPI.BALANCE) + " &bby " + p.getDisplayName() + "&b.");
+						 			if (Bukkit.getPlayer(who.getUuid()) != null){
+						 				main.s(Bukkit.getPlayer(who.getUuid()), "none", "Your balance was set to &6" + who.getStr(DPI.BALANCE) + " &bby " + p.getDisplayName() + "&b.");
 						 			}
 						 			
 			 					} else {
@@ -139,8 +143,8 @@ public class ElyEconomy implements AutoRegister {
 		 Map<Integer, DivinityPlayer> players = new THashMap<Integer, DivinityPlayer>();
 		 int serverTotal = 0;
 		 
-		 for (DivinityStorage p : main.divinity.api.getAllPlayers()){
-			 if (p.getInt(DPI.BALANCE) > 2000){
+		 for (DivinityStorageModule p : main.api.getOnlineModules().values()){
+			 if (p.getTable().equals("users") && p.getInt(DPI.BALANCE) > 2000){
 				 balances.add(p.getInt(DPI.BALANCE));
 				 players.put(p.getInt(DPI.BALANCE), (DivinityPlayer)p);
 				 serverTotal = serverTotal + p.getInt(DPI.BALANCE);

@@ -8,8 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
 public class GenericSignListener implements AutoRegister<GenericSignListener>, Listener {
 

@@ -18,8 +18,8 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.github.lyokofirelyte.Empyreal.Utils;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 import com.github.lyokofirelyte.Platform.Events.RoundEndEvent;
 import com.github.lyokofirelyte.Platform.Rounds.Round;
 

@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.MM;
+/*package com.github.lyokofirelyte.MM;
 
 import gnu.trove.map.hash.THashMap;
 
@@ -251,7 +251,7 @@ public class MMMain extends JavaPlugin implements GameModule{
 					APIScheduler.REPEAT.stop("COUNTDOWN_TIMER");
 
 				}
-			});*/
+			});
 			
 			
 			Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable(){ public void run(){
@@ -279,7 +279,7 @@ public class MMMain extends JavaPlugin implements GameModule{
 			}}, 5 * 20L);
 	}
 	
-	/*public void updateBoardAll(){
+	public void updateBoardAll(){
 		List<Integer> scores = new ArrayList<Integer>();
 		Map<GamePlayer<GotchaPlayer>, Integer> mappedScores = new HashMap<>();
 		List<String> finals = new ArrayList<String>();
@@ -297,7 +297,7 @@ public class MMMain extends JavaPlugin implements GameModule{
 			}
 		}
 		
-	}*/
+	}
 	
 	
 	public void actuallyStart(){
@@ -385,4 +385,4 @@ public class MMMain extends JavaPlugin implements GameModule{
 		return true;
 	}
 
-}
+}*/

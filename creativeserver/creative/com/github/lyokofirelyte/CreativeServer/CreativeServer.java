@@ -19,9 +19,10 @@ import org.json.simple.parser.JSONParser;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.JSONMap;
-import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 import com.sk89q.wepif.PermissionsResolver;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
@@ -101,8 +102,8 @@ public class CreativeServer extends JavaPlugin implements GameModule, Permission
 	public void onPlayerQuit(Player p){
 		if (!movingServers.containsKey(p.getName())){
 			Utils.customBC("&4\u03E0 &7" + p.getDisplayName() + " &6<-> &edisconnect");
-			getApi().sendToSocket(getApi().getServerSockets().get("wa"), "chat", "&7" + p.getDisplayName() + " &6<-> &edisconnect");
-			getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "chat", "&7" + p.getDisplayName() + " &6<-> &edisconnect");
+			getApi().sendToSocket("wa", Handler.GLOBAL_CHAT, "&7" + p.getDisplayName() + " &6<-> &edisconnect");
+			getApi().sendToSocket("GameServer", Handler.GLOBAL_CHAT, "&7" + p.getDisplayName() + " &6<-> &edisconnect");
 		} else {
 			getMovingServers().remove(p.getName());
 		}
@@ -111,8 +112,8 @@ public class CreativeServer extends JavaPlugin implements GameModule, Permission
 	@Override
 	public void onPlayerChat(GamePlayer<?> gp, String msg){
 		Utils.bc("&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
-		getApi().sendToSocket(getApi().getServerSockets().get("wa"), "chat", "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
-		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "chat", "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+		getApi().sendToSocket("wa", Handler.GLOBAL_CHAT, "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+		getApi().sendToSocket("GameServer", Handler.GLOBAL_CHAT, "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
 	}
 	
 	@Override

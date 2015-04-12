@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.Games.Cranked;
+/*package com.github.lyokofirelyte.Elysian.Games.Cranked;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,4 +57,4 @@ public class CrankedActive implements Listener {
 			e.getPlayer().teleport(root.getRandomLocation());
 		}
 	}
-}
+}*/

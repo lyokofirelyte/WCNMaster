@@ -1,11 +1,11 @@
-package com.github.lyokofirelyte.Elysian.Games.Hellwave;
+/*package com.github.lyokofirelyte.Elysian.Games.Hellwave;
 
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Elysian.api.DivinityGame;
+import com.github.lyokofirelyte.Elysian.api.DivinityPlayer;
 
 public class HellwaveCommands {
 
@@ -26,4 +26,4 @@ public class HellwaveCommands {
 		
 	}
 	
-}
+}*/

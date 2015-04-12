@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.Games.Booth;
+/*package com.github.lyokofirelyte.Elysian.Games.Booth;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,5 +57,4 @@ public class BoothEvent implements Listener {
 		}
 		
 	}
-}
-
+}*/

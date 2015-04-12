@@ -53,23 +53,25 @@ public class Booth implements AutoSave, AutoRegister, DivGame{
 	public void load() {}
 	
 }
-*/
+
 package com.github.lyokofirelyte.Elysian.Games.Booth;
+
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoSave;
-import com.github.lyokofirelyte.Spectral.Identifiers.DivGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityGame;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class Booth implements AutoSave, AutoRegister, DivGame{
+public class Booth implements AutoRegister<Booth> {
 
+	@Getter
+	private Booth type = this;
+	
 	public Elysian main;
 	private BoothCommand cmd;
 	private BoothEvent event;
@@ -172,11 +174,4 @@ public class Booth implements AutoSave, AutoRegister, DivGame{
 	public DivinityGame toDivGame(){
 		return main.api.getDivGame("booth", "booth");
 	}
-
-	@Override
-	public void save() {}
-
-	@Override
-	public void load() {}
-	
-}
+}*/

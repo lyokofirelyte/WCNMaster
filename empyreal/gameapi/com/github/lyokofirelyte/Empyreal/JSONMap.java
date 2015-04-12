@@ -300,6 +300,15 @@ public class JSONMap<K, V> extends HashMap<Object, Object> {
 		return new Integer[]{0};
 	}
 	
+	public Object getRawInfo(Object i){
+		
+		if (containsKey(toString(i))){
+			return get(toString(i));
+		}
+		
+		return null;
+	}
+	
 	public Object[] getObjArray(Object i){
 
 		if (containsKey(toString(i))){

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import lombok.Getter;
+
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -17,19 +19,24 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatClickEventType;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatExtra;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatHoverEventType;
-import com.github.lyokofirelyte.Divinity.JSON.JSONChatMessage;
-import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
-import com.github.lyokofirelyte.Divinity.Manager.ElyMarkkitItem;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
+import com.github.lyokofirelyte.Elysian.api.ElyMarkkitItem;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatClickEventType;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatExtra;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatHoverEventType;
+import com.github.lyokofirelyte.Empyreal.JSON.JSONChatMessage;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
-public class ElyCrate implements AutoRegister, Listener {
+public class ElyCrate implements AutoRegister<ElyCrate>, Listener {
 
 	Elysian main;
+	
+	@Getter
+	private ElyCrate type = this;
+	
 	List<ItemStack> loot = new ArrayList<ItemStack>();
 //	Map<Material, Integer> prices = new THashMap<Material, Integer>();
 	Map<Integer, HashMap<Material, Integer>> prices = new THashMap<Integer, HashMap<Material, Integer>>();
@@ -50,7 +57,7 @@ public class ElyCrate implements AutoRegister, Listener {
 	}
 	
 	public void loadValues(){
-		ElyMarkkitItem item = new ElyMarkkitItem(main.divinity.api, Material.STONE, 0);
+		ElyMarkkitItem item = new ElyMarkkitItem(main.api, Material.STONE, 0);
 		
 		for(int i :  new int[]{256, 512, 1024, 2048}){
 			prices.put(i, new HashMap<Material, Integer>());
@@ -125,13 +132,13 @@ public class ElyCrate implements AutoRegister, Listener {
 		if(args.length == 0){
 			showOptions(p, 1);
 		}else if(args.length == 1){
-			if(main.divinity.api.divUtils.isInteger(args[0])){
+			if(Utils.isInteger(args[0])){
 				showOptions(p, Integer.parseInt(args[0]));
 			}else{
 				main.s(p, "&cThat is not a number!");
 			}
 		}else{
-			if(main.divinity.api.divUtils.isInteger(args[0]) && main.divinity.api.divUtils.isInteger(args[0])){
+			if(Utils.isInteger(args[0]) && Utils.isInteger(args[0])){
 				ItemStack i = getKey(Integer.parseInt(args[1]));
 				i.setAmount(Integer.parseInt(args[0]));
 				p.getInventory().addItem(i);

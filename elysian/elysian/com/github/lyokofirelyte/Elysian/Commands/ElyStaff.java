@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import com.google.common.collect.Lists;
+
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,24 +35,28 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
-import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
-import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Gui.GuiChest;
-import com.github.lyokofirelyte.Spectral.DataTypes.DAI;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElyChannel;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
+import com.github.lyokofirelyte.Elysian.api.ElyChannel;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DAI;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
+import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.google.common.collect.Lists;
 
-public class ElyStaff implements Listener, AutoRegister {
+public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 
 	 Elysian main;
 	 int id;
+	 
+	 @Getter
+	 private ElyStaff type = this;
 	 
 	 public ElyStaff(Elysian i){
 		 main = i;
@@ -59,8 +64,7 @@ public class ElyStaff implements Listener, AutoRegister {
 
 	 @DivCommand(perm = "wa.staff.admin", aliases = {"backup"}, desc = "File Backup Command", help = "/backup", player = false)
 	 public void onBackup(CommandSender cs, String[] args){
-		 main.api.backup();
-		 main.s(cs, "Backup Complete!");
+		 main.s(cs, "Not implemented yet!");
 	 }
 	 
 	 @DivCommand(perm = "wa.staff.intern", aliases = {"x"}, desc = "X Chat", help = "/x <message>", min = 1, player = true)
@@ -229,21 +233,23 @@ public class ElyStaff implements Listener, AutoRegister {
 		 String who = cs instanceof Player ? ((Player)cs).getDisplayName() : "&6Console";
 		 if(main.hasSunDayBeenPerformedBefore == false){
 			 main.hasSunDayBeenPerformedBefore = true;
-			 for (DivinityStorage dp : main.divinity.api.getAllPlayers()){
-				 List<String> groups = new ArrayList<String>(((ElyPerms)main.api.getInstance(ElyPerms.class)).memberGroups);
-				 Collections.reverse(groups);
-				 for (String group : groups){
-					 if (dp.getList(DPI.PERMS).contains("wa." + ("rank." + group).replace("rank.member", "member"))){
-						 float amt = Float.parseFloat(((ElyPerms)main.api.getInstance(ElyPerms.class)).rankNames.get(group).split(" % ")[2])/100;
-						 float amount = dp.getInt(DPI.BALANCE)*amt;
-						 dp.set(DPI.BALANCE, dp.getInt(DPI.BALANCE) + Math.round(amount));
-						 dp.getList(DPI.MAIL).add("personal" + "%SPLIT%" + who + "%SPLIT%" + "Sunday balance updated! You were given " + Math.round(amount) + " this week!");
-						 
-						 if (Bukkit.getPlayer(dp.uuid()) != null){
-							 main.s(Bukkit.getPlayer(dp.uuid()), "none", "You've recieved a mail! /mail read");
+			 for (DivinityStorageModule dp : main.api.getOnlineModules().values()){
+				 if (dp.getTable().equals("users")){
+					 List<String> groups = new ArrayList<String>(((ElyPerms)main.api.getInstance(ElyPerms.class)).memberGroups);
+					 Collections.reverse(groups);
+					 for (String group : groups){
+						 if (dp.getList(DPI.PERMS).contains("wa." + ("rank." + group).replace("rank.member", "member"))){
+							 float amt = Float.parseFloat(((ElyPerms)main.api.getInstance(ElyPerms.class)).rankNames.get(group).split(" % ")[2])/100;
+							 float amount = dp.getInt(DPI.BALANCE)*amt;
+							 dp.set(DPI.BALANCE, dp.getInt(DPI.BALANCE) + Math.round(amount));
+							 dp.getList(DPI.MAIL).add("personal" + "%SPLIT%" + who + "%SPLIT%" + "Sunday balance updated! You were given " + Math.round(amount) + " this week!");
+							 
+							 if (Bukkit.getPlayer(dp.getUuid()) != null){
+								 main.s(Bukkit.getPlayer(dp.getUuid()), "none", "You've recieved a mail! /mail read");
+							 }
+							 
+							 break;
 						 }
-						 
-						 break;
 					 }
 				 }
 			 }
@@ -610,7 +616,7 @@ public class ElyStaff implements Listener, AutoRegister {
 				 main.s(p, "playerNotFound");
 			 }
 			 
-		 } else if (main.divinity.api.divManager.getMap(DivinityManager.allianceDir).containsKey(args[0])){
+		 } else if (main.api.getOnlineModules().containsKey("ALLIANCE_" + args[0])){
 			 if(!main.api.perms(p, "wa.staff.mod2", false)) return;
 
 			 String[] coords = main.api.getDivAlliance(args[0]).getStr(DAI.CENTER).split(" ");
@@ -664,7 +670,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		 if (main.api.doesPartialPlayerExist(args[0])){
 			 if (main.api.isOnline(args[0])){
 				 DivinityPlayer who = main.api.getDivPlayer(args[0]);
-				 who.set(DPI.TP_INVITE, sender.getName() + " " + who.name());
+				 who.set(DPI.TP_INVITE, sender.getName() + " " + who.getName());
 				 main.s(main.api.getPlayer(args[0]), sender.getDisplayName() + " &b&ohas requested to TP to you.");
 				 main.s(main.api.getPlayer(args[0]), "&oAccept it with &6/tpaccept&b. Decline with &6/tpdeny&b.");
 				 main.s(sender, "Sent!");
@@ -682,7 +688,7 @@ public class ElyStaff implements Listener, AutoRegister {
 		 if (main.api.doesPartialPlayerExist(args[0])){
 			 if (main.api.isOnline(args[0])){
 				 DivinityPlayer who = main.api.getDivPlayer(args[0]);
-				 who.set(DPI.TP_INVITE, who.name() + " " + sender.getName());
+				 who.set(DPI.TP_INVITE, who.getName() + " " + sender.getName());
 				 main.s(main.api.getPlayer(args[0]), sender.getDisplayName() + " &b&ohas requested for you to TP to them.");
 				 main.s(main.api.getPlayer(args[0]), "&oAccept it with &6/tpaccept&b. Decline with &6/tpdeny&b.");
 				 main.s(sender, "Sent!");
@@ -746,16 +752,18 @@ public class ElyStaff implements Listener, AutoRegister {
 		 String mod2s = "";
 		 String admins = "";
 		 
-		 for (DivinityStorage dp : main.divinity.api.getAllPlayers()){
-			 List<String> perms = dp.getList(DPI.PERMS);
-			 if (perms.contains("wa.staff.admin")){
-				 admins = admins + " " + dp.getStr(DPI.DISPLAY_NAME);
-			 } else if (perms.contains("wa.staff.mod2")){
-				 mod2s = mod2s + " " + dp.getStr(DPI.DISPLAY_NAME);
-			 } else if (perms.contains("wa.staff.mod")){
-				 mods = mods + " " + dp.getStr(DPI.DISPLAY_NAME);
-			 } else if (perms.contains("wa.staff.intern")){
-				 interns = interns + " " + dp.getStr(DPI.DISPLAY_NAME);
+		 for (DivinityStorageModule dp : main.api.getOnlineModules().values()){
+			 if (dp.getTable().equals("users")){
+				 List<String> perms = dp.getList(DPI.PERMS);
+				 if (perms.contains("wa.staff.admin")){
+					 admins = admins + " " + dp.getStr(DPI.DISPLAY_NAME);
+				 } else if (perms.contains("wa.staff.mod2")){
+					 mod2s = mod2s + " " + dp.getStr(DPI.DISPLAY_NAME);
+				 } else if (perms.contains("wa.staff.mod")){
+					 mods = mods + " " + dp.getStr(DPI.DISPLAY_NAME);
+				 } else if (perms.contains("wa.staff.intern")){
+					 interns = interns + " " + dp.getStr(DPI.DISPLAY_NAME);
+				 }
 			 }
 		 }
 		 
@@ -854,8 +862,8 @@ public class ElyStaff implements Listener, AutoRegister {
 			Player p = (Player) sender;
 			ElyChannel.STAFF.send(p.getDisplayName(), DivinityUtilsModule.createString(args, 0), main.api);
 			try{
-				main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"), "forwardexclude", "o", "&7" + p.getDisplayName() + "&f: &c&o" + DivinityUtilsModule.createString(args, 0), "wa");
-				main.divinity.api.sendToSocket(main.divinity.api.getServerSockets().get("GameServer"),  "o", "&7" + p.getDisplayName() + "&f: &c&o" + DivinityUtilsModule.createString(args, 0));
+				main.api.sendToSocket("GameServer", Handler.FORWARD_EXCLUDE, "O_CHAT", "&7" + p.getDisplayName() + "&f: &c&o" + DivinityUtilsModule.createString(args, 0), "wa");
+				main.api.sendToSocket("GameServer", Handler.O_CHAT, "&7" + p.getDisplayName() + "&f: &c&o" + DivinityUtilsModule.createString(args, 0));
 			}catch(Exception e){}
 		} else {
 			ElyChannel.STAFF.send("&4[&cS&6e&er&2v&ae&br&3]", DivinityUtilsModule.createString(args, 0), main.api);
@@ -878,7 +886,7 @@ public class ElyStaff implements Listener, AutoRegister {
 					main.discussion.add(args[1]);
 					
 					DivinityPlayer temp = main.api.getDivPlayer(args[1]);
-					dp.s("Added player " + temp.name() + " to the discussion!");
+					dp.s("Added player " + temp.getName() + " to the discussion!");
 					
 					
 				}else{
@@ -899,7 +907,7 @@ public class ElyStaff implements Listener, AutoRegister {
 					main.discussion.remove(args[1]);
 					
 					DivinityPlayer temp = main.api.getDivPlayer(args[1]);
-					dp.s("Removed player " + temp.name() + " from the discussion!");
+					dp.s("Removed player " + temp.getName() + " from the discussion!");
 					
 				}else{
 					dp.err("Player not found!");

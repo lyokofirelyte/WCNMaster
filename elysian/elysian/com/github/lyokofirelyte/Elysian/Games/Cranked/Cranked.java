@@ -1,19 +1,22 @@
-package com.github.lyokofirelyte.Elysian.Games.Cranked;
+/*package com.github.lyokofirelyte.Elysian.Games.Cranked;
+
+import gnu.trove.map.hash.THashMap;
 
 import java.util.ArrayList;
 
-import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoSave;
-import com.github.lyokofirelyte.Spectral.Identifiers.DivGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityGame;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class Cranked implements AutoSave, AutoRegister, DivGame {
+public class Cranked implements AutoRegister<Cranked> {
+	
+	@Getter
+	private Cranked type = this;
 	
 	protected Elysian main;
 	public CrankedCommand command;
@@ -31,18 +34,6 @@ public class Cranked implements AutoSave, AutoRegister, DivGame {
 
 	public DivinityGame toDivGame() {
 		return main.api.getDivGame("cranked", "cranked");
-	}
-
-	@Override
-	public void save(){
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void load(){
-		// TODO Auto-generated method stub
-		
 	}
 
 	public boolean isPlaying(Player p){
@@ -65,4 +56,4 @@ public class Cranked implements AutoSave, AutoRegister, DivGame {
 			active
 		};
 	}
-}
+}*/

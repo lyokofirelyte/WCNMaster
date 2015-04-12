@@ -1,0 +1,5 @@
+name: ServerInstances
+main: com.github.lyokofirelyte.ServerInstances.ServerInstances
+author: lyokofirelyte
+prefix: ServerInstances
+version: 1

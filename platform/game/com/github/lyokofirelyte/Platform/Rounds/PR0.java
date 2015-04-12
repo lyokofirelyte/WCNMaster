@@ -3,7 +3,7 @@ package com.github.lyokofirelyte.Platform.Rounds;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 import com.github.lyokofirelyte.Platform.Platform;
 import com.github.lyokofirelyte.Platform.PlatformPlayer;
 

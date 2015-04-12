@@ -2,6 +2,9 @@ package com.github.lyokofirelyte.Elysian.MMO.Magics;
 
 import java.util.Random;
 
+import lombok.Getter;
+
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
@@ -9,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.ChatColor;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
@@ -18,15 +20,18 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.github.lyokofirelyte.Divinity.Events.SkillExpGainEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Elysian.MMO.ElyMMO;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
-import com.github.lyokofirelyte.Spectral.Public.ParticleEffect;
+import com.github.lyokofirelyte.Elysian.Events.SkillExpGainEvent;
+import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
 
-public class SpellEvents implements Listener {
+public class SpellEvents implements AutoRegister<SpellEvents>, Listener {
 	
 	private Elysian main;
+	
+	@Getter
+	private SpellEvents type = this;
 
 	public SpellEvents(Elysian i) {
 		main = i;

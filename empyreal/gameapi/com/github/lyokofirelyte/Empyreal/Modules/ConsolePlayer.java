@@ -7,13 +7,12 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
 import lombok.Getter;
 import lombok.Setter;
 
 public class ConsolePlayer implements GamePlayer<ConsolePlayer> {
-
 	
 	@Getter @Setter
 	private ConsolePlayer type;

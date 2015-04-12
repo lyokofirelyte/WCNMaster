@@ -1,10 +1,11 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -23,26 +24,28 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
-import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
-import com.github.lyokofirelyte.Divinity.Manager.DivInvManager;
-import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRingFuel;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRingFuelSafe;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRings;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.DRS;
-import com.github.lyokofirelyte.Spectral.DataTypes.RingsType;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.Public.ParticleEffect;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityRing;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
+import com.github.lyokofirelyte.Elysian.api.RingsType;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Database.DRS;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRing;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
 
-public class ElyRings implements Listener, AutoRegister {
+public class ElyRings implements Listener, AutoRegister<ElyRings> {
 
 	private Elysian main;
+	
+	@Getter
+	private ElyRings type = this;
 	
 	public ElyRings(Elysian i){
 		main = i;
@@ -87,8 +90,7 @@ public class ElyRings implements Listener, AutoRegister {
 			case "remove":
 				
 				if (main.api.doesRingExist(args[1])){
-					main.divinity.api.divManager.getMap(DivinityManager.ringsDir).remove(args[1]);
-					new File("./plugins/Divinity/rings/" + args[1].toLowerCase() + ".yml").delete();
+					main.api.getOnlineModules().remove("RING_" + args[1].toLowerCase());
 					main.s(p, "&c&oDeleted!");
 				} else {
 					main.s(p, "&c&oThat ring does not exist!");
@@ -251,14 +253,14 @@ public class ElyRings implements Listener, AutoRegister {
 		}
 
 		for (Location l : horLocs){
-			main.api.getDivSystem().addEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.name() + "_ring", ParticleEffect.RED_DUST, 0, 0, 2, 0, 100, l, 16, 5);
+			main.api.getDivSystem().addEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.getName() + "_ring", ParticleEffect.RED_DUST, 0, 0, 2, 0, 100, l, 16, 5);
 		}
 		
 		for (Location l : verLocs){
-			main.api.getDivSystem().addEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.name() + "_ring", ParticleEffect.RED_DUST, 2, 0, 0, 0, 100, l, 16, 5);
+			main.api.getDivSystem().addEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.getName() + "_ring", ParticleEffect.RED_DUST, 2, 0, 0, 0, 100, l, 16, 5);
 		}
 		
-		main.api.getDivSystem().addEffect(currentRing.name() + "_ring", ParticleEffect.PORTAL, 5, 5, 5, 1, 5000, currentRing.getCenterLoc(), 16, 10);
+		main.api.getDivSystem().addEffect(currentRing.getName() + "_ring", ParticleEffect.PORTAL, 5, 5, 5, 1, 5000, currentRing.getCenterLoc(), 16, 10);
 		
 		if (tp){
 			main.api.schedule(this, "lightning", 60L, "bleh", currentRing.getCenterLoc());
@@ -271,14 +273,14 @@ public class ElyRings implements Listener, AutoRegister {
 	public void finish(List<Location> horLocs, List<Location> verLocs, DivinityRing currentRing, DivinityRing dest){
 		
 		for (Location l : horLocs){
-			main.api.getDivSystem().remEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.name() + "_ring");
+			main.api.getDivSystem().remEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.getName() + "_ring");
 		}
 		
 		for (Location l : verLocs){
-			main.api.getDivSystem().remEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.name() + "_ring");
+			main.api.getDivSystem().remEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.getName() + "_ring");
 		}
 		
-		main.api.getDivSystem().remEffect(currentRing.name() + "_ring");
+		main.api.getDivSystem().remEffect(currentRing.getName() + "_ring");
 		currentRing.setInOperation(false);
 		dest.setInOperation(false);
 	}
@@ -303,15 +305,15 @@ public class ElyRings implements Listener, AutoRegister {
 		}
 		
 		for (Location l : horLocs){
-			main.api.getDivSystem().remEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.name() + "_ring");
+			main.api.getDivSystem().remEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.getName() + "_ring");
 		}
 		
 		for (Location l : verLocs){
-			main.api.getDivSystem().remEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.name() + "_ring");
+			main.api.getDivSystem().remEffect(l.getX() + " " + l.getY() + " " + l.getZ() + "_" + currentRing.getName() + "_ring");
 		}
 		
-		main.api.getDivSystem().remEffect(currentRing.name() + "_ring");
-		calculate(players.get(0), dest.getCenterLoc().toVector(), currentRing.name(), dest.name(), false);
+		main.api.getDivSystem().remEffect(currentRing.getName() + "_ring");
+		calculate(players.get(0), dest.getCenterLoc().toVector(), currentRing.getName(), dest.getName(), false);
 	}
 	
 	@EventHandler
@@ -352,25 +354,27 @@ public class ElyRings implements Listener, AutoRegister {
 			Vector v = e.getClickedBlock().getLocation().toVector();
 			String[] clickedLoc = (e.getClickedBlock().getWorld().getName() + " " + v.getBlockX() + " " + v.getBlockY() + " " + v.getBlockZ()).split(" ");
 			
-			for (DivinityStorage r : main.divinity.api.divManager.getMap(DivinityManager.ringsDir).values()){
-				DivinityRing ring = (DivinityRing) r;
-				if (!ring.getBool(DRS.IS_SERVER_RING) && ring.getCenter()[0].equals(clickedLoc[0]) && ring.getCenter()[1].equals(clickedLoc[1]) && ring.getCenter()[2].equals(clickedLoc[2]) && ring.getCenter()[3].equals(clickedLoc[3])){
-					if (!ring.isInOperation()){
-						if (e.getPlayer().isSneaking() && ring.isAllianceOwned()){
-							DivinityPlayer dp = main.api.getDivPlayer(e.getPlayer());
-							if (dp.getStr(DPI.ALLIANCE_NAME).equals(ring.getStr(DRS.ALLIANCE))){
-								((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRingFuel(main, ring));
+			for (DivinityStorageModule r : main.api.getOnlineModules().values()){
+				if (r.getTable().equals("rings")){
+					DivinityRing ring = (DivinityRing) r;
+					if (!ring.getBool(DRS.IS_SERVER_RING) && ring.getCenter()[0].equals(clickedLoc[0]) && ring.getCenter()[1].equals(clickedLoc[1]) && ring.getCenter()[2].equals(clickedLoc[2]) && ring.getCenter()[3].equals(clickedLoc[3])){
+						if (!ring.isInOperation()){
+							if (e.getPlayer().isSneaking() && ring.isAllianceOwned()){
+								DivinityPlayer dp = main.api.getDivPlayer(e.getPlayer());
+								if (dp.getStr(DPI.ALLIANCE_NAME).equals(ring.getStr(DRS.ALLIANCE))){
+									((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRingFuel(main, ring));
+								} else {
+									((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRingFuelSafe(main, ring));
+								}
 							} else {
-								((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRingFuelSafe(main, ring));
+								main.s(e.getPlayer(), "Select!");
+								((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRings(main, v, ring.getName(), RingsType.MENU));
 							}
 						} else {
-							main.s(e.getPlayer(), "Select!");
-							((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(e.getPlayer(), new GuiRings(main, v, ring.name(), RingsType.MENU));
+							main.s(e.getPlayer(), "&c&oRing already in operation!");
 						}
-					} else {
-						main.s(e.getPlayer(), "&c&oRing already in operation!");
+						return;
 					}
-					return;
 				}
 			}
 		}

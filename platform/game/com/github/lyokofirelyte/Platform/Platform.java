@@ -18,10 +18,11 @@ import org.bukkit.scoreboard.DisplaySlot;
 
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.FireworkShenans;
-import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.FireworkShenans;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 import com.github.lyokofirelyte.Platform.Data.PlatformData;
 import com.github.lyokofirelyte.Platform.Data.PlatformGameData;
 import com.github.lyokofirelyte.Platform.Rounds.PR0;
@@ -88,7 +89,7 @@ public class Platform extends JavaPlugin implements GameModule {
 	
 	@Override
 	public void onRegister(){
-		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "server_boot_complete");
+		getApi().sendToSocket("GameServer", Handler.SERVER_BOOT_COMPLETE);
 	}
 	
 	@Override
@@ -155,7 +156,7 @@ public class Platform extends JavaPlugin implements GameModule {
 	}
 	
 	public void start(){
-		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "game_in_progress");
+		getApi().sendToSocket("GameServer", Handler.GAME_IN_PROGRESS);
 		pah.formArena(gameData.getCenter());
 	}
 	

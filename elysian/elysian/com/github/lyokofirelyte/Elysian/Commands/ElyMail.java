@@ -1,19 +1,25 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
 import java.util.ArrayList;
+
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityStorage;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElyMail implements AutoRegister {
+public class ElyMail implements AutoRegister<ElyMail> {
 
 	 Elysian main;
+	 
+	 @Getter
+	 private ElyMail type = this;
 	 
 	 public ElyMail(Elysian i){
 		 main = i;
@@ -50,7 +56,7 @@ public class ElyMail implements AutoRegister {
 		  	  
 		  	  case "clear":
 		  		  
-		  		  DivinityStorage clearing = null;
+		  		  DivinityStorageModule clearing = null;
 		  		  
 		  		  if (p instanceof Player){
 		  			clearing = main.api.getDivPlayer((Player)p);
@@ -123,8 +129,8 @@ public class ElyMail implements AutoRegister {
 						  if (main.api.doesPartialPlayerExist(args[1])){
 							  send = false;
 							  main.api.getDivPlayer(args[1]).getList(DPI.MAIL).add("personal" + "%SPLIT%" + p.getName() + "%SPLIT%" + msg);
-							  if (Bukkit.getPlayer(main.api.getDivPlayer(args[1]).uuid()) != null){
-								  main.s(Bukkit.getPlayer(main.api.getDivPlayer(args[1]).uuid()), "none", "You've recieved a mail! /mail read");
+							  if (Bukkit.getPlayer(main.api.getDivPlayer(args[1]).getUuid()) != null){
+								  main.s(Bukkit.getPlayer(main.api.getDivPlayer(args[1]).getUuid()), "none", "You've recieved a mail! /mail read");
 							  }
 							  main.s(p, "Mail sent!");
 						  } else {
@@ -137,11 +143,11 @@ public class ElyMail implements AutoRegister {
 				  }
 				  
 				  if (send){
-					  for (DivinityStorage dp : main.divinity.api.getAllPlayers()){
-						  if (dp.getList(DPI.PERMS).contains(perm)){
+					  for (DivinityStorageModule dp : main.api.getOnlineModules().values()){
+						  if (dp.getTable().equals("users") && dp.getList(DPI.PERMS).contains(perm)){
 							  dp.getList(DPI.MAIL).add(perm + "%SPLIT%" + p.getName() + "%SPLIT%" + msg);
-							  if (Bukkit.getPlayer(dp.uuid()) != null){
-								  main.s(Bukkit.getPlayer(dp.uuid()), "none", "You've recieved a mail! /mail read");
+							  if (Bukkit.getPlayer(dp.getUuid()) != null){
+								  main.s(Bukkit.getPlayer(dp.getUuid()), "none", "You've recieved a mail! /mail read");
 							  }
 						  }
 					  }

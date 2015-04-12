@@ -15,10 +15,10 @@ import org.bukkit.scoreboard.DisplaySlot;
 
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
-import com.github.lyokofirelyte.GameServer.Listener.WCNConsoleListener;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
 public class GameServer extends JavaPlugin implements GameModule {
 	
@@ -86,9 +86,15 @@ public class GameServer extends JavaPlugin implements GameModule {
 	@Override
 	public void onPlayerChat(GamePlayer<?> gp, String msg){
 		
-		Utils.bc("&7" + gp.getPlayer().getDisplayName() + "&f: &e" + msg);
-		getApi().sendToSocket(getApi().getServerSockets().get("wa"), "chat", "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
-		getApi().sendToSocket(getApi().getServerSockets().get("Creative"), "chat", "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+		Utils.bc("&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+		getApi().sendToSocket("wa", Handler.GLOBAL_CHAT, "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+		getApi().sendToSocket("Creative", Handler.GLOBAL_CHAT, "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+		
+		for (String server : getApi().getServerSockets().keySet()){
+			if (server.startsWith("SI-")){
+				getApi().sendToSocket(server, Handler.GLOBAL_CHAT, "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+			}
+		}
 	}
 	
 	public void updateAllSigns(String serverName, int line, String msg){
@@ -130,8 +136,6 @@ public class GameServer extends JavaPlugin implements GameModule {
 				}
 			}
 		});
-		
-		new WCNConsoleListener(this);
 	}
 	
 	@Override

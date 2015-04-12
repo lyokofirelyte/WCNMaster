@@ -1,8 +1,9 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,23 +15,23 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffectType;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
-import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
-import com.github.lyokofirelyte.Divinity.Storage.DivinityStorageModule;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.MMO.ElyMMO;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.google.common.collect.Iterables;
 
-public class ElyJoinQuit implements Listener, AutoRegister {
+public class ElyJoinQuit implements Listener, AutoRegister<ElyJoinQuit> {
 	
 	private Elysian main;
 	private boolean reboot = false;
+	
+	@Getter
+	private ElyJoinQuit type = this;
 	
 	public ElyJoinQuit(Elysian i){
 		main = i;
@@ -140,15 +141,7 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent e){
-		
-		try {
-			DivinityStorageModule mod = main.divinity.api.divManager.data.get(DivinityManager.dir).get(e.getPlayer().getUniqueId().toString());
-			mod.save(new File(DivinityManager.dir + "/" + e.getPlayer().getUniqueId().toString() + ".yml"));
-			main.divinity.api.divManager.data.get(DivinityManager.dir).remove(e.getPlayer().getUniqueId().toString());
-		} catch (Exception ee){
-			ee.printStackTrace();
-		}
-		
+
 		if (!main.api.getDivSystem().getBool(DPI.IS_REBOOT_SERVER)){
 			ElyMMO mmo = (ElyMMO) main.api.getInstance(ElyMMO.class);
 			e.setQuitMessage(null);
@@ -167,12 +160,6 @@ public class ElyJoinQuit implements Listener, AutoRegister {
 				main.api.getDivPlayer(p.getStr(DPI.SPECTATE_TARGET)).set(DPI.SPECTATING, false);
 				p.set(DPI.SPECTATE_TARGET, "none");
 			}
-			
-			try {
-				if (mmo.patrols.doesPatrolExistWithPlayer(pl)){
-					mmo.patrols.getPatrolWithPlayer(pl).getMembers().remove(pl.getName());
-				}
-			} catch (Exception ee){}
 			
 			DivinityUtilsModule.customBC("&4(\\__/) " + pl.getDisplayName());
 			DivinityUtilsModule.customBC("&4(=-.-=)" + " &e&o" + p.getStr(DPI.QUIT_MESSAGE) + "&e&o");

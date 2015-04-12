@@ -1,12 +1,11 @@
-package com.github.lyokofirelyte.Elysian.Games.Spleef;
+/*package com.github.lyokofirelyte.Elysian.Games.Spleef;
 
 import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Location;
 
-import com.github.lyokofirelyte.Divinity.Manager.DivinityManager;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 public @interface SpleefData {
 	
 	public String[] appliesTo() default {""};
@@ -101,4 +100,4 @@ public @interface SpleefData {
 		public void setLobby(Location l);
 		public void setCount(SpleefGame g, int i);
 	}
-}
+}*/

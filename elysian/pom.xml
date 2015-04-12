@@ -15,12 +15,7 @@
     <dependencies>
     	<dependency>
             <groupId>com.github.lyokofirelyte</groupId>
-            <artifactId>Divinity</artifactId>
-            <version>1.0</version>
-        </dependency> 
-    	<dependency>
-            <groupId>com.github.lyokofirelyte</groupId>
-            <artifactId>Spectral</artifactId>
+            <artifactId>Empyreal</artifactId>
             <version>1.0</version>
         </dependency> 
     </dependencies>
@@ -32,5 +27,59 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+		<plugins>
+		    <plugin>
+       			<groupId>org.apache.maven.plugins</groupId>
+       			<artifactId>maven-shade-plugin</artifactId>
+       			<version>2.3</version>
+       			<configuration>
+       			 	<artifactSet>
+  						<excludes>
+  							<exclude>me.confuser:*</exclude>
+  							<exclude>com.github.lyokofirelyte:Spectral:*</exclude>
+  						</excludes>
+					</artifactSet>
+				</configuration>
+       			<executions>
+        			<execution>
+           				<phase>package</phase>
+            			<goals>
+              				<goal>shade</goal>
+           	 			</goals>
+           	 			<configuration>
+           	 				<filters>
+           	 					<filter>
+           	 						<artifact>com.github.lyokofirelyte:CB</artifact>
+           	 						<excludes>
+    									<exclude>org/bukkit/**</exclude>
+    									<exclude>org/yaml/**</exclude>
+    									<exclude>org/sqlite/**</exclude>
+    									<exclude>org/json/**</exclude>
+    									<exclude>javax/**</exclude>
+    									<exclude>com/dom4j/**</exclude>
+    									<exclude>com/dsh105/**</exclude>
+    									<exclude>com/sk89q/**</exclude>
+    									<exclude>com/mysql/**</exclude>
+    									<exclude>com/avaje/**</exclude>
+    									<exclude>com/github/lyokofirelyte/Spectral/**</exclude>
+    									<exclude>xml-apis/xml-apis/**</exclude>
+    									<exclude>net/minecraft/**</exclude>
+    									<exclude>me/confuser/**</exclude>
+    									<exclude>com/mojang/**</exclude>
+    									<exclude>io/netty/**</exclude>
+    									<exclude>native/**</exclude>
+    									<exclude>configurations/**</exclude>
+    									<exclude>mojang-translations/**</exclude>
+    									<exclude>net/md_5/**</exclude>
+    									<exclude>org/spigotmc/**</exclude>
+    									<exclude>assets/minecraft/**</exclude>
+  									</excludes>
+  								</filter>
+  							</filters>
+  						</configuration>
+          			</execution>
+       	 		</executions>
+    		</plugin>
+    	</plugins>
 	</build>
 </project>

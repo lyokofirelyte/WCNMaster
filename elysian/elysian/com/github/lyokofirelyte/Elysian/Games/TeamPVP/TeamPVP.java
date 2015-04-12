@@ -1,32 +1,35 @@
-package com.github.lyokofirelyte.Elysian.Games.TeamPVP;
+/*package com.github.lyokofirelyte.Elysian.Games.TeamPVP;
+
+import gnu.trove.map.hash.THashMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import gnu.trove.map.hash.THashMap;
-
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
+import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Games.TeamPVP.TeamPVPData.TeamPVPGame;
 import com.github.lyokofirelyte.Elysian.Games.TeamPVP.TeamPVPData.TeamPVPPlayer;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoSave;
-import com.github.lyokofirelyte.Spectral.Identifiers.DivGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityGame;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class TeamPVP extends THashMap<String, TeamPVPGame> implements AutoSave, AutoRegister, DivGame {
+public class TeamPVP extends THashMap<String, TeamPVPGame> implements AutoRegister<TeamPVP> {
 	
 	protected Elysian main;
 	public TeamPVPData data;
 	public TeamPVPCommand command;
 	public TeamPVPActive active;
+	
+	@Getter
+	private TeamPVP type = this;
 	
 	public TeamPVP(Elysian i){
 		main = i;
@@ -238,12 +241,6 @@ public class TeamPVP extends THashMap<String, TeamPVPGame> implements AutoSave, 
 		};
 	}
 
-	@Override
-	public void save(){}
-
-	@Override
-	public void load(){}
-
 	public DivinityGame toDivGame(){
 		return main.api.getDivGame("teampvp", "teampvp");
 	}
@@ -254,4 +251,4 @@ public class TeamPVP extends THashMap<String, TeamPVPGame> implements AutoSave, 
 			active
 		};
 	}
-}
+}*/

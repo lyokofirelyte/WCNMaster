@@ -1,7 +1,9 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
-import org.bukkit.entity.Player;
+import lombok.Getter;
+
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -9,15 +11,17 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
-import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class ElyMove implements Listener, AutoRegister {
+public class ElyMove implements Listener, AutoRegister<ElyMove> {
 	
 	private Elysian main;
+	
+	@Getter
+	private ElyMove type = this;
 	
 	public ElyMove(Elysian i){
 		main = i;

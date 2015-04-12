@@ -1,22 +1,27 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
+import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.github.lyokofirelyte.Divinity.Commands.DivCommand;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.PlayerLocation;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
-public class ElyProxy implements AutoRegister, PluginMessageListener {
+public class ElyProxy implements AutoRegister<ElyProxy>, PluginMessageListener {
 
 	private Elysian main;
+	
+	@Getter
+	private ElyProxy type = this;
 	
 	public ElyProxy(Elysian i){
 		main = i;
@@ -56,9 +61,9 @@ public class ElyProxy implements AutoRegister, PluginMessageListener {
 		    		main.s(sendTo, "&6Location Overview: " + player.getDisplayName());
 		    		main.s(sendTo, "IP: &3" + ip);
 					main.s(sendTo, "Port: &3" + port);
-					main.s(sendTo, "Country: &3" + main.divinity.api.playerLocation.getCountry(ip));
-					main.s(sendTo, "City: &3" + main.divinity.api.playerLocation.getCity(ip));
-					main.s(sendTo, "Postal Code: &3" + main.divinity.api.playerLocation.getPostal(ip));
+					main.s(sendTo, "Country: &3" + main.api.getInstance(PlayerLocation.class).getType().getCountry(ip));
+					main.s(sendTo, "City: &3" + main.api.getInstance(PlayerLocation.class).getType().getCity(ip));
+					main.s(sendTo, "Postal Code: &3" + main.api.getInstance(PlayerLocation.class).getType().getPostal(ip));
 					
 		    	break;
 		    	

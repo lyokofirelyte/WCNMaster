@@ -1,11 +1,10 @@
 package com.github.lyokofirelyte.Elysian.Gui;
 
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import com.github.lyokofirelyte.Divinity.DivGui;
+
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DRS;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityRing;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRing;
+import com.github.lyokofirelyte.Empyreal.Gui.DivGui;
 
 public class GuiRingFuelSafe extends DivGui {
 	
@@ -15,7 +14,7 @@ public class GuiRingFuelSafe extends DivGui {
 	
 	public GuiRingFuelSafe(Elysian main,  DivinityRing ring){
 		
-		super(54, "Deposit to " + ring.name());
+		super(54, "Deposit to " + ring.getName());
 		this.main = main;
 		this.ring = ring;
 	}

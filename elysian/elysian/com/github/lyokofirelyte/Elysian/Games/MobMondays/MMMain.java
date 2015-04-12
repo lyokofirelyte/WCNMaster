@@ -1,13 +1,14 @@
-package com.github.lyokofirelyte.Elysian.Games.MobMondays;
+/*package com.github.lyokofirelyte.Elysian.Games.MobMondays;
 
 import gnu.trove.map.hash.THashMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,19 +21,18 @@ import org.bukkit.entity.Skeleton;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
 
-import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoSave;
-import com.github.lyokofirelyte.Spectral.Identifiers.DivGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityGame;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Elysian.api.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
-public class MMMain implements AutoSave, AutoRegister, DivGame{
+public class MMMain implements AutoRegister<MMMain> {
 	public Elysian main;
 	MMCommands mmcmd;
 	MMEvents mmevents;
+	
+	@Getter
+	private MMMain type = this;
 	
 	public List<String> currentPlayers = new ArrayList<String>();
 	public List<String> startingPlayers = new ArrayList<String>();
@@ -277,21 +277,4 @@ public class MMMain implements AutoSave, AutoRegister, DivGame{
 		}
 		return true;
 	}
-
-	@Override
-	public Object[] registerSubClasses() {
-		return new Object[]{mmcmd, mmevents};
-	}
-
-	@Override
-	public DivinityGame toDivGame() {
-		return main.api.getDivGame("mobmondays", "mobmondays");
-	}
-
-	@Override
-	public void save() {}
-
-	@Override
-	public void load() {}
-
-}
+}*/

@@ -2,10 +2,11 @@ package com.github.lyokofirelyte.Elysian.Gui;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import com.github.lyokofirelyte.Divinity.DivGui;
+
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Spectral.DataTypes.DRS;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityRing;
+import com.github.lyokofirelyte.Empyreal.Database.DRS;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRing;
+import com.github.lyokofirelyte.Empyreal.Gui.DivGui;
 
 public class GuiRingFuel extends DivGui {
 	
@@ -15,7 +16,7 @@ public class GuiRingFuel extends DivGui {
 	
 	public GuiRingFuel(Elysian main,  DivinityRing ring){
 		
-		super(54, ring.name() + " Fuel");
+		super(54, ring.getName() + " Fuel");
 		this.main = main;
 		this.ring = ring;
 	}

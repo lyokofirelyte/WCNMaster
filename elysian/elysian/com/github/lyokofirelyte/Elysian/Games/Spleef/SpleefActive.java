@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.Games.Spleef;
+/*package com.github.lyokofirelyte.Elysian.Games.Spleef;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,14 +12,14 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Events.DivinityTeleportEvent;
+import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Games.Spleef.SpleefData.SpleefGame;
 import com.github.lyokofirelyte.Elysian.Games.Spleef.SpleefData.SpleefGameData;
 import com.github.lyokofirelyte.Elysian.Games.Spleef.SpleefData.SpleefPlayer;
 import com.github.lyokofirelyte.Elysian.Games.Spleef.SpleefData.SpleefPlayerData;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
 
 import static com.github.lyokofirelyte.Elysian.Games.Spleef.SpleefModule.*;
 
@@ -104,4 +104,4 @@ public class SpleefActive implements Listener {
 			}
 		}
 	}
-}
+}*/

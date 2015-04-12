@@ -24,9 +24,10 @@ import org.bukkit.ChatColor;
 
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.Utils;
+import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
 public class Gotcha extends JavaPlugin implements GameModule {
 	
@@ -83,7 +84,7 @@ public class Gotcha extends JavaPlugin implements GameModule {
 			setChosenArena((GotchaArena) arenas.values().toArray()[new Random().nextInt(arenas.size())]);
 		}
 		
-		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "server_boot_complete");
+		getApi().sendToSocket("GameServer", Handler.SERVER_BOOT_COMPLETE);
 	}
 	
 	@Override
@@ -173,7 +174,7 @@ public class Gotcha extends JavaPlugin implements GameModule {
 		setCanShoot(true);
 		secondsLeft = 600;
 		
-		getApi().sendToSocket(getApi().getServerSockets().get("GameServer"), "game_in_progress");
+		getApi().sendToSocket("GameServer", Handler.GAME_IN_PROGRESS);
 		
 		for (Player p : Bukkit.getOnlinePlayers()){
 			p.setWalkSpeed(0.4f);

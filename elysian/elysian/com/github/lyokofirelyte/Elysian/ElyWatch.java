@@ -1,10 +1,10 @@
 package com.github.lyokofirelyte.Elysian;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+
+import lombok.Getter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,22 +14,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.github.lyokofirelyte.Divinity.DivinityUtilsModule;
-import com.github.lyokofirelyte.Divinity.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Commands.ElyPerms;
-import com.github.lyokofirelyte.Elysian.MMO.MMO;
-import com.github.lyokofirelyte.Elysian.Patrols.ElyPatrol;
-import com.github.lyokofirelyte.Spectral.DataTypes.DPI;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElyChannel;
-import com.github.lyokofirelyte.Spectral.DataTypes.ElySkill;
-import com.github.lyokofirelyte.Spectral.Identifiers.AutoRegister;
-import com.github.lyokofirelyte.Spectral.Identifiers.PatrolTask;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinityPlayer;
-import com.github.lyokofirelyte.Spectral.StorageSystems.DivinitySystem;
+import com.github.lyokofirelyte.Elysian.Events.ScoreboardUpdateEvent;
+import com.github.lyokofirelyte.Elysian.api.ElyChannel;
+import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.SpreadSheetReader;
 
-public class ElyWatch implements Runnable, AutoRegister {
+public class ElyWatch implements Runnable, AutoRegister<ElyWatch> {
 	
 	private Elysian main;
+	
+	@Getter
+	private ElyWatch type = this;
 	
 	public ElyWatch(Elysian i){
 		main = i;
@@ -192,7 +193,7 @@ public class ElyWatch implements Runnable, AutoRegister {
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	private void invCheck(Player p, DivinityPlayer dp){
 		
-		if (!dp.getBool(MMO.IS_MINING) && !dp.getBool(MMO.IS_DIGGING)){
+		/*if (!dp.getBool(MMO.IS_MINING) && !dp.getBool(MMO.IS_DIGGING)){
 			for (ItemStack i : p.getInventory().getContents()){
 				if (i != null && i.hasItemMeta() && i.getItemMeta().hasLore()){
 					if (i.getItemMeta().getLore().contains(main.AS("&3&oSuperbreaker active!"))){
@@ -218,7 +219,7 @@ public class ElyWatch implements Runnable, AutoRegister {
 					}
 				}
 			}
-		}
+		}*/
 		
 		for (ItemStack i : p.getInventory().getContents()){
 			if (i != null && i.hasItemMeta() && i.getItemMeta().hasDisplayName()){
@@ -259,6 +260,6 @@ public class ElyWatch implements Runnable, AutoRegister {
 	}
 	
 	private void markkit(){
-		main.divinity.api.sheets.fetch(false, false);
+		main.api.getInstance(SpreadSheetReader.class).getType().fetch(false, false);
 	}
 }
