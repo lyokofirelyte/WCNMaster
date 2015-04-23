@@ -16,13 +16,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.SimplePluginManager;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 
@@ -67,8 +68,20 @@ public class CommandRegistry implements CommandExecutor {
 		}
 	}
     
-    @Override
+    @Override // so this is a hot mess...
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    	
+    	GamePlayer<?> gp = null;
+    	
+    	if (sender instanceof Player){
+	    	if (main.getPlayers().containsKey(((Player) sender).getUniqueId())){
+	    		gp = main.getGamePlayer(((Player) sender).getUniqueId());
+	    	} else if (main.getOnlineModules().containsKey(((Player) sender).getUniqueId().toString())){
+	    		gp = (DivinityPlayer) main.getOnlineModules().get(((Player) sender).getUniqueId().toString());
+	    	}
+    	} else {
+    		gp = main.getConsolePlayer();
+    	}
     	
     	for (List<String> cmdList : main.commandMap.keySet()){
     		if (cmdList.contains(label)){
@@ -79,41 +92,45 @@ public class CommandRegistry implements CommandExecutor {
     						if (m.getAnnotation(GameCommand.class) != null && Arrays.asList(m.getAnnotation(GameCommand.class).aliases()).contains(command)){
     							try {
     								GameCommand anno = m.getAnnotation(GameCommand.class);
-    								if ((sender instanceof Player && main.getGamePlayer(((Player) sender).getUniqueId()).getPerms().contains(anno.perm())) || sender instanceof Player == false || sender.isOp() || anno.perm().equals("emp.member")){
+    								if ((sender instanceof Player && gp.getPerms().contains(anno.perm())) || sender instanceof Player == false || sender.isOp() || anno.perm().equals("emp.member") || anno.perm().equals("wa.guest")){
     									if (args.length > anno.max() || args.length < anno.min()){
     										s(sender, anno.help());
     										return true;
-    									}     
-    									if (anno.name().equals("none")){
-    										if (anno.player()){
-    											if (sender instanceof Player){
-    												m.invoke(obj, (Player) sender, main.getGamePlayer(((Player) sender).getUniqueId()), args);
-    											} else {
-    												s(sender, "&cConsole players cannot run this command!");
-    											}
+    									}
+    									if (sender instanceof Player == false && anno.player()){
+    										s(sender, "&4Console can't run this!");
+    									} else { // epilepsy warning
+    										if (anno.name().equals("none")){
+	    										if (m.getParameterTypes()[0].equals(Player.class)){
+	    											if (m.getParameterTypes()[1].equals(GamePlayer.class)){
+	    												m.invoke(obj, (Player) sender, gp, args);
+	    											} else {
+	    												m.invoke(obj, (Player) sender, args);
+	    											}
+	    										} else if (m.getParameterTypes()[0].equals(CommandSender.class)){
+	    											if (m.getParameterTypes()[1].equals(GamePlayer.class)){
+	    												m.invoke(obj, sender, gp, args);
+	    											} else {
+	    												m.invoke(obj, sender, args);
+	    											}
+	    										}
     										} else {
-    											if (sender instanceof Player){
-    												m.invoke(obj, sender, main.getGamePlayer(((Player) sender).getUniqueId()), args);
-    											} else {
-    												m.invoke(obj, sender, main.getConsolePlayer(), args);
-    											}
-    										}
-    									} else {
-    										if (anno.player()){
-    											if (sender instanceof Player){
-    												m.invoke(obj, (Player) sender, main.getGamePlayer(((Player) sender).getUniqueId()), args, label);
-    											} else {
-    												s(sender, "&cConsole players cannot run this command!");
-    											}
-    										} else {
-    											if (sender instanceof Player){
-    												m.invoke(obj, sender, main.getGamePlayer(((Player) sender).getUniqueId()), args, label);
-    											} else {
-    												m.invoke(obj, sender, main.getConsolePlayer(), args, label);
-    											}
+	    										if (m.getParameterTypes()[0].equals(Player.class)){
+	    											if (m.getParameterTypes()[1].equals(GamePlayer.class)){
+	    												m.invoke(obj, (Player) sender, gp, args, label);
+	    											} else {
+	    												m.invoke(obj, (Player) sender, args, label);
+	    											}
+	    										} else if (m.getParameterTypes()[0].equals(CommandSender.class)){
+	    											if (m.getParameterTypes()[1].equals(GamePlayer.class)){
+	    												m.invoke(obj, sender, gp, args, label);
+	    											} else {
+	    												m.invoke(obj, sender, args, label);
+	    											}
+	    										}
     										}
     									}
-    								} else {
+    								} else if (!sender.hasPermission(anno.perm())){
     									s(sender, "&4No permission!");
     								}
     							} catch (Exception e) {
@@ -178,13 +195,14 @@ public class CommandRegistry implements CommandExecutor {
 		for (Class<?> clazz : allClasses){
 			
 			Object obj = null;
-
-			try {
-				Constructor<?> con = clazz.getConstructors()[0];
-				con.setAccessible(true);
-				obj = con.newInstance(mainClassInstance);
-			} catch (Exception e1){
-				continue;
+			
+			for (int i = 0; i < clazz.getConstructors().length; i++){
+				try {
+					Constructor<?> con = clazz.getConstructors()[i];
+					con.setAccessible(true);
+					obj = con.newInstance(mainClassInstance);
+					break;
+				} catch (Exception e){}
 			}
 			
 			if (obj instanceof AutoRegister && !clazz.toString().contains("\\$") && !main.getClazzez().containsKey(clazz.toString())){

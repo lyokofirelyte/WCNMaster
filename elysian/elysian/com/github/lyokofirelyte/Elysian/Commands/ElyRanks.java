@@ -6,7 +6,7 @@ import org.bukkit.FireworkEffect.Type;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
@@ -26,7 +26,7 @@ public class ElyRanks implements AutoRegister<ElyRanks> {
 		main = i;
 	}
 	
-	@DivCommand(aliases = {"rankup"}, desc = "Elysian Rankup Command", help = "/rankup", player = true)
+	@GameCommand(aliases = {"rankup"}, desc = "Elysian Rankup Command", help = "/rankup", player = true)
 	public void onRankup(Player p, String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -73,7 +73,7 @@ public class ElyRanks implements AutoRegister<ElyRanks> {
 		}
 	}
 
-	@DivCommand(aliases = {"ranks"}, desc = "Ranks Command", help = "/ranks", player = true)
+	@GameCommand(aliases = {"ranks"}, desc = "Ranks Command", help = "/ranks", player = true)
 	public void onRanks(Player p, String[] args){
 		
 		ElyPerms perms = (ElyPerms) main.api.getInstance(ElyPerms.class);

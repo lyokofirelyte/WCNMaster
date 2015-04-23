@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
@@ -25,7 +25,7 @@ public class ElyHome implements AutoRegister<ElyHome> {
 		main = i;
 	}
 
-	@DivCommand(aliases = {"home", "h"}, help = "/home <name>", desc = "Return Home Command", player = true)
+	@GameCommand(aliases = {"home", "h"}, help = "/home <name>", desc = "Return Home Command", player = true)
 	public void noPlaceLikeHome(Player p, String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -50,7 +50,7 @@ public class ElyHome implements AutoRegister<ElyHome> {
 		}
 	}
 	
-	@DivCommand(aliases = {"sethome", "sh"}, help = "/sethome <name>", desc = "Set Home Command", player = true, min = 1)
+	@GameCommand(aliases = {"sethome", "sh"}, help = "/sethome <name>", desc = "Set Home Command", player = true, min = 1)
 	public void onSetHome(Player p, String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -80,7 +80,7 @@ public class ElyHome implements AutoRegister<ElyHome> {
 		}	
 	}
 	
-	@DivCommand(aliases = {"delhome", "remhome", "dh", "rh"}, help = "/delhome <name>", desc = "Delete Home Command", player = true, min = 1)
+	@GameCommand(aliases = {"delhome", "remhome", "dh", "rh"}, help = "/delhome <name>", desc = "Delete Home Command", player = true, min = 1)
 	public void onDelHome(Player p, String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);

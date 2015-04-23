@@ -1,13 +1,12 @@
 package com.github.lyokofirelyte.Elysian.MMO;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import gnu.trove.map.hash.THashMap;
+
+import java.util.Map;
 
 import org.bukkit.Material;
 
-import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElySkill;
 
 public class MXP extends THashMap<ElySkill, Integer[]>{
 

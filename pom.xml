@@ -30,6 +30,7 @@
 	    <module>platform</module>
 	    <module>deviance</module>
 	    <module>wcn</module>
+	    <module>bungee</module>
 	    <module>creator</module>
 	</modules>
 	<properties>
@@ -50,6 +51,11 @@
 			<artifactId>CB</artifactId>
 			<version>1.0</version>
 		</dependency>
+    	<dependency>
+    		<groupId>net.md-5</groupId>
+    		<artifactId>BungeeCord</artifactId>
+    		<version>1.8</version>
+    	</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -62,16 +68,6 @@
 			<version>3.8.7</version>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-            <id>TeamSpeak-3-Java-API-mvn-repo</id>
-            <url>https://raw.githubusercontent.com/TheHolyWaffle/TeamSpeak-3-Java-API/mvn-repo/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-	</repositories>
 	<build>
 		<sourceDirectory>.</sourceDirectory>
 		<plugins>

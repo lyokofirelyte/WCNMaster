@@ -2,8 +2,8 @@ package com.github.lyokofirelyte.Elysian;
 
 import lombok.Getter;
 
-import com.github.lyokofirelyte.Elysian.api.ElyChannel;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyChannel;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
 public class ElyAutoSave implements Runnable, AutoRegister<ElyAutoSave> {

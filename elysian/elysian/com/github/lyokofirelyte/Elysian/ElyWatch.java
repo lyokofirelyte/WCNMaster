@@ -16,12 +16,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.github.lyokofirelyte.Elysian.Commands.ElyPerms;
 import com.github.lyokofirelyte.Elysian.Events.ScoreboardUpdateEvent;
-import com.github.lyokofirelyte.Elysian.api.ElyChannel;
-import com.github.lyokofirelyte.Elysian.api.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyChannel;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Utils.SpreadSheetReader;
 

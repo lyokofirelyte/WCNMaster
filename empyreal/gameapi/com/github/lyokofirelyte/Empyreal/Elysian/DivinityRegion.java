@@ -14,13 +14,11 @@ import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Database.DRF;
 import com.github.lyokofirelyte.Empyreal.Database.DRI;
 import com.github.lyokofirelyte.Empyreal.Database.EmpyrealSQL;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketObject;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
 
 public class DivinityRegion extends DivinityStorageModule {
 	
 	public DivinityRegion(String n, Empyreal i) {
-		super(n, i, "rings");
+		super(n, i, "regions");
 	}
 	
 	public void quickSet(boolean enable, DRF... flags){
@@ -100,13 +98,9 @@ public class DivinityRegion extends DivinityStorageModule {
 		return getList(DRI.PERMS);
 	}
 	
+	@Override
 	public void save(){
-		if (!api.getServerName().equals("GameServer")){
-			SocketObject obj = new SocketObject(this, DivinityStorageModule.class, Handler.SAVE_OBJECT_TO_SQL, api.getServerName());
-			api.sendObjectToSocket("GameServer", obj);
-		} else {
-			api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("regions", this);
-		}
+		api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("regions", this);
 	}
 	
 	public void transfer(){

@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.JSONMap;
 
-public abstract class DivinityStorageModule extends JSONMap<String, Object> {
+public class DivinityStorageModule extends JSONMap<String, Object> {
 
 	private static final long serialVersionUID = -4735951550321821204L;
 	
@@ -31,6 +31,8 @@ public abstract class DivinityStorageModule extends JSONMap<String, Object> {
 		uuid = u;
 		name = Bukkit.getPlayer(u) != null ? Bukkit.getPlayer(u).getName() : Bukkit.getOfflinePlayer(u).getName();
 		setTable(table);
+		set("uuid", u.toString());
+		set("name", name);
 	}
 
 	public DivinityStorageModule(String n, Empyreal i, String table){
@@ -40,13 +42,15 @@ public abstract class DivinityStorageModule extends JSONMap<String, Object> {
 			uuid = Bukkit.getPlayer(n).getUniqueId();
 		}
 		setTable(table);
+		set("name", n);
+		set("uuid", uuid != null ? uuid.toString() : n);
 	}
 	
 	public void fill(JSONMap<String, Object> obj){
-		for (Object thing : obj.keySet()){
+		for (String thing : obj.keySet()){
 			set(thing, obj.get(thing));
 		}
 	}
 	
-	public abstract void save();
+	public void save(){}
 }

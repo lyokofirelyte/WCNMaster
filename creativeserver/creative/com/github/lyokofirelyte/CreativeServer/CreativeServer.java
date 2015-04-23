@@ -1,7 +1,6 @@
 package com.github.lyokofirelyte.CreativeServer;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,11 +14,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.JSONMap;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
+import com.github.lyokofirelyte.Empyreal.Listener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 import com.github.lyokofirelyte.Empyreal.Utils.Utils;
@@ -100,19 +98,13 @@ public class CreativeServer extends JavaPlugin implements GameModule, Permission
 	
 	@Override
 	public void onPlayerQuit(Player p){
-		if (!movingServers.containsKey(p.getName())){
-			Utils.customBC("&4\u03E0 &7" + p.getDisplayName() + " &6<-> &edisconnect");
-			getApi().sendToSocket("wa", Handler.GLOBAL_CHAT, "&7" + p.getDisplayName() + " &6<-> &edisconnect");
-			getApi().sendToSocket("GameServer", Handler.GLOBAL_CHAT, "&7" + p.getDisplayName() + " &6<-> &edisconnect");
-		} else {
-			getMovingServers().remove(p.getName());
-		}
+
 	}
 	
 	@Override
 	public void onPlayerChat(GamePlayer<?> gp, String msg){
 		Utils.bc("&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
-		getApi().sendToSocket("wa", Handler.GLOBAL_CHAT, "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
+		getApi().sendToSocket("GameServer", Handler.FORWARD_EXCLUDE, "GLOBAL_CHAT", "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg, "Creative");
 		getApi().sendToSocket("GameServer", Handler.GLOBAL_CHAT, "&7" + gp.getPlayer().getDisplayName() + "&f: " + msg);
 	}
 	

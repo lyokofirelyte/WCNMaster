@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Events.ElyCrate;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatClickEventType;
@@ -30,7 +30,7 @@ public class ElyNewMember implements AutoRegister<ElyNewMember> {
 		 main = i;
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.intern", aliases = {"newmember"}, desc = "Add a new member", help = "/newmember <user>", player = false, min = 1)
+	 @GameCommand(perm = "wa.staff.intern", aliases = {"newmember"}, desc = "Add a new member", help = "/newmember <user>", player = false, min = 1)
 	 public void onNewMember(CommandSender p, String[] args){
 
 			 if (main.api.doesPartialPlayerExist(args[0])){
@@ -68,7 +68,7 @@ public class ElyNewMember implements AutoRegister<ElyNewMember> {
 
 	 }
 	 
-	 @DivCommand(perm = "wa.guest", aliases = {"member"}, desc = "Send the forum link", help = "/member", player = false, min = 0)
+	 @GameCommand(perm = "wa.guest", aliases = {"member"}, desc = "Send the forum link", help = "/member", player = false, min = 0)
 	 public void onMember(CommandSender p, String[] args){
 		 
 		 DivinityUtilsModule.bc("--------------------------------------------");
@@ -87,7 +87,7 @@ public class ElyNewMember implements AutoRegister<ElyNewMember> {
 		 DivinityUtilsModule.bc("--------------------------------------------");
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.intern", aliases = {"rec"}, desc = "Gives a player a key in case staff forgot to give them one on /newmember.", help = "/rec <user>", player = false, min = 0)
+	 @GameCommand(perm = "wa.staff.intern", aliases = {"rec"}, desc = "Gives a player a key in case staff forgot to give them one on /newmember.", help = "/rec <user>", player = false, min = 0)
 	 public void onForgot(CommandSender p, String[] args){
 		 
 		 if(main.api.doesPartialPlayerExist(args[0])){

@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.Socket;
@@ -43,6 +41,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.github.lyokofirelyte.Empyreal.Command.CommandRegistry;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Database.EmpyrealSQL;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityAlliance;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
@@ -56,14 +55,13 @@ import com.github.lyokofirelyte.Empyreal.JSON.JSONManager;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONManager.JSONClickType;
 import com.github.lyokofirelyte.Empyreal.Listener.BungeeListener;
 import com.github.lyokofirelyte.Empyreal.Listener.EmpyrealSocketListener;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketObject;
+import com.github.lyokofirelyte.Empyreal.Listener.Handler;
+import com.github.lyokofirelyte.Empyreal.Listener.SQLQueue;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.ConsolePlayer;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 import com.github.lyokofirelyte.Empyreal.Utils.Utils;
-import com.github.lyokofirelyte.GameServer.Listener.SQLQueue;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
@@ -100,7 +98,7 @@ public class Empyreal extends JavaPlugin {
 	@Getter @Setter
 	private CommandRegistry commandRegistry;
 	
-	@Getter @Setter
+	static @Getter @Setter
 	private String serverName = "";
 	
 	@Getter @Setter
@@ -115,7 +113,7 @@ public class Empyreal extends JavaPlugin {
 	@Getter @Setter
 	private Map<String, DivinityPlayer> lastCheckedUser = new HashMap<String, DivinityPlayer>();
 
-	@Override @SneakyThrows
+	@Override
 	public void onEnable(){
 		
 		String thisFile = new File("javabestlanguage").getAbsolutePath();
@@ -145,15 +143,9 @@ public class Empyreal extends JavaPlugin {
 		} else {
 			APIScheduler.REPEAT.start(this, "gameserver_keep_alive", 200L, 100L, new Runnable(){
 				public void run(){
-					if (getServerSockets().get("GameServer").isClosed()){
-						if (!reconnectInProgress){
-							Utils.bc("&c&oLost connection to GameServer & Chat Module, attempting to reconnect...");
-							reconnectInProgress = true;
-							registerSockets();
-						}
-					} else if (reconnectInProgress){
-						reconnectInProgress = false;
-						Utils.bc("Connection with GameServer & Chat re-established.");
+					if (reconnectInProgress){
+						System.out.println("&c&oLost connection to GameServer & Chat Module, attempting to reconnect...");
+						registerSockets();
 					}
 				}
 			});
@@ -166,14 +158,13 @@ public class Empyreal extends JavaPlugin {
 		
 			System.out.println("Auto-registering sockets for " + getServerName() + "...");
 			
-			serverSockets.put("Bungee", new Socket("127.0.0.1", 10000));
-			
 			if (!serverName.equals("GameServer")){
 				serverSockets.put("GameServer", new Socket("127.0.0.1", 24000));
 				assignSocket();
 			}
 			
 			System.out.println("Sockets registered!");
+			reconnectInProgress = false;
 			
 		} catch (Exception e){
 			System.out.println("Failed to register sockets. Retrying in 5 seconds...");
@@ -185,18 +176,22 @@ public class Empyreal extends JavaPlugin {
 		}
 	}
 
-	@Override
+	@Override @SneakyThrows
 	public void onDisable(){
 		
+		List<GameModule> toUnregister = new ArrayList<GameModule>();
+		
 		for (GameModule module : gameModules){
-			if (gameModules.contains(module)){
-				unregisterModule(module);
-			}
+			toUnregister.add(module);
+		}
+		
+		for (GameModule m : toUnregister){
+			unregisterModule(m);
 		}
 		
 		if (!serverName.equals("GameServer")){
-			sendToSocket(getServerSockets().get("GameServer"), "server_shutdown");
-			sendToSocket(getServerSockets().get("GameServer"), "remove_socket");
+			sendToSocket("GameServer", Handler.SERVER_SHUTDOWN);
+			sendToSocket("GameServer", Handler.REMOVE_SOCKET);
 		}
 	}
 	
@@ -205,7 +200,7 @@ public class Empyreal extends JavaPlugin {
 	}
 	
 	public boolean perms(CommandSender p, String perm, boolean silent){
-		boolean result = p.isOp() || p instanceof Player == false || getGamePlayer(((Player) p).getUniqueId()).getPerms().contains(perm);
+		boolean result = p.isOp() || p instanceof Player == false || (getOnlineModules().containsKey(((Player) p).getUniqueId().toString()) && getDivPlayer((Player) p).getList(DPI.PERMS).contains(perm)) || (getPlayers().containsKey(((Player) p).getUniqueId()) && getGamePlayer(((Player) p).getUniqueId()).getPerms().contains(perm));
 		if (!silent){
 			Utils.s(p, "&c&oNo permissions!");
 		}
@@ -380,15 +375,6 @@ public class Empyreal extends JavaPlugin {
 		sendToSocket(getServerSockets().get(server), strs);
 	}
 	
-	public void sendObjectToSocket(String server, SocketObject obj){
-		
-		try {
-			ObjectOutputStream oos = new ObjectOutputStream(getServerSockets().get(server).getOutputStream());
-			oos.writeObject(obj);
-			oos.flush();
-		} catch (Exception e){}
-	}
-	
 	private void sendToSocket(Socket socket, String... msgs){
 		
 		try {
@@ -493,6 +479,8 @@ public class Empyreal extends JavaPlugin {
 		
 		if (Bukkit.getOnlinePlayers().size() > 0){
 			try {
+				GamePlayer<?> gp = getPlayers().get(Bukkit.getPlayer(player).getUniqueId());
+				gp.getPerms().add("server.transfer." + server);
 				ByteArrayDataOutput out = ByteStreams.newDataOutput();
 				out.writeUTF("ConnectOther");
 				out.writeUTF(player);
@@ -622,8 +610,7 @@ public class Empyreal extends JavaPlugin {
 		try {
 			sendToSocket(getServerSockets().get("GameServer"), "assign_socket", getServerName());
 			BufferedReader in = new BufferedReader(new InputStreamReader(getServerSockets().get("GameServer").getInputStream()));
-			new Thread(new EmpyrealSocketListener(this, in, new PrintWriter(getServerSockets().get("GameServer").getOutputStream()))).start();
-			new Thread(new EmpyrealSocketListener(this, new ObjectInputStream(getServerSockets().get("GameServer").getInputStream()))).start();
+			new Thread(new EmpyrealSocketListener(this, in, new PrintWriter(getServerSockets().get("GameServer").getOutputStream(), true))).start();
 		} catch (Exception e){}
 	}
 	
@@ -635,31 +622,42 @@ public class Empyreal extends JavaPlugin {
 		return getDivPlayer(p.getUniqueId());
 	}
 	
+	@SneakyThrows
 	public DivinityPlayer getDivPlayer(UUID uuid){
 		
 		if (getOnlineModules().containsKey(uuid.toString())){
+			if (!getPlayers().containsKey(uuid)){
+				getPlayers().put(uuid, (DivinityPlayer) getOnlineModules().get(uuid.toString()));
+			}
 			return (DivinityPlayer) getOnlineModules().get(uuid.toString());
 		}
 		
 		DivinityPlayer newPlayer = new DivinityPlayer(uuid, this);
 		
-		if (Bukkit.getPlayer(uuid).hasPlayedBefore()){
+		if (getInstance(EmpyrealSQL.class).getType().getResult("users", "uuid", "uuid='" + uuid.toString() + "';").next()){
 			newPlayer.fill(getInstance(EmpyrealSQL.class).getType().getMapFromDatabase("users", uuid.toString()));
 		} else {
 			YamlConfiguration yaml = YamlConfiguration.loadConfiguration(this.getResource("newUser.yml"));
 			for (String key : yaml.getKeys(false)){
 				newPlayer.set(key, yaml.get(key));
 			}
+			Utils.bc("Welcome " + Bukkit.getPlayer(uuid).getName() + " to WA!");
+			Bukkit.getPlayer(uuid).setDisplayName("&7" + Bukkit.getPlayer(uuid).getName());
 		}
 		
 		getOnlineModules().put(uuid.toString(), newPlayer);
+		
+		if (!getPlayers().containsKey(uuid)){
+			getPlayers().put(uuid, (DivinityPlayer) getOnlineModules().get(uuid.toString()));
+		}
+		
 		return newPlayer;
 	}
 	
 	public DivinityAlliance getDivAlliance(String name){
 		
-		if (getOnlineModules().containsKey("ALLIANCE_" + name)){
-			return (DivinityAlliance) getOnlineModules().get("ALLIANCE_" + name);
+		if (getOnlineModules().containsKey("ALLIANCE_" + name.toLowerCase())){
+			return (DivinityAlliance) getOnlineModules().get("ALLIANCE_" + name.toLowerCase());
 		}
 		
 		return null;
@@ -671,7 +669,9 @@ public class Empyreal extends JavaPlugin {
 			return (DivinityRegion) getOnlineModules().get("REGION_" + name);
 		}
 		
-		return null;
+		DivinityRegion rg = new DivinityRegion(name, this);
+		getOnlineModules().put("REGION_" + name, rg);
+		return rg;
 	}
 	
 	public DivinityRing getDivRing(String name){
@@ -680,7 +680,9 @@ public class Empyreal extends JavaPlugin {
 			return (DivinityRing) getOnlineModules().get("RING_" + name);
 		}
 		
-		return null;
+		DivinityRing ring = new DivinityRing(name, this);
+		getOnlineModules().put("RING_" + name, ring);
+		return ring;
 	}
 	
 	public DivinitySystem getDivSystem(){
@@ -690,14 +692,18 @@ public class Empyreal extends JavaPlugin {
 		}
 		
 		DivinitySystem sys = new DivinitySystem(this, "system");
-		sys.fill(getInstance(EmpyrealSQL.class).getType().getMapFromDatabase("system", "system"));
+		
+		if (getInstance(EmpyrealSQL.class).getType().hasTable("system")){
+			sys.fill(getInstance(EmpyrealSQL.class).getType().getMapFromDatabase("system", "system"));
+		}
+		
 		getOnlineModules().put("SYSTEM", sys);
 		
 		return sys;
 	}
 	
 	public Player getPlayer(String name){
-		return Bukkit.getPlayer(getOnlineModules().get(name).getUuid());
+		return Bukkit.getPlayer(searchForPlayer(name).getUuid());
 	}
 	
 	public DivinityPlayer searchForPlayer(String name){
@@ -755,7 +761,7 @@ public class Empyreal extends JavaPlugin {
 		int i = 0;
 		
 		while (rs.next()){
-			UUID uuid = (UUID) rs.getObject("uuid");
+			UUID uuid = UUID.fromString("" + rs.getObject("uuid"));
 			DivinityPlayer dp = new DivinityPlayer(uuid, this);
 			dp.fill(getInstance(EmpyrealSQL.class).getType().getMapFromDatabase("users", uuid.toString()));
 			getOnlineModules().put(uuid.toString(), dp);
@@ -775,8 +781,14 @@ public class Empyreal extends JavaPlugin {
 			int i = 0;
 			
 			while (rs.next()){
-				String name = rs.getString("name");
-				DivinityRing dp = new DivinityRing(name, this);
+				String name = table.equals("alliances") ? rs.getString("name").toLowerCase() : rs.getString("name");
+				DivinityStorageModule dp = null;
+				switch (table){
+					case "alliances": dp = new DivinityAlliance(name, this); break;
+					case "rings": dp = new DivinityRing(name, this); break;
+					case "regions": dp = new DivinityRegion(name, this); break;
+					case "system": dp = new DivinitySystem(this, name); break;
+				}
 				dp.fill(getInstance(EmpyrealSQL.class).getType().getMapFromDatabase(table, name));
 				getOnlineModules().put(table.substring(0, table.length()-1).toUpperCase() + "_" + name, dp);
 				i++;
@@ -787,7 +799,7 @@ public class Empyreal extends JavaPlugin {
 	}
 	
 	public void loadAllDivinityModules(){
-		for (String table : new String[]{ "users", "alliances", "rings", "regions" }){
+		for (String table : new String[]{ "users", "alliances", "rings", "regions", "system" }){
 			loadAllDivinityModules(table);
 		}
 	}

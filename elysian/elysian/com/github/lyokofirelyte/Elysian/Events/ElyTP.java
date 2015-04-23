@@ -89,7 +89,7 @@ public class ElyTP implements Listener, AutoRegister<ElyTP> {
 	
 	private void effects(Player p){
 		if (!main.api.getDivPlayer(p).getBool(DPI.VANISHED) && main.api.getDivPlayer(p).getBool(DPI.PARTICLES_TOGGLE)){
-			main.api.getDivPlayer(p).lockEffect("tp" + p.getName(), ParticleEffect.HAPPY_VILLAGER, 1, 1, 1, 1, 200, 16, 1L);
+			main.api.getDivPlayer(p).lockEffect("tp" + p.getName(), ParticleEffect.ENCHANTMENT_TABLE, 1, 1, 1, 1, 200, 16, 1L);
 		}
 	}
 	

@@ -14,7 +14,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class JSONMap<K, V> extends HashMap<Object, Object> {
+public class JSONMap<K, V> extends HashMap<String, Object> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -135,12 +135,17 @@ public class JSONMap<K, V> extends HashMap<Object, Object> {
 		
 		if (containsKey(toString(i))){
 			try {
-				if (get(toString(i)) instanceof List){
-					return (List<String>) get(toString(i));
-				}
-				set(i, new ArrayList<String>());
+				return (List<String>) get(toString(i));
 			} catch (Exception e){
-				set(i, new ArrayList<String>());
+				try {
+					List<String> newList = new ArrayList<String>();
+					for (String str : getStr(i).substring(1, getStr(i).length()-1).split(", ")){
+						newList.add(str);
+					}
+					set(i, newList);
+				} catch (Exception ee){
+					set(i, new ArrayList<String>());
+				}
 			}
 		} else {
 			set(i, new ArrayList<String>());
@@ -154,10 +159,7 @@ public class JSONMap<K, V> extends HashMap<Object, Object> {
 		
 		if (containsKey(toString(i))){
 			try {
-				if (get(toString(i)) instanceof List){
-					return (List<LivingEntity>) get(toString(i));
-				}
-				set(i, new ArrayList<LivingEntity>());
+				return (List<LivingEntity>) get(toString(i));
 			} catch (Exception e){
 				set(i, new ArrayList<LivingEntity>());
 			}
@@ -192,11 +194,11 @@ public class JSONMap<K, V> extends HashMap<Object, Object> {
 	public List<ItemStack> getStack(Object i){
 		
 		if (containsKey(toString(i))){
-			if (get(toString(i)) instanceof List){
+			try {
 				return (List<ItemStack>) get(toString(i));
-			}
+			} catch (Exception e){}
 		}
-
+		
 		set(i, new ArrayList<ItemStack>());
 		return (List<ItemStack>) get(toString(i));
 	}

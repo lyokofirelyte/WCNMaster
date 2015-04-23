@@ -29,10 +29,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.github.lyokofirelyte.Elysian.api.ElyMarkkitItem;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyMarkkitItem;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
 /**

@@ -5,7 +5,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElySkill;
 
 public class SkillExpGainEvent extends Event implements Cancellable {
 	

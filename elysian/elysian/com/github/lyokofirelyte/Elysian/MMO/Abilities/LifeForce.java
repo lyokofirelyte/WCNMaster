@@ -8,10 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Elysian.MMO.ElyMMO;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
-import com.github.lyokofirelyte.Elysian.api.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElySkill;
 
 public class LifeForce {
 

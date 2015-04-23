@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,14 +21,20 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.util.Vector;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.JSONMap;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
+import com.github.lyokofirelyte.Empyreal.Database.DAI;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.google.common.io.Files;
 
 public class ElyWarps implements AutoRegister<ElyWarps>, Listener {
 
@@ -90,7 +97,37 @@ public class ElyWarps implements AutoRegister<ElyWarps>, Listener {
 			
 		}
 		
+	}
+	
+	@SneakyThrows
+	private void t(Player p){
 		
+		try {
+			p.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
+		} catch (Exception e){}
+		
+		main.s(p, "Loading DIVINITY data for " + p.getUniqueId().toString() + "...");
+		
+		File fi = new File("./plugins/Divinity/users/" + p.getUniqueId().toString() + ".yml");
+		if (fi.exists()){
+			YamlConfiguration yaml = YamlConfiguration.loadConfiguration(fi);
+			DivinityPlayer dp = main.api.getDivPlayer(p);
+			JSONMap json = new JSONMap<String, Object>();
+			for (String key : yaml.getKeys(false)){
+				json.set(key, yaml.get(key));
+				main.s(p, "TRANSFER &6<->&b " + key);
+			}
+			dp.fill(json);
+			dp.save();
+			File file = new File("./plugins/Divinity/userbackup/");
+			file.mkdirs();
+			file = new File("./plugins/Divinity/userbackup/" + p.getUniqueId().toString() + ".yml");
+			Files.move(fi, file);
+			main.s(p, "-------------");
+			main.s(p, "&aTransfer Complete! Welcome back!");
+		} else {
+			main.s(p, "No DIVINITY data found!");
+		}
 	}
 	
 	@EventHandler
@@ -98,6 +135,24 @@ public class ElyWarps implements AutoRegister<ElyWarps>, Listener {
 		
 		if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getClickedBlock().getState() instanceof Sign){
 			Sign s = (Sign) e.getClickedBlock().getState();
+			
+			if (main.api.getInstance(ElyProtect.class).getType().isInAnyRegion(e.getPlayer().getLocation()).equals("doomsday")){
+				if (s.getLine(0).contains("TRANSFER DATA")){
+					t(e.getPlayer());
+					e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), -891, 600, -3104));
+				} else if (s.getLine(0).contains("FRESH ACCOUNT")){
+					e.getPlayer().teleport(new Location(Bukkit.getWorld("world"), -891, 600, -3104));
+					main.s(e.getPlayer(), "You've made your choice - this is your path. Was it worth it?");
+					for (DivinityStorageModule m : main.api.getOnlineModules().values()){
+						if (m.getTable().equals("alliances")){
+							if (m.getList(DAI.MEMBERS).contains(e.getPlayer().getUniqueId().toString())){
+								m.getList(DAI.MEMBERS).remove(e.getPlayer().getUniqueId().toString());
+								break;
+							}
+						}
+					}
+				}
+			}
 			
 			if(s.getLine(0).equals(main.AS(warpText))){
 				String warp = ChatColor.stripColor(s.getLine(1));
@@ -153,15 +208,15 @@ public class ElyWarps implements AutoRegister<ElyWarps>, Listener {
 		
 	}
 	
-	@DivCommand(perm = "wa.guest", aliases = {"s", "spawn"}, desc = "Elysian Spawn Command", help = "/s", player = true)
+	@GameCommand(perm = "wa.guest", aliases = {"s", "spawn"}, desc = "Elysian Spawn Command", help = "/s", player = true)
 	public void onSpawn(Player p, String[] args){
 		String[] loc = main.api.getDivSystem().getStr(DPI.SPAWN_POINT).split("%SPLIT%");
 		Location spawn = new Location(Bukkit.getWorld(loc[0]), Float.parseFloat(loc[1]), Float.parseFloat(loc[2]), Float.parseFloat(loc[3]), Float.parseFloat(loc[4]), Float.parseFloat(loc[5]));
-		p.teleport(spawn);
+		main.api.event(new DivinityTeleportEvent(p, spawn));
 		main.s(p, "You have arrived at spawn!");
 	}
 	
-	@DivCommand(perm = "wa.staff.admin", aliases = {"setspawn"}, desc = "Elysian Spawn Set Command", help = "/setspawn", player = true)
+	@GameCommand(perm = "wa.staff.admin", aliases = {"setspawn"}, desc = "Elysian Spawn Set Command", help = "/setspawn", player = true)
 	public void onSpawnSet(Player p, String[] args){
 		Location loc = p.getLocation();
 		main.api.getDivSystem().set(DPI.SPAWN_POINT, loc.getWorld().getName() + "%SPLIT%" + loc.getX() + "%SPLIT%" + loc.getY() + "%SPLIT%" + loc.getZ() + "%SPLIT%" + loc.getYaw() + "%SPLIT%" + loc.getPitch());
@@ -169,7 +224,7 @@ public class ElyWarps implements AutoRegister<ElyWarps>, Listener {
 	}
 	
 	
-	@DivCommand(name = "Warp", aliases = {"warp", "w", "creative"}, desc = "Elysian Warp Command", help = "/warp <name>", player = true)
+	@GameCommand(name = "Warp", aliases = {"warp", "w", "creative"}, desc = "Elysian Warp Command", help = "/warp <name>", player = true)
 	public void onWarp(Player p, String[] args, String cmd){
 		
 		if (cmd.equals("creative")){
@@ -190,7 +245,7 @@ public class ElyWarps implements AutoRegister<ElyWarps>, Listener {
 		}
 	}
 
-	@DivCommand(perm = "wa.staff.mod2", name = "SW", aliases = {"setwarp", "remwarp", "delwarp"}, desc = "Elysian Set/Rem Warp Command", help = "/setwarp <name>, /remwarp <name>", player = true, min = 1)
+	@GameCommand(perm = "wa.staff.mod2", name = "SW", aliases = {"setwarp", "remwarp", "delwarp"}, desc = "Elysian Set/Rem Warp Command", help = "/setwarp <name>, /remwarp <name>", player = true, min = 1)
 	public void onSetWarp(Player p, String[] args, String cmd){
 		
 		if (cmd.equals("setwarp")){

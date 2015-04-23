@@ -49,8 +49,7 @@ import org.bukkit.util.Vector;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
-import com.github.lyokofirelyte.Elysian.api.ElyChannel;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Database.DRF;
 import com.github.lyokofirelyte.Empyreal.Database.DRI;
@@ -58,6 +57,7 @@ import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRegion;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyChannel;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
@@ -466,7 +466,7 @@ public class ElyProtect implements Listener, AutoRegister<ElyProtect> {
 	}
 	
 	@SuppressWarnings("deprecation")
-	@DivCommand(aliases = {"protect", "pro"}, desc = "Elysian World Protection Command", help = "/pro help", player = true, min = 1)
+	@GameCommand(aliases = {"protect", "pro"}, desc = "Elysian World Protection Command", help = "/pro help", player = true, min = 1)
 	public void onProtect(final Player p, String[] args){
 		
 		if (!args[0].equals("info") && !args[0].equals("view")){

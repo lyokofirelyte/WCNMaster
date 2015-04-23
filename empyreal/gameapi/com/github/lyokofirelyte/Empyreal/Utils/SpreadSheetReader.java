@@ -14,12 +14,12 @@ import lombok.Getter;
 
 import org.bukkit.Material;
 
-import com.github.lyokofirelyte.Elysian.api.ElyChannel;
-import com.github.lyokofirelyte.Elysian.api.ElyMarkkitItem;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyChannel;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyMarkkitItem;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.ListEntry;
@@ -322,8 +322,8 @@ public class SpreadSheetReader implements AutoRegister<SpreadSheetReader> {
 				        	
 				    		for (Object o : api.commandMap.values()){
 				    			for (Method m : o.getClass().getMethods()){
-				    				if (m.getAnnotation(DivCommand.class) != null){
-				    					DivCommand anno = m.getAnnotation(DivCommand.class);
+				    				if (m.getAnnotation(GameCommand.class) != null){
+				    					GameCommand anno = m.getAnnotation(GameCommand.class);
 				    					String name = anno.aliases()[0];
 				    					for (int i = 1; i < anno.aliases().length; i++){
 				    						name = anno.aliases().length > i ? name + ", " + anno.aliases()[i] : name;

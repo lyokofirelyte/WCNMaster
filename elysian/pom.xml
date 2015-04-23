@@ -75,6 +75,14 @@
     									<exclude>assets/minecraft/**</exclude>
   									</excludes>
   								</filter>
+           	 					<filter>
+           	 						<artifact>net.md-5:BungeeCord</artifact>
+           	 						<excludes>
+    									<exclude>**</exclude>
+    									<exclude>/**</exclude>
+    									<exclude>*</exclude>
+  									</excludes>
+  								</filter>
   							</filters>
   						</configuration>
           			</execution>

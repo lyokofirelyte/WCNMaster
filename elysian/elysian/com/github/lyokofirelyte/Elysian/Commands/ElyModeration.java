@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
@@ -33,12 +33,12 @@ public class ElyModeration implements AutoRegister<ElyModeration> {
 		 main = i;
 	 }
 	 
-	 @DivCommand(perm = "wa.rank.dweller", aliases = {"suicide"}, desc = "Goodbye, World!", help = "/suicide", player = true)
+	 @GameCommand(perm = "wa.rank.dweller", aliases = {"suicide"}, desc = "Goodbye, World!", help = "/suicide", player = true)
 	 public void onSuicide(Player p, String[] args){
 		 p.setHealth(0);
 	 }
 	 
-	 @DivCommand(name = "Mute", perm = "wa.staff.mod", aliases = {"mute", "kik", "disable"}, desc = "Mute someone!", help = "/mute <player> <duration in minutes, default = 5> or /kick <player> <reason>", player = false, min = 1)
+	 @GameCommand(name = "Mute", perm = "wa.staff.mod", aliases = {"mute", "kik", "disable"}, desc = "Mute someone!", help = "/mute <player> <duration in minutes, default = 5> or /kick <player> <reason>", player = false, min = 1)
 	 public void onMute(CommandSender cs, String[] args, String cmd){
 		 
 		 DivinityPlayer who = main.api.doesPartialPlayerExist(args[0]) ? main.api.getDivPlayer(args[0]) : null;
@@ -78,7 +78,7 @@ public class ElyModeration implements AutoRegister<ElyModeration> {
 		 Bukkit.getPlayer(who.getName()).kickPlayer(main.AS("&e&o(&6&o" + message.replace(args[0], "").trim() + "&e&o)"));
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"kill"}, desc = "Kill someone!", help = "/kill <player>", player = false, min = 1)
+	 @GameCommand(perm = "wa.staff.mod2", aliases = {"kill"}, desc = "Kill someone!", help = "/kill <player>", player = false, min = 1)
 	 public void onKill(CommandSender cs, String[] args){
 		 
 		 String display = cs instanceof Player ? ((Player)cs).getDisplayName() : "&6Console";
@@ -91,7 +91,7 @@ public class ElyModeration implements AutoRegister<ElyModeration> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"eban"}, desc = "Elysian Ban Command", help = "/eban <player>", player = true, min = 1)
+	 @GameCommand(perm = "wa.staff.mod2", aliases = {"eban"}, desc = "Elysian Ban Command", help = "/eban <player>", player = true, min = 1)
 	 public void onBan(Player p, String[] args){
 		 
 		 DivinityPlayer dp = main.api.getDivPlayer(p);

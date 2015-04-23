@@ -16,4 +16,4 @@ PARTICLES_TOGGLE: 'true'
 FIREWORKS_TOGGLE: 'true'
 SCOREBOARD_TOGGLE: 'true'
 PLAYER_DESC: '&7&oGeneric player biography / description.\n&7&oUse /bio <message> to change this.'
-CHAT_FILTER_TOGGLE: true
+CHAT_FILTER_TOGGLE: 'true'

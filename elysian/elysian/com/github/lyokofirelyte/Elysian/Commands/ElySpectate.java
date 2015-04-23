@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
@@ -26,7 +26,7 @@ public class ElySpectate implements AutoRegister<ElySpectate> {
 		main = i;
 	}
 	
-	@DivCommand(aliases = {"spectate", "spec"}, desc = "Elysian Spectate Command", help = "/spec <player>, /spec", player = true, perm = "wa.staff.mod2")
+	@GameCommand(aliases = {"spectate", "spec"}, desc = "Elysian Spectate Command", help = "/spec <player>, /spec", player = true, perm = "wa.staff.mod2")
 	public void onSpectate(Player p, String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);

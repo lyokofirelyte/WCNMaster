@@ -1,5 +1,6 @@
-package com.github.lyokofirelyte.GameServer.Listener;
+package com.github.lyokofirelyte.Empyreal.Listener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -15,7 +16,7 @@ public class SQLQueue implements Runnable, AutoRegister<SQLQueue> {
 	private SQLQueue type = this;
 	
 	@Getter
-	private List<String> queue;
+	private List<String> queue = new ArrayList<String>();
 	
 	@Setter
 	private Empyreal main;

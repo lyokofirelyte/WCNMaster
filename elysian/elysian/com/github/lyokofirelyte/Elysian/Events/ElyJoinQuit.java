@@ -1,5 +1,6 @@
 package com.github.lyokofirelyte.Elysian.Events;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +19,12 @@ import org.bukkit.potion.PotionEffectType;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.MMO.ElyMMO;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
-import com.github.lyokofirelyte.Elysian.api.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 import com.google.common.collect.Iterables;
 
 public class ElyJoinQuit implements Listener, AutoRegister<ElyJoinQuit> {
@@ -43,18 +45,22 @@ public class ElyJoinQuit implements Listener, AutoRegister<ElyJoinQuit> {
 		e.setJoinMessage(null);
 		final Player pl = e.getPlayer();
 		
-		if(!e.getPlayer().hasPlayedBefore()){
-			String[] loc = main.api.getDivSystem().getStr(DPI.SPAWN_POINT).split("%SPLIT%");
-			final Location spawn = new Location(Bukkit.getWorld(loc[0]), Float.parseFloat(loc[1]), Float.parseFloat(loc[2]), Float.parseFloat(loc[3]), Float.parseFloat(loc[4]), Float.parseFloat(loc[5]));
-			
-			Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
-
-				@Override
-				public void run() {
-					e.getPlayer().teleport(spawn);
-				}
+		try {
+			if(!e.getPlayer().hasPlayedBefore()){
+				String[] loc = main.api.getDivSystem().getStr(DPI.SPAWN_POINT).split("%SPLIT%");
+				final Location spawn = new Location(Bukkit.getWorld(loc[0]), Float.parseFloat(loc[1]), Float.parseFloat(loc[2]), Float.parseFloat(loc[3]), Float.parseFloat(loc[4]), Float.parseFloat(loc[5]));
 				
-			}, 10L);
+				Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
+	
+					@Override
+					public void run() {
+						e.getPlayer().teleport(spawn);
+					}
+					
+				}, 10L);
+			}
+		} catch (Exception ee){
+			System.out.println("No spawn detected - update it!");
 		}
 		
 		Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
@@ -112,11 +118,15 @@ public class ElyJoinQuit implements Listener, AutoRegister<ElyJoinQuit> {
 
 					p.set(DPI.PVP_CHOICE, true);
 					
-					DivinityUtilsModule.customBC("&2(\\__/) " + pl.getDisplayName());
+					/*DivinityUtilsModule.customBC("&2(\\__/) " + pl.getDisplayName());
 					DivinityUtilsModule.customBC("&2(=^.^=)" + " &e&o" + p.getStr(DPI.JOIN_MESSAGE) + "&e&o");
-					pl.sendMessage("");
+					pl.sendMessage("");*/
 					
-					p.s("&3Welcome back! We're running Elysian & Divinity v2.0");
+					if (p.getStr(DPI.REGION_TOGGLE).equals("none")){
+						p.set(DPI.REGION_TOGGLE, true);
+					}
+					
+					p.s("&3Welcome back! We're running Elysian & Empyreal 3.0 by Hugs & Msnijder.");
 					p.s(p.getList(DPI.MAIL).size() > 0 ? "Mail time! /mail read or /mail clear." : "&7&oNo new messages.");
 					
 				} else {
@@ -126,6 +136,10 @@ public class ElyJoinQuit implements Listener, AutoRegister<ElyJoinQuit> {
 						main.api.getDivSystem().set(DPI.REBOOT_INIT, true);
 						pl.teleport(new Location(pl.getWorld(), -379, 92, 22, -129, -4));
 					}
+				}
+				
+				if (new File("./plugins/Divinity/users/" + pl.getUniqueId().toString() + ".yml").exists()){
+					main.api.event(new DivinityTeleportEvent(pl, new Location(Bukkit.getWorld("world_nether"), 1, 127, 13, 90, 5)));
 				}
 
 			}}, 5L);
@@ -161,9 +175,11 @@ public class ElyJoinQuit implements Listener, AutoRegister<ElyJoinQuit> {
 				p.set(DPI.SPECTATE_TARGET, "none");
 			}
 			
-			DivinityUtilsModule.customBC("&4(\\__/) " + pl.getDisplayName());
-			DivinityUtilsModule.customBC("&4(=-.-=)" + " &e&o" + p.getStr(DPI.QUIT_MESSAGE) + "&e&o");
 			p.clearEffects();
+			
+			//DivinityUtilsModule.customBC("&4(\\__/) " + pl.getDisplayName());
+			//DivinityUtilsModule.customBC("&4(=-.-=)" + " &e&o" + p.getStr(DPI.QUIT_MESSAGE) + "&e&o");
+			
 		} else if (Bukkit.getOnlinePlayers().size() <= 0 || (Bukkit.getOnlinePlayers().size() == 1 && Iterables.getFirst(Bukkit.getOnlinePlayers(), null).getName().equals(e.getPlayer().getName()))){
 			Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
 				public void run(){

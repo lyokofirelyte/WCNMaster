@@ -38,15 +38,15 @@ import org.bukkit.util.Vector;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Gui.GuiChest;
-import com.github.lyokofirelyte.Elysian.api.ElyChannel;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DAI;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyChannel;
 import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
+import com.github.lyokofirelyte.Empyreal.Listener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.google.common.collect.Lists;
 
@@ -62,17 +62,17 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 main = i;
 	 }
 
-	 @DivCommand(perm = "wa.staff.admin", aliases = {"backup"}, desc = "File Backup Command", help = "/backup", player = false)
+	 @GameCommand(perm = "wa.staff.admin", aliases = {"backup"}, desc = "File Backup Command", help = "/backup", player = false)
 	 public void onBackup(CommandSender cs, String[] args){
 		 main.s(cs, "Not implemented yet!");
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.intern", aliases = {"x"}, desc = "X Chat", help = "/x <message>", min = 1, player = true)
+	 @GameCommand(perm = "wa.staff.intern", aliases = {"x"}, desc = "X Chat", help = "/x <message>", min = 1, player = true)
 	 public void onX(Player p, String[] args){
 		 main.api.sendPluginMessageAll("x", ChatColor.stripColor(DivinityUtilsModule.createString(args, 0)));
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.admin", aliases = {"bomb"}, desc = "Holiday Bomb 9-11", help = "/bomb <player>", player = true, min = 1)
+	 @GameCommand(perm = "wa.staff.admin", aliases = {"bomb"}, desc = "Holiday Bomb 9-11", help = "/bomb <player>", player = true, min = 1)
 	 public void onBomb(Player p, String[] args){
 		 
 		Potion splash = new Potion(PotionType.INSTANT_HEAL, 1);
@@ -90,7 +90,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		}
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod", aliases = {"markkit"}, desc = "Lookup command", help = "/markkit <player> <page>", player = false, min = 2)
+	 @GameCommand(perm = "wa.staff.mod", aliases = {"markkit"}, desc = "Lookup command", help = "/markkit <player> <page>", player = false, min = 2)
 	 public void onMarkkit(CommandSender cs, String[] args){
 		 if(main.api.doesPartialPlayerExist(args[0])){
 			 if(DivinityUtilsModule.isInteger(args[1])){
@@ -130,7 +130,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 /*@DivCommand(perm = "wa.staff.admin", aliases = {"ts3auth"}, desc = "Set TS3Auth Info", help = "/ts3auth <user> <pass>", player = false, min = 2)
+	 /*@GameCommand(perm = "wa.staff.admin", aliases = {"ts3auth"}, desc = "Set TS3Auth Info", help = "/ts3auth <user> <pass>", player = false, min = 2)
 	 public void onTS3Auth(CommandSender p, String[] args){
 		 
 		 if (args[0].equals("stop")){
@@ -142,7 +142,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }*/
 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"invsee"}, desc = "Inventory Spy Command", help = "/invsee <player>", player = true, min = 1)
+	 @GameCommand(perm = "wa.staff.mod2", aliases = {"invsee"}, desc = "Inventory Spy Command", help = "/invsee <player>", player = true, min = 1)
 	 public void onInvSee(Player p, String[] args){
 		 
 		 if (main.api.isOnline(args[0])){
@@ -152,7 +152,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.admin", aliases = {"ipinfo"}, desc = "IP & Location Information", help = "/ipinfo <player>", min = 1, player = true)
+	 @GameCommand(perm = "wa.staff.admin", aliases = {"ipinfo"}, desc = "IP & Location Information", help = "/ipinfo <player>", min = 1, player = true)
 	 public void onIP(Player cs, String[] args){
 		 
 		 try {
@@ -163,7 +163,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.intern", aliases = {"stafftp"}, desc = "Staff Grief Teleport Check Command", help = "/stafftp <player>", player = true)
+	 @GameCommand(perm = "wa.staff.intern", aliases = {"stafftp"}, desc = "Staff Grief Teleport Check Command", help = "/stafftp <player>", player = true)
 	 public void onStaffTp(Player p, String[] args){
 		 
 		 DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -188,12 +188,12 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.rank.citizen", aliases = {"workbench", "wb"}, desc = "Open a Workbench", help = "/wb", player = true)
+	 @GameCommand(perm = "wa.rank.citizen", aliases = {"workbench", "wb"}, desc = "Open a Workbench", help = "/wb", player = true)
 	 public void onWB(Player p, String[] args){
 		 p.openWorkbench(p.getLocation(), true);
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases= {"dis"}, desc = "Spooky Disguise Command", help = "/dis <mob>", player = true)
+	 @GameCommand(perm = "wa.staff.mod2", aliases= {"dis"}, desc = "Spooky Disguise Command", help = "/dis <mob>", player = true)
 	 public void onDis(Player p, String[] args){
 		 
 		 DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -227,7 +227,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.admin", aliases = {"sunday"}, desc = "Sunday Balance Increase", help = "/sunday", player = false)
+	 @GameCommand(perm = "wa.staff.admin", aliases = {"sunday"}, desc = "Sunday Balance Increase", help = "/sunday", player = false)
 	 public void onSunday(CommandSender cs, String[] args){
 		 
 		 String who = cs instanceof Player ? ((Player)cs).getDisplayName() : "&6Console";
@@ -258,7 +258,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"clear"}, desc = "Clear items on floor (and monsters)", help = "/clear <radius>", player = true, min = 1)
+	 @GameCommand(perm = "wa.staff.mod2", aliases = {"clear"}, desc = "Clear items on floor (and monsters)", help = "/clear <radius>", player = true, min = 1)
 	 public void onClear(Player p, String[] args){
 		 
 		 if (DivinityUtilsModule.isInteger(args[0]) && Integer.parseInt(args[0]) <= 500){
@@ -280,7 +280,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod", aliases = {"placesign"}, desc = "Place a market sign down", help = "/placesign <down/side>", player = true, min = 1)
+	 @GameCommand(perm = "wa.staff.mod", aliases = {"placesign"}, desc = "Place a market sign down", help = "/placesign <down/side>", player = true, min = 1)
 	 public void onPlaceDown(Player p, String[] args){
 		 
 		 Block newSign = p.getWorld().getBlockAt(new Location(p.getWorld(), p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ()));
@@ -306,7 +306,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 s.update();
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"chestview"}, desc = "Chest Lookup / View Command", help = "/chestview <player>, /chestview lookup <player> <item>", player = true, min = 1)
+	 @GameCommand(perm = "wa.staff.mod2", aliases = {"chestview"}, desc = "Chest Lookup / View Command", help = "/chestview <player>, /chestview lookup <player> <item>", player = true, min = 1)
 	 public void onChestView(Player p, String[] args){
 		 
 		 if (args.length != 1 && args.length != 3){
@@ -321,7 +321,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.rank.dweller", aliases = {"seen"}, desc = "Seen Command", help = "/seen <player>", player = false, min = 1)
+	 @GameCommand(perm = "wa.rank.dweller", aliases = {"seen"}, desc = "Seen Command", help = "/seen <player>", player = false, min = 1)
 	 public void onSeen(CommandSender cs, String[] args){
 		 
 		 DivinityPlayer dp = null;
@@ -346,7 +346,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.intern", aliases = {"abandonship"}, desc = "ABANDON SHIP!", help = "/abandonship", player = true, min = 0)
+	 @GameCommand(perm = "wa.staff.intern", aliases = {"abandonship"}, desc = "ABANDON SHIP!", help = "/abandonship", player = true, min = 0)
 	 public void onAbandon(CommandSender cs, String[] args){
 		 main.api.schedule(this, "abandonship", 10L, "abandonship");
 		 main.api.schedule(this, "abandonship", 20L, "abandonship");
@@ -363,7 +363,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 p.kickPlayer("§4Abandoned Ship!");
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod", aliases = {"speed"}, desc = "Speed Command", help = "/speed <1-10>", player = true, min = 1, max = 2)
+	 @GameCommand(perm = "wa.staff.mod", aliases = {"speed"}, desc = "Speed Command", help = "/speed <1-10>", player = true, min = 1, max = 2)
 	 public void onSpeed(CommandSender cs, String[] args){
 		 Player p = (Player)cs;
 
@@ -398,7 +398,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.intern", aliases = {"setcast"}, desc = "Set your cast prefix", help = "/setcast <prefix>", player = true, min = 1)
+	 @GameCommand(perm = "wa.staff.intern", aliases = {"setcast"}, desc = "Set your cast prefix", help = "/setcast <prefix>", player = true, min = 1)
 	 public void onSetCast(CommandSender cs, String[] args){
 		 
 		 Player pl = (Player)cs;
@@ -414,7 +414,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 main.s(pl, "People will see: " + prefix.toString().replace("_", " ") + "\u2744" + " Message");
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.intern", aliases = {"cast"}, desc = "Send a broadcast message", help = "/cast <message>", player = true, min = 1)
+	 @GameCommand(perm = "wa.staff.intern", aliases = {"cast"}, desc = "Send a broadcast message", help = "/cast <message>", player = true, min = 1)
 	 public void onCast(CommandSender cs, String[] args){
 		 
 		 Player pl = (Player)cs;
@@ -432,7 +432,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.admin", aliases = {"spreadsheet"}, desc = "Enable / disable the spreadsheet", help = "/spreadsheet enable, /spreadsheet disable", min = 1)
+	 @GameCommand(perm = "wa.staff.admin", aliases = {"spreadsheet"}, desc = "Enable / disable the spreadsheet", help = "/spreadsheet enable, /spreadsheet disable", min = 1)
 	 public void onSpreadSheet(CommandSender cs, String[] args){
 		 
 		 if (args[0].equals("enable") || args[0].equals("disable")){
@@ -444,7 +444,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"setmarkkit"}, desc = "Set a market place", help = "/setmarkkit <sellprice> <buyprice> <markkit name>", player = true, min = 3)
+	 @GameCommand(perm = "wa.staff.mod2", aliases = {"setmarkkit"}, desc = "Set a market place", help = "/setmarkkit <sellprice> <buyprice> <markkit name>", player = true, min = 3)
 	 public void onSetMarket(CommandSender cs, String[] args){
 		 
 		 Player p = (Player)cs;
@@ -516,7 +516,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		  }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"back"}, desc = "Back Command", help = "/tp <player> [player]", player = true)
+	 @GameCommand(perm = "wa.staff.mod2", aliases = {"back"}, desc = "Back Command", help = "/tp <player> [player]", player = true)
 	 public void onBack(Player p, String[] args){
 		 
 		 DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -544,7 +544,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod", aliases = {"v", "vanish"}, desc = "Vanish Command", help = "/v", player = true)
+	 @GameCommand(perm = "wa.staff.mod", aliases = {"v", "vanish"}, desc = "Vanish Command", help = "/v", player = true)
 	 public void onVanish(Player p, String[] args){
 		 
 		 DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -569,7 +569,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 main.s(p, "You are now " + hidden[dp.getBool(DPI.VANISHED) ? 1 : 0]);
 	 }
 	 
-	 @DivCommand(perm = "wa.rank.continental", aliases = {"heal"}, desc = "Heal Command", help = "/heal", player = true)
+	 @GameCommand(perm = "wa.rank.continental", aliases = {"heal"}, desc = "Heal Command", help = "/heal", player = true)
 	 public void onHeal(Player p, String[] args){
 		 p.setHealth(((Damageable)p).getMaxHealth());
 		 p.setFoodLevel(20);
@@ -577,14 +577,14 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 main.s(p, "Restored to full health!");
 	 }
 	 
-	 @DivCommand(perm = "wa.rank.national", aliases = {"feed"}, desc = "Feed", help = "/feed", player = true)
+	 @GameCommand(perm = "wa.rank.national", aliases = {"feed"}, desc = "Feed", help = "/feed", player = true)
 	 public void onFeed(Player p, String[] args){
 		 p.setFoodLevel(20);
 		 p.setSaturation(20);
 		 main.s(p, "Yum! Pixel food!");
 	 }
 	 
-	 @DivCommand(aliases = {"tp", "teleport"}, desc = "Staff Telport Command", help = "/tp <player, alliance, coords> [player]", player = false, min = 1)
+	 @GameCommand(aliases = {"tp", "teleport"}, desc = "Staff Telport Command", help = "/tp <player, alliance, coords> [player]", player = false, min = 1)
 	 public void onTP(CommandSender p, String[] args){
 		 
 		 if (args.length == 1 && p instanceof Player && main.api.doesPartialPlayerExist(args[0])){
@@ -644,7 +644,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"tphere"}, desc = "Staff Telport Command", help = "/tphere <player>", player = true, min = 1)
+	 @GameCommand(perm = "wa.staff.mod2", aliases = {"tphere"}, desc = "Staff Telport Command", help = "/tphere <player>", player = true, min = 1)
 	 public void onTPHere(Player p, String[] args){
 		 
 		 if (main.api.doesPartialPlayerExist(args[0]) && main.api.isOnline(args[0])){
@@ -654,7 +654,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.admin", aliases = {"tpall"}, desc = "Staff Telport Command", help = "/tpall", player = true)
+	 @GameCommand(perm = "wa.staff.admin", aliases = {"tpall"}, desc = "Staff Telport Command", help = "/tpall", player = true)
 	 public void onTPAll(Player sender, String[] args){
 		 
 		 for (Player p : Bukkit.getOnlinePlayers()){
@@ -664,7 +664,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 main.s(sender, "&oMass temporal shift completed.");
 	 }
 	 
-	 @DivCommand(perm = "wa.rank.statesman", aliases = {"tpa"}, desc = "TPA Command", help = "/tpa <player>", player = true, min = 1)
+	 @GameCommand(perm = "wa.rank.statesman", aliases = {"tpa"}, desc = "TPA Command", help = "/tpa <player>", player = true, min = 1)
 	 public void onTPA(Player sender, String[] args){
 		 
 		 if (main.api.doesPartialPlayerExist(args[0])){
@@ -682,7 +682,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(perm = "wa.rank.emperor", aliases = {"tpahere"}, desc = "TPAHere Command", help = "/tpahere <player>", player = true, min = 1)
+	 @GameCommand(perm = "wa.rank.emperor", aliases = {"tpahere"}, desc = "TPAHere Command", help = "/tpahere <player>", player = true, min = 1)
 	 public void onTPAHere(Player sender, String[] args){
 		 
 		 if (main.api.doesPartialPlayerExist(args[0])){
@@ -700,7 +700,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(name = "TPAuth", perm = "wa.rank.dweller", aliases = {"tpaccept", "tpdeny"}, desc = "TP Auth Command", help = "/tpaccept or /tpdeny", player = true)
+	 @GameCommand(name = "TPAuth", perm = "wa.rank.dweller", aliases = {"tpaccept", "tpdeny"}, desc = "TP Auth Command", help = "/tpaccept or /tpdeny", player = true)
 	 public void onTPAuth(Player sender, String[] args, String cmd){
 		 
 		 DivinityPlayer dp = main.api.getDivPlayer(sender);
@@ -734,7 +734,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 dp.set(DPI.TP_INVITE, "none");
 	 }
 	 
-	 @DivCommand(perm = "wa.rank.citizen", aliases = {"tpblock"}, desc = "TP Block Command", help = "/tpblock", player = true)
+	 @GameCommand(perm = "wa.rank.citizen", aliases = {"tpblock"}, desc = "TP Block Command", help = "/tpblock", player = true)
 	 public void onTPBlock(Player sender, String[] args){
 		 
 		 DivinityPlayer dp = main.api.getDivPlayer(sender);
@@ -742,10 +742,10 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 main.s(sender, "&oTeleport block " + (dp.getBool(DPI.TP_BLOCK) + "").replace("true", "&aactive.").replace("false", "&cdisabled."));
 	 }
 	 
-	 @DivCommand(aliases = {"staff"}, desc = "Online Staff List Command", help = "/staff", player = false)
+	 @GameCommand(aliases = {"staff"}, desc = "Online Staff List Command", help = "/staff", player = false)
 	 public void onStaff(CommandSender p, String[] args){
 		 
-		 main.s(p, "Online Staff:");
+		 main.s(p, "WCN Staff:");
 		 
 		 String interns = "";
 		 String mods = "";
@@ -788,7 +788,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 main.s(p, admins);
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"gamemode", "gm"}, desc = "GameMode Command", help = "/gm <c, s, a, sp> [player]", player = true, min = 1)
+	 @GameCommand(perm = "wa.staff.mod2", aliases = {"gamemode", "gm"}, desc = "GameMode Command", help = "/gm <c, s, a, sp> [player]", player = true, min = 1)
 	 public void onGM(Player p, String[] args){
 		 
 		 Player toSet = null;
@@ -820,7 +820,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @DivCommand(aliases = {"more", "moar"}, desc = "Give yourself 64 of the item in your hand", help = "/more", perm = "wa.staff.mod2", player = true)
+	 @GameCommand(aliases = {"more", "moar"}, desc = "Give yourself 64 of the item in your hand", help = "/more", perm = "wa.staff.mod2", player = true)
 	 public void onMore(Player p, String[] args){
 
 		if (p.getInventory().getItemInHand() != null){
@@ -828,7 +828,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		}
 	 }
 	 
-	 @DivCommand(perm = "wa.staff.mod2", aliases = {"fly"}, desc = "Fly Command", help = "/fly [player]", player = true)
+	 @GameCommand(perm = "wa.staff.mod2", aliases = {"fly"}, desc = "Fly Command", help = "/fly [player]", player = true)
 	 public void onFly(Player p, String[] args){
 		 
 		 Player toSet = null;
@@ -856,7 +856,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	@DivCommand(perm = "wa.staff.intern", aliases = {"o"}, desc = "Staff chat command", help = "/o <message>", player = false, min = 1)
+	/*@GameCommand(perm = "wa.staff.intern", aliases = {"o"}, desc = "Staff chat command", help = "/o <message>", player = false, min = 1)
 	public void onO(CommandSender sender, String[] args){
 		if (sender instanceof Player){
 			Player p = (Player) sender;
@@ -868,9 +868,9 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		} else {
 			ElyChannel.STAFF.send("&4[&cS&6e&er&2v&ae&br&3]", DivinityUtilsModule.createString(args, 0), main.api);
 		}
-	}
+	}*/
 	
-	@DivCommand(perm = "wa.member", aliases = {"d"}, desc = "Staff chat command", help = "/d [ -list | -invite <player> | -remove <player>]", player = true, min = 1)
+	@GameCommand(perm = "wa.member", aliases = {"d"}, desc = "Staff chat command", help = "/d [ -list | -invite <player> | -remove <player>]", player = true, min = 1)
 	public void onD(Player sender, String[] args){
 		DivinityPlayer dp = main.api.getDivPlayer(sender);
 
@@ -936,7 +936,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 
 	}
 	 
-	@DivCommand(aliases = {"skull"}, min = 1, max = 1, player = true, perm = "wa.staff.intern")
+	@GameCommand(aliases = {"skull"}, min = 1, max = 1, player = true, perm = "wa.staff.intern")
 	public void onSkull(Player p, String[] args){
 			
 		ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
@@ -946,7 +946,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		p.setItemInHand(is);
 	}
 		
-	@DivCommand(aliases = {"top"}, desc = "Teleport to the highest block above", help = "/top", max = 0, perm = "wa.staff.mod2", player = true)
+	@GameCommand(aliases = {"top"}, desc = "Teleport to the highest block above", help = "/top", max = 0, perm = "wa.staff.mod2", player = true)
 	public void onTop(Player p, String[] args){
 		
 		if (p.getWorld().getHighestBlockYAt(p.getLocation()) != -1){
@@ -967,7 +967,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 	}
 	
 	@SuppressWarnings("deprecation")
-	@DivCommand(aliases = {"sm"}, desc = "Spawn Mob", help = "/sm <type> <health> <nameTag> <armorType> <weapon> <potionEffect> <location> <passenger(s)> <amount>", max = 9, perm = "wa.staff.mod2", player = true)
+	@GameCommand(aliases = {"sm"}, desc = "Spawn Mob", help = "/sm <type> <health> <nameTag> <armorType> <weapon> <potionEffect> <location> <passenger(s)> <amount>", max = 9, perm = "wa.staff.mod2", player = true)
 	public void onSM(Player p, String[] args){
 
 		String armors = "diamond iron chain gold leather";
@@ -1078,7 +1078,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		}		
 	}
 	
-	@DivCommand(aliases = {"op"}, desc = "OP", help = "/op <player>", perm = "wa.staff.admin", min = 1)
+	@GameCommand(aliases = {"op"}, desc = "OP", help = "/op <player>", perm = "wa.staff.admin", min = 1)
 	public void onOP(CommandSender cs, String[] args){
 		
 		if (main.api.doesPartialPlayerExist(args[0])){
@@ -1094,7 +1094,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 	}
 
 	@SuppressWarnings("deprecation")
-	@DivCommand(aliases = {"i"}, desc = "Give an item to yourself", help = "/i <item>", max = 1, perm = "wa.staff.mod2", player = true)
+	@GameCommand(aliases = {"i"}, desc = "Give an item to yourself", help = "/i <item>", max = 1, perm = "wa.staff.mod2", player = true)
 	public void onI(Player p, String[] args){
 		
 		boolean found = false;
@@ -1124,7 +1124,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		}
 	}
 	
-	@DivCommand(perm = "wa.rank.townsman", aliases = {"ci"}, desc = "Clear Inventory (or restore inventory. Results may vary. TM)", help = "/ci [confirm]", player = true)
+	@GameCommand(perm = "wa.rank.townsman", aliases = {"ci"}, desc = "Clear Inventory (or restore inventory. Results may vary. TM)", help = "/ci [confirm]", player = true)
 	public void onCI(Player p, String[] args){
 		
 		p.getInventory().clear();

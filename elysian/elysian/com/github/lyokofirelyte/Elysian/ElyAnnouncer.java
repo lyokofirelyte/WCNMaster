@@ -6,11 +6,11 @@ import lombok.Getter;
 
 import org.bukkit.command.CommandSender;
 
-import com.github.lyokofirelyte.Elysian.api.ElyTask;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyTask;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
 public class ElyAnnouncer implements Runnable, AutoRegister<ElyAnnouncer> {
@@ -44,7 +44,7 @@ public class ElyAnnouncer implements Runnable, AutoRegister<ElyAnnouncer> {
 		main.cancelTask(ElyTask.ANNOUNCER);
 	}
 	
-	@DivCommand(aliases= {"announcer"}, perm = "wa.staff.mod2", help = "/announcer <add, remove, view> <message>", player = false, min = 1)
+	@GameCommand(aliases= {"announcer"}, perm = "wa.staff.mod2", help = "/announcer <add, remove, view> <message>", player = false, min = 1)
 	public void onAnnounceCommand(CommandSender cs, String[] args){
 		
 		List<String> messages = main.api.getDivSystem().getList(DPI.ANNOUNCER);

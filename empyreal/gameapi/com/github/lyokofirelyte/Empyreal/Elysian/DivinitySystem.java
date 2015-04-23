@@ -8,8 +8,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Database.EmpyrealSQL;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketObject;
 import com.github.lyokofirelyte.Empyreal.Utils.Direction;
 import com.github.lyokofirelyte.Empyreal.Utils.Letter;
 import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
@@ -22,6 +20,7 @@ public class DivinitySystem extends DivinityStorageModule {
 		super(n, i, "system");
 		set(DPI.DISPLAY_NAME, "&6Console");
 		set(DPI.PM_COLOR, "&f");
+		reloadMarkkit();
 	}
 	
 	private YamlConfiguration markkitYaml;
@@ -30,12 +29,8 @@ public class DivinitySystem extends DivinityStorageModule {
 		return markkitYaml;
 	}
 	
-	public void setMarkkit(YamlConfiguration yaml){
-		markkitYaml = yaml;
-	}
-	
 	public void reloadMarkkit(){
-		markkitYaml = YamlConfiguration.loadConfiguration(new File("../wa/Divinity/system/markkit.yml"));
+		markkitYaml = YamlConfiguration.loadConfiguration(new File("./plugins/Divinity/system/markkit.yml"));
 	}
 	
 	public void saveMarkkit(){
@@ -71,13 +66,9 @@ public class DivinitySystem extends DivinityStorageModule {
 		api.cancelTask("effects" + name);
 	}
 	
+	@Override
 	public void save(){
-		if (!api.getServerName().equals("GameServer")){
-			SocketObject obj = new SocketObject(this, DivinityStorageModule.class, Handler.SAVE_OBJECT_TO_SQL, api.getServerName());
-			api.sendObjectToSocket("GameServer", obj);
-		} else {
-			api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("system", this);
-		}
+		api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("system", this);
 	}
 	
 	public void transfer(){

@@ -5,23 +5,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import com.github.lyokofirelyte.Elysian.api.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
+import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Database.EmpyrealSQL;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketObject;
+import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
 
-public class DivinityPlayer extends DivinityStorageModule {
+public class DivinityPlayer extends DivinityStorageModule implements GamePlayer<DivinityPlayer> {
 
 	public DivinityPlayer(UUID n, Empyreal api) {
 		super(n, api, "users");
+		UUID = n;
 	}
+	
+	@Getter
+	private UUID UUID;
+	
+	@Getter // don't do it!
+	private Player player;
+	// java.lang.nullfuckthisshitexception
+	
+	@Override
+	public List<String> getPerms(){
+		return getList(DPI.PERMS);
+	}
+	
+	@Getter
+	private DivinityPlayer type = this;
+	
+	@Getter @Setter
+	private String toServer = "none";
 	
 	private List<String> activeEffects = new ArrayList<String>();
 		
@@ -85,13 +106,9 @@ public class DivinityPlayer extends DivinityStorageModule {
 		}
 	}
 	
+	@Override
 	public void save(){
-		if (!api.getServerName().equals("GameServer")){
-			SocketObject obj = new SocketObject(this, DivinityStorageModule.class, Handler.SAVE_OBJECT_TO_SQL, api.getServerName());
-			api.sendObjectToSocket("GameServer", obj);
-		} else {
-			api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("users", this);
-		}
+		api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("users", this);
 	}
 	
 	public void transfer(){

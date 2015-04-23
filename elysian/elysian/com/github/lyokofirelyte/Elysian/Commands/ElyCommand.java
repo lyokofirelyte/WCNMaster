@@ -2,10 +2,12 @@ package com.github.lyokofirelyte.Elysian.Commands;
 
 import gnu.trove.map.hash.THashMap;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -14,6 +16,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,6 +24,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -32,13 +36,17 @@ import org.json.simple.JSONObject;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRoot;
-import com.github.lyokofirelyte.Elysian.api.ElyChannel;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.JSONMap;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityAlliance;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRegion;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRing;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyChannel;
 import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatClickEventType;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatExtra;
@@ -49,6 +57,7 @@ import com.github.lyokofirelyte.Empyreal.Utils.Direction;
 import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
 import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 import com.github.lyokofirelyte.Empyreal.Utils.WebsiteManager;
+import com.google.common.io.Files;
 
 public class ElyCommand implements AutoRegister<ElyCommand> {
 
@@ -81,8 +90,8 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		help.clear();
 		for (Object o : main.api.commandMap.values()){
 			for (Method m : o.getClass().getMethods()){
-				if (m.getAnnotation(DivCommand.class) != null){
-					DivCommand anno = m.getAnnotation(DivCommand.class);
+				if (m.getAnnotation(GameCommand.class) != null){
+					GameCommand anno = m.getAnnotation(GameCommand.class);
 					if (perms.contains(anno.perm()) || all){
 						String name = anno.aliases()[0];
 						for (int i = 1; i < anno.aliases().length; i++){
@@ -115,13 +124,31 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		return false;
 	}
 	
-	@DivCommand(aliases = {"dank"}, perm = "wa.member", desc = "Dank Command", help = "/dank", player = true)
+	@GameCommand(aliases = {"transfer2"}, perm = "wa.staff.admin", desc = "Transfer", help = "/transfer", player = true)
+	public void onTransfer2(Player p, String[] args){
+		for (File f : new File("./plugins/Divinity/regions").listFiles()){
+			if (f.getName().endsWith(".yml")){
+				YamlConfiguration yaml = YamlConfiguration.loadConfiguration(f);
+				DivinityRegion dp = new DivinityRegion(f.getName().replace(".yml", ""), main.api);
+				JSONMap json = new JSONMap<String, Object>();
+				for (String key : yaml.getKeys(false)){
+					json.set(key, yaml.get(key));
+				}
+				dp.fill(json);
+				dp.save();
+				main.api.getOnlineModules().put("REGION_" + f.getName().replace(".yml", ""), dp);
+				main.s(p, "Saved " + f.getName() + " @ " + dp.size() + " objects.");
+			}
+		}
+	}
+	
+	@GameCommand(aliases = {"dank"}, perm = "wa.member", desc = "Dank Command", help = "/dank", player = true)
 	public void onDank(Player p, String[] args){
 		main.api.getDivPlayer(p).set(DPI.DANK, !main.api.getDivPlayer(p).getBool(DPI.DANK));
 		main.s(p, "Updated dank mode.");
 	}
 	
-	@DivCommand(aliases = {"tutorial"}, perm = "wa.guest", desc = "Basic tutorial books for Worlds Apart!", help = "/tutorial", player = true)
+	@GameCommand(aliases = {"tutorial"}, perm = "wa.guest", desc = "Basic tutorial books for Worlds Apart!", help = "/tutorial", player = true)
 	public void onTutorial(Player p, String[] args){
 		
 		if(args.length == 0){
@@ -194,7 +221,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		
 	}
 		
-	@DivCommand(aliases = {"rolldice", "rd"}, perm = "wa.staff.intern", desc = "Get a random result from a list!", help = "/rolldice", player = true)
+	@GameCommand(aliases = {"rolldice", "rd"}, perm = "wa.staff.intern", desc = "Get a random result from a list!", help = "/rolldice", player = true)
 	public void onRollDice(Player p, String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -257,14 +284,10 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 			dp.s(result.toString());
 				
 			break;
-		
-			
-		
 		}
-		
 	}
 	
-	@DivCommand(aliases = {"website"}, desc = "Obtain a registration code for the website", help = "/website", player = true)
+	@GameCommand(aliases = {"website"}, desc = "Obtain a registration code for the website", help = "/website", player = true)
 	public void onWebsite(Player p, String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -297,7 +320,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		}
 	}
 	
-	@DivCommand(aliases = {"sell"}, desc = "Add an item to the trading house in /root!", help = "/sell <price>", player = true, min = 1)
+	@GameCommand(aliases = {"sell"}, desc = "Add an item to the trading house in /root!", help = "/sell <price>", player = true, min = 1)
 	public void onSell(Player p, String[] args){
 		
 		int amt = 0;
@@ -339,7 +362,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		}
 	}
 	
-	@DivCommand(perm = "wa.staff.admin", aliases = {"effects"}, desc = "Effects Command", help = "/effects help", player = true)
+	@GameCommand(perm = "wa.staff.admin", aliases = {"effects"}, desc = "Effects Command", help = "/effects help", player = true)
 	public void onEffects(final Player p, String[] args){
 		
 		DivinitySystem ds = main.api.getDivSystem();
@@ -478,7 +501,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		}
 	}
 	
-	@DivCommand(perm = "wa.rank.dweller", aliases = {"notepad"}, desc = "Notepad Management System", help = "/notepad", player = true)
+	@GameCommand(perm = "wa.rank.dweller", aliases = {"notepad"}, desc = "Notepad Management System", help = "/notepad", player = true)
 	public void onNotepad(Player p, String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -557,12 +580,12 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		}
 	}
 	
-	@DivCommand(aliases = {"root", "menu"}, desc = "Open the main menu", help = "/root", player = true)
+	@GameCommand(aliases = {"root", "menu"}, desc = "Open the main menu", help = "/root", player = true)
 	public void onRoot(Player p, String[] args){
 		((DivInvManager) main.api.getInstance(DivInvManager.class)).displayGui(p, new GuiRoot(main));
 	}
 	
-	 @DivCommand(perm = "wa.member", aliases = {"poll"}, desc = "Polls!", help = "/poll help", player = false, min = 1)
+	 @GameCommand(perm = "wa.member", aliases = {"poll"}, desc = "Polls!", help = "/poll help", player = false, min = 1)
 	 public void onPoll(CommandSender p, String[] args){
 		 
 		 /*DivinitySystem system = main.api.getSystem();
@@ -688,7 +711,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		 }
 	 }
 	 
-		@DivCommand(perm = "wa.rank.regional", aliases = {"rainoff"}, desc = "Turn off that rain!", help = "/rainoff", player = true)
+		@GameCommand(perm = "wa.rank.regional", aliases = {"rainoff"}, desc = "Turn off that rain!", help = "/rainoff", player = true)
 		public void onRainoff(Player p, String[] args){
 			DivinityPlayer player = main.api.getDivPlayer(p.getName());
 			World w = p.getWorld();
@@ -706,7 +729,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 			
 		}
 		
-		@DivCommand(perm = "wa.staff.admin", aliases = {"testdrax"}, desc = "TestDrax", help = "/testdrax", player = true)
+		@GameCommand(perm = "wa.staff.admin", aliases = {"testdrax"}, desc = "TestDrax", help = "/testdrax", player = true)
 		public void onTestDrax(Player p, String[] args){
 			p.getInventory().addItem(DivInvManager.createItem(main.AS("&5&o))( &f&odRaX &5&o)(("), new String[] {"&6&o(HAOS DEVICE", "&a&o5000/5000"}, Enchantment.DURABILITY, 10, Material.ARROW, 1));
 			p.getInventory().addItem(DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, 14));
@@ -716,7 +739,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 			p.getInventory().addItem(DivInvManager.createItem(main.AS("&fDraX Shard"), new String[]{main.AS("&c&oUsed to create (hA0s!")}, Material.STAINED_CLAY, 1, 5));
 		}
 		
-		@DivCommand(perm = "wa.rank.districtman", aliases = {"near"}, desc = "See nearby players!", help = "/near", player = true, min = 0)
+		@GameCommand(perm = "wa.rank.districtman", aliases = {"near"}, desc = "See nearby players!", help = "/near", player = true, min = 0)
 		public void onNear(Player p, String[] args){
 			StringBuilder players = new StringBuilder();
 			int count = 0;
@@ -739,7 +762,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 			
 		}
 		
-	@DivCommand(aliases = {"setprice"}, desc = "Set the item price for your personal markkit.", help = "/setprice <price>", player = true, min = 1)
+	@GameCommand(aliases = {"setprice"}, desc = "Set the item price for your personal markkit.", help = "/setprice <price>", player = true, min = 1)
 	public void onPrice(Player p, String[] args){
 		if(!Utils.isInteger(args[0])) return;
 		if(p.getItemInHand().getType() == null) return;
@@ -750,7 +773,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		main.s(p, "Price set!");
 	}
 		
-	@DivCommand(aliases = {"bio"}, desc = "Modify your hover-over description", help = "/bio <message>", player = true, min = 1)
+	@GameCommand(aliases = {"bio"}, desc = "Modify your hover-over description", help = "/bio <message>", player = true, min = 1)
 	public void onBio(Player p, String[] args){
 	
 		DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -758,20 +781,20 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		main.s(p, "Updated!");
 	}
 	
-	@DivCommand(aliases = {"me"}, desc = "This is you", help = "/me <action>", player = true, min = 1)
+	@GameCommand(aliases = {"me"}, desc = "This is you", help = "/me <action>", player = true, min = 1)
 	public void onMe(Player p, String[] args){
 		for(Player player : Bukkit.getOnlinePlayers()){
 			player.sendMessage(main.AS("&f* " + p.getName() + " " + DivinityUtilsModule.createString(args, 0)));
 		}
 	}
 	
-	@DivCommand(perm = "wa.staff.admin", aliases = {"motd"}, desc = "Change the MOTD", help = "/motd <message>", player = false, min = 1)
+	@GameCommand(perm = "wa.staff.admin", aliases = {"motd"}, desc = "Change the MOTD", help = "/motd <message>", player = false, min = 1)
 	public void onMOTD(CommandSender p, String[] args){
 		main.api.getDivSystem().set(DPI.MOTD, DivinityUtilsModule.createString(args, 0));
 		main.s(p, "&bUpdated!");
 	}
 	
-	@DivCommand(aliases = {"enderdragon"}, desc = "Spawn the enderdragon in the end", help = "/enderdragon", player = true)
+	@GameCommand(aliases = {"enderdragon"}, desc = "Spawn the enderdragon in the end", help = "/enderdragon", player = true)
 	public void onEnderDragon(Player p, String[] args){
 		
 		DivinitySystem system = main.api.getDivSystem();
@@ -789,12 +812,12 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		}
 	}
 	
-	@DivCommand(aliases = {"colors"}, desc = "View the colors", help = "/colors", player = false)
+	@GameCommand(aliases = {"colors"}, desc = "View the colors", help = "/colors", player = false)
 	public void onColors(CommandSender cs, String[] args){
 		main.s(cs, "&aa &bb &cc &dd &ee &ff &00 &11 &22 &33 &44 &55 &66 &77 &88 &99 &7&ll &7&mm &7&nn &7&oo &7&rr");
 	}
 	
-	@DivCommand(aliases = {"calendar"}, desc = "View our calendar!", help = "/calendar", player = true, min = 0)
+	@GameCommand(aliases = {"calendar"}, desc = "View our calendar!", help = "/calendar", player = true, min = 0)
 	public void onCalendar(Player p, String[] args){
 
 		DivinitySystem player = main.api.getDivSystem();
@@ -811,7 +834,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		 msg.sendToAllPlayers(); 
 	}
 	
-	@DivCommand(perm = "wa.staff.admin", aliases = {"sudo"}, desc = "Force someone to run a command", help = "/sudo <player> <command>", player = false, min = 2)
+	@GameCommand(perm = "wa.staff.admin", aliases = {"sudo"}, desc = "Force someone to run a command", help = "/sudo <player> <command>", player = false, min = 2)
 	public void onSudo(CommandSender cs, String[] args){
 		
 		if (main.api.doesPartialPlayerExist(args[0]) && main.api.isOnline(args[0])){
@@ -822,12 +845,12 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		}
 	}
 	
-	@DivCommand(perm = "wa.staff.admin", aliases = {"bc", "broadcast"}, desc = "Broadcasts a message", help = "/broadcast", player = false, min = 1)
+	@GameCommand(perm = "wa.staff.admin", aliases = {"bc", "broadcast"}, desc = "Broadcasts a message", help = "/broadcast", player = false, min = 1)
 	public void onBroadcast(CommandSender cs, String[] args){
 		DivinityUtilsModule.bc(DivinityUtilsModule.createString(args, 0));
 	}
 	
-	@DivCommand(aliases = {"calc"}, desc = "Calculator Command", help = "/calc <query>", player = false)
+	@GameCommand(aliases = {"calc"}, desc = "Calculator Command", help = "/calc <query>", player = false)
 	public void onCalc(CommandSender cs, String[] args){
 		try {
 			ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");  
@@ -837,7 +860,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		}
 	}
 	
-	@DivCommand(perm = "wa.rank.villager", aliases = {"hat"}, desc = "Wear a hat!", help = "/hat", player = true)
+	@GameCommand(perm = "wa.rank.villager", aliases = {"hat"}, desc = "Wear a hat!", help = "/hat", player = true)
 	public void onHat(Player p, String[] args){
 		if (p.getItemInHand() != null && (p.getInventory().getHelmet() == null || p.getInventory().getHelmet().getType().equals(Material.AIR))){
 			p.getInventory().setHelmet(p.getItemInHand());
@@ -847,7 +870,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		}
 	}
 	
-	@DivCommand(perm = "wa.staff.admin", aliases = {"modify"}, desc = "Divinity Modification Command", help = "/modify list, /modify <player/alliance> <stat> <value>", player = false, min = 1)
+	@GameCommand(perm = "wa.staff.admin", aliases = {"modify"}, desc = "Divinity Modification Command", help = "/modify list, /modify <player/alliance> <stat> <value>", player = false, min = 1)
 	public void onModify(CommandSender p, String[] args){
 		
 		String dispName = p instanceof Player ? ((Player) p).getDisplayName() : "&6Console";
@@ -871,6 +894,8 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 							m.put(args[1], Utils.createString(args, 2));
 							ElyChannel.STAFF.send("&6System", dispName + " &cmodified &6" + args[1].toUpperCase() + " &cfor " + m.getName() + "&c!", main.api);
 							break;
+						} else {
+							main.s(p, "&c&oNo enum of " + args[1] + " found for " + m.getUuid() + ".");
 						}
 					}
 				}
@@ -883,7 +908,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		}
 	}
 	
-	@DivCommand(aliases = {"list"}, desc = "List everyone online!", help = "/list", player = false)
+	@GameCommand(aliases = {"list"}, desc = "List everyone online!", help = "/list", player = false)
 	public void onList(CommandSender cs, String[] args){
 		
 		JSONChatMessage msg = new JSONChatMessage("");
@@ -910,13 +935,13 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		}
 	}
 	
-	@DivCommand(aliases = {"setrebootserver"}, desc = "Set Reboot Server", help = "/setrebootserver <boolean>", player = false, perm = "wa.staff.admin")
+	@GameCommand(aliases = {"setrebootserver"}, desc = "Set Reboot Server", help = "/setrebootserver <boolean>", player = false, perm = "wa.staff.admin")
 	public void onSetRebootServer(CommandSender cs, String[] args){
 		main.api.getDivSystem().set(DPI.IS_REBOOT_SERVER, args[0].equals("true") ? true : false);
 		main.s(cs, "Changed to &6" + main.api.getDivSystem().getBool(DPI.IS_REBOOT_SERVER) + "&b!");
 	}
 	
-	@DivCommand(aliases = {"reboot"}, desc = "Reboot Command", help = "/reboot", player = false, perm = "wa.staff.admin")
+	@GameCommand(aliases = {"reboot"}, desc = "Reboot Command", help = "/reboot", player = false, perm = "wa.staff.admin")
 	public void onReboot(CommandSender cs, String[] args){
 		
 		String ext = System.getProperty("os.name").contains("Windows") ? ".bat" : ".sh";
@@ -942,7 +967,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		Bukkit.getServer().shutdown();
 	}
 	
-	@DivCommand(aliases = {"div", "divinity"}, desc = "Divinity Main Command", help = "/ely help", player = false)
+	@GameCommand(aliases = {"div", "divinity"}, desc = "Divinity Main Command", help = "/ely help", player = false)
 	public void onDivinity(CommandSender p, String[] args){
 		
 		for (String s : divLogo){
@@ -950,7 +975,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 		}
 	}
 	
-	@DivCommand(aliases = {"ely", "elysian", "?"}, desc = "Elysian Main Command", help = "/ely help, /ely help all", player = false)
+	@GameCommand(aliases = {"ely", "elysian", "?"}, desc = "Elysian Main Command", help = "/ely help, /ely help all", player = false)
 	public void onElysian(CommandSender p, String[] args){
 		
 		if (args.length == 0){
@@ -963,58 +988,55 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 			
 			switch (args[0].toLowerCase()){
 
-				case "help": case "helpmepleaseidontknowwhatimdoing":
+				case "help": case "helpmepleaseidontknowwhatimdoing": case "?":
 					
 					if (p instanceof Player){
-						fillMap(main.api.getDivPlayer((Player)p).getList(DPI.PERMS), args.length >= 2 && args[1].equals("all"));
-					} else {
-						fillMap(new ArrayList<String>(), true);
-					}
 					
-					List<String> sortedHelp = new ArrayList<String>();
-					
-					for (String s : help.keySet()){
-						sortedHelp.add(s);
-					}
-					
-					Collections.sort(sortedHelp);
-					int i = 10;
-					
-					if(args.length == 3 && args[1].equals("all") && args[2] != null){
-						if (DivinityUtilsModule.isInteger(args[2])){
-							i = Integer.parseInt(args[2]) * 10;
-						} else {
-							main.s(p, "&c&oThat's not a number...");
-							return;
-						}
-					}else if (args.length == 2 && !args[1].equals("all")){
-						if (DivinityUtilsModule.isInteger(args[1])){
-							i = Integer.parseInt(args[1]) * 10;
-						} else {
-							main.s(p, "&c&oThat's not a number...");
-							return;
-						}
-					}
-					
-					if (p instanceof Player){
+						DivinityStorageModule dp = main.api.getDivPlayer((Player) p);
+						List<String> allowed = new ArrayList<String>();
+						Map<String, GameCommand> annos = new HashMap<String, GameCommand>();
 						
-						for (int index = i - 10; index < i; index++){
-							JSONChatMessage message = new JSONChatMessage("", null, null);
-							JSONChatExtra extra = new JSONChatExtra(main.AS("&3" + sortedHelp.get(index) + " &7\u2744 &6" + help.get(sortedHelp.get(index))[0]), null, null);
-							extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&7&o" + help.get(sortedHelp.get(index))[1]));
-							message.addExtra(extra);
-							message.sendToPlayer(((Player)p));
+						for (Object o : main.api.commandMap.values()){
+							for (Method m : o.getClass().getMethods()){
+								if (m.getAnnotation(GameCommand.class) != null){
+									GameCommand anno = m.getAnnotation(GameCommand.class);
+									if (dp.getList(DPI.PERMS).contains(anno.perm()) || p.isOp() || anno.perm().equals("wa.guest") || anno.perm().equals("emp.member")){
+										allowed.add(anno.aliases()[0]);
+									}
+									annos.put(anno.aliases()[0], anno);
+								}
+							}
 						}
 						
-						p.sendMessage(main.AS("&7&oUse /ely help <page> to visit other pages!"));
-						p.sendMessage(main.AS("&7&oHover to display the description of each command"));
+						JSONChatMessage msg = new JSONChatMessage("", null, null);
+						int x = 0;
+						int y = 0;
 						
-						if (args.length == 2 && args[1].equals("all")){
-							p.sendMessage(main.AS("&7&oShowing all commands, including those you can't yet use."));
-						} else {
-							p.sendMessage(main.AS("&7&oOnly showing commands you have permission for. See &6&o/ely help all &7&ofor all commands."));
+						List<String> sorted = new ArrayList<String>(annos.keySet());
+						Collections.sort(sorted);
+						
+						for (String command : sorted){
+							String alias = "";
+							for (String a : annos.get(command).aliases()){
+								if (!a.equals(command)){
+									alias += alias.equals("") ? "&6" + a : "&7, &6" + a;
+								}
+							}
+							String color = allowed.contains(command) ? "&a" : "&c";
+							JSONChatExtra extra = new JSONChatExtra(main.AS(color + command + " &9- "));
+							extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, main.AS("&bAliases: " + alias + "\n" + "&bPerm: &6" + annos.get(command).perm() + "\n" + "&bDesc: &6" + annos.get(command).desc() + "\n" + "&bHelp: &6" + annos.get(command).help()));
+							msg.addExtra(extra);
+							x++; y++;
+							if (x == 5 || y >= annos.size()-1){
+								if (y > annos.size()-1){
+									JSONChatExtra ee = new JSONChatExtra(main.AS("&7&oHover over each command for info!"));
+									msg.addExtra(ee);
+								}
+								msg.sendToPlayer((Player) p);
+								x = 0;
+								msg = new JSONChatMessage("", null, null);
+							}
 						}
-						
 					} else {
 						main.s(p, "&c&oConsole can't run this!");
 					}
@@ -1038,7 +1060,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 				
 				case "reload":
 					
-					if (main.api.perms(p, "wa.staff.admin", false)){
+					if (main.api.perms(p, "wa.staff.admin", true)){
 					
 						try {
 							main.api.loadAllDivinityModules();

@@ -15,10 +15,10 @@ import org.bukkit.util.Vector;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Commands.ElyRings;
-import com.github.lyokofirelyte.Elysian.api.RingsType;
 import com.github.lyokofirelyte.Empyreal.Database.DRS;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRing;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.RingsType;
 import com.github.lyokofirelyte.Empyreal.Gui.DivGui;
 import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
 

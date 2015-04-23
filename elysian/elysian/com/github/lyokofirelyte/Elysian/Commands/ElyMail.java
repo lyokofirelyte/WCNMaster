@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
@@ -34,7 +34,7 @@ public class ElyMail implements AutoRegister<ElyMail> {
 		"/mail clear"
 	 };
 	 
-	 @DivCommand(aliases = {"mail"}, desc = "Elysian Mail Command", help = "/mail help", player = true, min = 1)
+	 @GameCommand(aliases = {"mail"}, desc = "Elysian Mail Command", help = "/mail help", player = true, min = 1)
 	 public void onMail(Player p, String[] args){
 		 
 		 

@@ -26,7 +26,7 @@ public class EmpyrealChatListener implements AutoRegister<EmpyrealChatListener>,
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent e){
 		
-		e.setCancelled(true);
+		e.setCancelled(!main.getServerName().equals("wa"));
 
 		for (GameModule m : main.getGameModules()){
 			m.onPlayerChat(main.getGamePlayer(e.getPlayer().getUniqueId()), e.getMessage());

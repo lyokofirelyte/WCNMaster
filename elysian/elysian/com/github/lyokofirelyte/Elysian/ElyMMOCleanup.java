@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import lombok.Getter;
 
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
-import com.github.lyokofirelyte.Elysian.api.ElyTask;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyTask;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
 public class ElyMMOCleanup implements Runnable, AutoRegister<ElyMMOCleanup> {

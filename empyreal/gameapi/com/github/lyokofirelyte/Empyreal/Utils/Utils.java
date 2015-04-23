@@ -16,10 +16,10 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
@@ -30,6 +30,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.BlockIterator;
+
+import com.github.lyokofirelyte.Empyreal.Empyreal;
 
 public class Utils {
 	
@@ -172,7 +174,7 @@ public class Utils {
 	}
 	
 	public static void bc(String message){
-		Bukkit.broadcastMessage(AS("&e\u26A1 &6" + message));
+		Bukkit.broadcastMessage(AS((Empyreal.getServerName().equals("wa") ? "&3\u2744 &b" : "&e\u26A1 &6") + message));
 	}
 	
 	public static void customBC(String message){

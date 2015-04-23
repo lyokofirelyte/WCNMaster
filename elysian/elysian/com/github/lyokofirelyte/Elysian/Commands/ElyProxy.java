@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
@@ -27,7 +27,7 @@ public class ElyProxy implements AutoRegister<ElyProxy>, PluginMessageListener {
 		main = i;
 	}
 	
-	@DivCommand(aliases = "sv", desc = "Elysian Server Command", help = "/sv <server>, /sv <server> <player>, /sv list", min = 1, perm = "wa.staff.mod2")
+	@GameCommand(aliases = "sv", desc = "Elysian Server Command", help = "/sv <server>, /sv <server> <player>, /sv list", min = 1, perm = "wa.staff.mod2")
 	public void onSV(Player p, String[] args){
 		
 		if (args[0].equals("list")){

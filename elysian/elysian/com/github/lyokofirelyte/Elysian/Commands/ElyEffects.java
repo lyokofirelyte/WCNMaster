@@ -8,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
@@ -25,7 +25,7 @@ public class ElyEffects implements AutoRegister<ElyEffects> {
 		main = i;
 	}
 	
-	@DivCommand(name = "FW", aliases = {"fw", "firework", "flare"}, perm = "wa.rank.statesman", desc = "Firework command", help = "/fw <color> <type> [player]", player = true)
+	@GameCommand(name = "FW", aliases = {"fw", "firework", "flare"}, perm = "wa.rank.statesman", desc = "Firework command", help = "/fw <color> <type> [player]", player = true)
 	public void onFirework(Player p, String[] args, String cmd){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);

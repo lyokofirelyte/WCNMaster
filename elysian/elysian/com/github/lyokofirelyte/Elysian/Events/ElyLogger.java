@@ -39,13 +39,13 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Elysian.api.ElyChannel;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyChannel;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 
 public class ElyLogger implements Listener, Runnable, AutoRegister<ElyLogger> {
@@ -313,7 +313,7 @@ public class ElyLogger implements Listener, Runnable, AutoRegister<ElyLogger> {
 		}
 	}
 	
-	@DivCommand(aliases = {"chest"}, desc = "Elysian Chest Protection Command", help = "/chest help", min = 1, player = true)
+	@GameCommand(aliases = {"chest"}, desc = "Elysian Chest Protection Command", help = "/chest help", min = 1, player = true)
 	public void onChestCommand(final Player p, final String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -547,7 +547,7 @@ public class ElyLogger implements Listener, Runnable, AutoRegister<ElyLogger> {
 	    }
 	}
 	
-	@DivCommand(aliases = {"log", "logger"}, perm = "wa.staff.intern", desc = "Elysian Logging Command", help = "/log help", player = true)
+	@GameCommand(aliases = {"log", "logger"}, perm = "wa.staff.intern", desc = "Elysian Logging Command", help = "/log help", player = true)
 	public void onLogCommand(final Player p, final String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);

@@ -15,8 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Elysian.api.ElyChannel;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DAI;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Database.DRF;
@@ -26,6 +25,7 @@ import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRegion;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyChannel;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 import com.sk89q.worldedit.bukkit.selections.Selection;
@@ -42,7 +42,7 @@ public class ElyAlliance implements AutoRegister<ElyAlliance> {
 		 main = i;
 	 }
 	 
-	 @DivCommand(aliases = {"nick"}, desc = "Change your nickname!", help = "/nick <name>", player = true, min = 1)
+	 @GameCommand(aliases = {"nick"}, desc = "Change your nickname!", help = "/nick <name>", player = true, min = 1)
 	 public void onNick(Player p, String[] args){
 		 
 		 DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -67,7 +67,7 @@ public class ElyAlliance implements AutoRegister<ElyAlliance> {
 		 }
 	 }
 	 
-	 @DivCommand(aliases = {"rn", "realname"}, desc = "Check for someone's real name", help = "/rn <name>", player = false, min = 1)
+	 @GameCommand(aliases = {"rn", "realname"}, desc = "Check for someone's real name", help = "/rn <name>", player = false, min = 1)
 	 public void onRealName(CommandSender p, String[] args){
 		 
 		 for (Player pp : Bukkit.getOnlinePlayers()){
@@ -77,7 +77,7 @@ public class ElyAlliance implements AutoRegister<ElyAlliance> {
 		 }
 	 }
 	 
-	 @DivCommand(aliases = {"a", "alliance"}, desc = "Elysian Alliance Command", help = "/a -help", player = true, min = 1)
+	 @GameCommand(aliases = {"a", "alliance"}, desc = "Elysian Alliance Command", help = "/a -help", player = true, min = 1)
 	 public void onAllianceCommand(Player p, String[] args){
 		 
 		 DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -233,7 +233,7 @@ public class ElyAlliance implements AutoRegister<ElyAlliance> {
 		 				alliance.set(DAI.TIER, 0);
 		 				alliance.set(DAI.COLOR_1, args[2]);
 		 				alliance.set(DAI.COLOR_2, args[3]);
-		 				alliance.set(DAI.NAME, args[1]);
+		 				alliance.set("name", args[1]);
 		 				alliance.set(DAI.LEADER, leader.getUuid().toString());
 		 				alliance.set(DAI.CENTER, v.getBlockX() + " " + v.getBlockY() + " " + v.getBlockZ());
 		 				alliance.getList(DAI.MEMBERS).add(leader.getUuid().toString());
@@ -362,8 +362,9 @@ public class ElyAlliance implements AutoRegister<ElyAlliance> {
 		 		String msg = "&6";
 		 		
 		 		for (DivinityStorageModule player : main.api.getOnlineModules().values()){
-		 			if (player.getTable().equals("users") && player.getBool(DPI.ALLIANCE_LEADER)){
-		 				alliances.add(main.coloredAllianceName(player.getStr(DPI.ALLIANCE_NAME)));
+		 			if (player.getTable().equals("alliances")){
+		 				String name = main.coloredAllianceName((DivinityAlliance) player);
+		 				alliances.add(name.substring(0, 1).toUpperCase() + name.substring(1));
 		 			}
 		 		}
 		 		
@@ -386,16 +387,16 @@ public class ElyAlliance implements AutoRegister<ElyAlliance> {
 		 				
 		 				DivinityAlliance alliance = main.api.getDivAlliance(args[1]);
 		 				List<String> members = alliance.getList(DAI.MEMBERS);
-		 				String players = main.api.getDivPlayer(UUID.fromString(members.get(0))).getStr(DPI.DISPLAY_NAME);
+		 				String players = Bukkit.getOfflinePlayer(UUID.fromString(members.get(0))).getName();
 		 				
 		 				for (int i = 1; i < members.size(); i++){
-		 					players = players + "&7, " + main.api.getDivPlayer(UUID.fromString(members.get(i))).getStr(DPI.DISPLAY_NAME);
+		 					players = players + "&7, " + Bukkit.getOfflinePlayer(UUID.fromString(members.get(i))).getName();
 		 				}
 		 				
 		 				String[] messages = new String[]{
 		 					"Alliance Name: " + main.coloredAllianceName(args[1]),
 		 					"Description: &6" + alliance.getStr(DAI.DESC),
-		 					"Leader: " + main.api.getDivPlayer(UUID.fromString(alliance.getStr(DAI.LEADER))).getStr(DPI.DISPLAY_NAME),
+		 					"Leader: " + Bukkit.getOfflinePlayer(UUID.fromString(alliance.getStr(DAI.LEADER))).getName(),
 		 					"Member Count: &6" + members.size(),
 		 					"Tier: &6" + alliance.getStr(DAI.TIER),
 		 					"Balance: &6" + alliance.getStr(DAI.BALANCE),

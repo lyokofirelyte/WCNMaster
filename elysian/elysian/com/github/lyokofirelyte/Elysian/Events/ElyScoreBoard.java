@@ -16,13 +16,13 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Commands.ElyProtect;
-import com.github.lyokofirelyte.Elysian.MMO.MMO;
-import com.github.lyokofirelyte.Elysian.api.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
 public class ElyScoreBoard implements Listener, AutoRegister<ElyScoreBoard> {
 	
@@ -48,11 +48,7 @@ public class ElyScoreBoard implements Listener, AutoRegister<ElyScoreBoard> {
 			}
 			return;
 		}
-		
-		if (dp.getBool(DPI.IN_GAME)){
-			return;
-		}
-		
+
 		if (e.isCancelled() || (!dp.getBool(DPI.SCOREBOARD_TOGGLE) && !e.getReason().equals("required"))){
 			if (!dp.getBool(DPI.SCOREBOARD_TOGGLE)){
 				p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
@@ -95,24 +91,38 @@ public class ElyScoreBoard implements Listener, AutoRegister<ElyScoreBoard> {
 			}
 		}
 		
+		String training = dp.getStr(DPI.LAST_ELYSS_SKILL).equals("none") ? "Not training..." : dp.getStr(DPI.LAST_ELYSS_SKILL);
+		String toLevel = training.equals("Not training...") ? "Level 0" : rounds[2] + " till " + (dp.getLevel(ElySkill.valueOf(dp.getStr(DPI.LAST_ELYSS_SKILL).toUpperCase())) + 1);
+		String region = main.api.getInstance(ElyProtect.class).getType().isInAnyRegion(p.getLocation());
+		
+		if (dp.getBool(DPI.REGION_TOGGLE) && !region.equals(dp.getStr(DPI.LAST_REGION))){
+			dp.set(DPI.LAST_REGION, region);
+			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + p.getName() + " times 10 10 10");
+			if (main.api.getOnlineModules().containsKey("ALLIANCE_" + region)){
+				region = main.coloredAllianceName(region);
+			}
+			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), Utils.AS("title " + p.getName() + " title '" + region.substring(0, 1).toUpperCase() + region.substring(1) + "'"));
+			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), Utils.AS("title " + p.getName() + " subtitle '&a&oregion entered'"));
+		}
+		
 		String[] scoreNames = new String[]{
-				
+			
 			" ",
 			"&7" + p.getDisplayName(),
-			"&b" + getShortDate(),
+			"&3" + Bukkit.getOnlinePlayers().size() + " Online",
 			"  ",
-			"&5S: &c" + rounds[0],
-			"&eE: &c" + rounds[1],
-			"&4B: &c" + dp.getInt(MMO.VAMP_BAR) + "%",
+			"&5Shinies",
+			"&c" + rounds[0],
 			"   ",
-			"&3Online: &c" + Bukkit.getOnlinePlayers().size(),
-			"&3RG: &c" + ((ElyProtect) main.api.getInstance(ElyProtect.class)).isInAnyRegion(p.getLocation()),
+			"&eStored EXP",
+			"&c" + rounds[1],
 			"    ",
-			"&2TR: &c" + dp.getStr(DPI.LAST_ELYSS_SKILL),
-			"&2XL: &c" + rounds[2],
-			"&2FI: &c" + dp.getStr(DPI.LAST_ELYSS_KILL),
-			"&2TK: &c" + mobs,
-			"     "
+			"&3Region",
+			"&c" + region,
+			"     ",
+			"&2" + training,
+			"&c" + toLevel,
+			"      "
 		};
 		
 		List<Boolean> diff = new ArrayList<Boolean>();

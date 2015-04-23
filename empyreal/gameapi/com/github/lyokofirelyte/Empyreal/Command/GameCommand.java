@@ -12,7 +12,7 @@ public @interface GameCommand {
 	public String name() default "none";
 	public String desc() default "A Empyreal Command";
 	public String help() default "/emp ?";
-	public String perm() default "emp.member";
+	public String perm() default "wa.member";
 	public boolean player() default false;
 	public int max() default 9999;
 	public int min() default 0;

@@ -20,8 +20,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Elysian.api.ElyMarkkitItem;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyMarkkitItem;
 import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatClickEventType;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatExtra;
@@ -127,7 +127,7 @@ public class ElyCrate implements AutoRegister<ElyCrate>, Listener {
 		}
 	}
 
-	@DivCommand(aliases = {"key"}, perm = "wa.staff.mod", desc = "Get a crate key!", help = "/key <amount>", player = true)
+	@GameCommand(aliases = {"key"}, perm = "wa.staff.mod", desc = "Get a crate key!", help = "/key <amount>", player = true)
 	public void onKey(Player p, String[] args){
 		if(args.length == 0){
 			showOptions(p, 1);

@@ -4,6 +4,18 @@ public enum DPI {
 	
 	WCN_CONSOLE("WCN_CONSOLE"),
 	
+	/**
+	 * Last region the player was at.
+	 * @dataType String
+	 */
+	LAST_REGION("LAST_REGION"),
+	
+	/**
+	 * Determines if we should show region changes via the title system.
+	 * @dataType boolean
+	 */
+	REGION_TOGGLE("REGION_TOGGLE"),
+	
 	DANK("DANK"),
 	
 	/**

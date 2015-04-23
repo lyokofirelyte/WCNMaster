@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.Events.CountdownEndEvent;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
+import com.github.lyokofirelyte.Empyreal.Listener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 import com.github.lyokofirelyte.Empyreal.Utils.Utils;

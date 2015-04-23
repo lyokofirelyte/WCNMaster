@@ -29,13 +29,13 @@ import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRingFuel;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRingFuelSafe;
 import com.github.lyokofirelyte.Elysian.Gui.GuiRings;
-import com.github.lyokofirelyte.Elysian.api.RingsType;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Database.DRS;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityRing;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.RingsType;
 import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
@@ -52,7 +52,7 @@ public class ElyRings implements Listener, AutoRegister<ElyRings> {
 	}
 	
 	@SuppressWarnings("deprecation")
-	@DivCommand(aliases = {"rings"}, desc = "Elysian Ring Transport System Command", help = "/rings help", player = true, min = 1)
+	@GameCommand(aliases = {"rings"}, desc = "Elysian Ring Transport System Command", help = "/rings help", player = true, min = 2)
 	public void onRings(Player p, String[] args){
 		
 		args[1] = args[1].toLowerCase();
@@ -349,7 +349,7 @@ public class ElyRings implements Listener, AutoRegister<ElyRings> {
 	@EventHandler (priority = EventPriority.LOWEST)
 	public void onInteract(PlayerInteractEvent e){
 		
-		if (e.getAction() == Action.RIGHT_CLICK_BLOCK){
+		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock() != null){
 			
 			Vector v = e.getClickedBlock().getLocation().toVector();
 			String[] clickedLoc = (e.getClickedBlock().getWorld().getName() + " " + v.getBlockX() + " " + v.getBlockY() + " " + v.getBlockZ()).split(" ");

@@ -13,10 +13,10 @@ import org.bukkit.entity.Player;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.MMO.MMO;
 import com.github.lyokofirelyte.Elysian.MMO.Magics.SpellTasks;
-import com.github.lyokofirelyte.Elysian.api.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
 import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
 

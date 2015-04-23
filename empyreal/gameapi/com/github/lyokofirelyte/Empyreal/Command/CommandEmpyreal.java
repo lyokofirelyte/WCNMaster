@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
+import com.github.lyokofirelyte.Empyreal.Listener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
 import com.github.lyokofirelyte.Empyreal.Utils.Utils;
@@ -38,6 +38,11 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 	public void onEmpyreal(CommandSender sender, GamePlayer<?> gp, String[] args){
 		
 		String str = "";
+		String[] empLogo = new String[this.empLogo.length];
+		
+		for (int i = 0; i < empLogo.length; i++){
+			empLogo[i] = this.empLogo[i];
+		}
 		
 		for (String game : main.getServerSockets().keySet()){
 			str += str.equals("") ? game : ", " + game;
@@ -47,6 +52,33 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 		
 		for (String l : empLogo){
 			sender.sendMessage(Utils.AS(l));
+		}
+	}
+	
+	@GameCommand(aliases = { "creative" }, help = "/creative", desc = "Creative Command", player = true)
+	public void onCreative(Player p, String[] args){
+		if (!main.getServerName().equals("Creative")){
+			main.sendToServer(p.getName(), "Creative");
+		} else {
+			p.teleport(p.getWorld().getSpawnLocation());
+		}
+	}
+	
+	@GameCommand(aliases = { "game", "games" }, help = "/game", desc = "Game Command", player = true)
+	public void onGameServer(Player p, String[] args){
+		if (!main.getServerName().equals("GameServer")){
+			main.sendToServer(p.getName(), "GameServer");
+		} else {
+			p.teleport(p.getWorld().getSpawnLocation());
+		}
+	}
+	
+	@GameCommand(aliases = { "wa" }, help = "/wa", desc = "WA Command", player = true)
+	public void onWA(Player p, String[] args){
+		if (!main.getServerName().equals("wa")){
+			main.sendToServer(p.getName(), "wa");
+		} else {
+			p.performCommand("/s");
 		}
 	}
 	
@@ -78,9 +110,13 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 		Utils.s(cs, "Complete.");
 	}
 	
-	@GameCommand(aliases = { "s", "spawn", "hub", "lobby" }, help = "/spawn", desc = "Spawn Command", player = true, perm = "emp.member")
+	@GameCommand(aliases = { "hub", "lobby" }, help = "/hub", desc = "Spawn Command", player = true, perm = "emp.member")
 	public void onSpawn(Player p, GamePlayer<?> gp, String[] args){
-		p.teleport(p.getWorld().getSpawnLocation());
+		if (main.getServerName().equals("GameServer")){
+			p.teleport(p.getWorld().getSpawnLocation());
+		} else {
+			main.sendToServer(p.getName(), "GameServer");
+		}
 	}
 	
 	@GameCommand(aliases = { "setspawn" }, help = "/setspawn", desc = "Set Spawn Command", player = true, perm = "gameserver.staff")
@@ -89,10 +125,10 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 		gp.s("Default world spawn set.");
 	}
 	
-	@GameCommand(aliases = { "o" }, help = "/o <msg>", desc = "Staff Chat", player = true)
+	@GameCommand(aliases = { "o" }, help = "/o <msg>", desc = "Staff Chat", player = true, perm = "wa.staff.intern")
 	public void onO(Player p, GamePlayer<?> gp, String[] args){
 		
-		if (p.isOp() || gp.getPerms().contains("gameserver.staff")){
+		if (p.isOp() || gp.getPerms().contains("gameserver.staff") || gp.getPerms().contains("wa.staff.intern")){
 			
 			if (!main.getServerName().equals("GameServer")){
 				main.sendToSocket("GameServer", Handler.FORWARD, "O_CHAT", "&7" + p.getDisplayName() + "&f: &c&o" + Utils.createString(args, 0));

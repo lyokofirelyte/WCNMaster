@@ -1,5 +1,6 @@
 package com.github.lyokofirelyte.GameServer.Listener;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,11 +35,13 @@ public class GameServerSocketMessageListener implements AutoRegister<GameServerS
 	@EventHandler
 	public void onSocketMessage(SocketMessageEvent e){
 		
-		Handler h = Handler.valueOf(e.getReason().toUpperCase());
-		SocketHandler handler = h.getHandler();
-		
-		if (handler.checkConditions(main)){
-			h.run(e);
+		if (Handler.containsValue(e.getReason().toUpperCase())){
+			Handler h = Handler.valueOf(e.getReason().toUpperCase());
+			SocketHandler handler = h.getHandler();
+			
+			if (handler.checkConditions(main)){
+				h.run(e);
+			}
 		}
 	}
 	
@@ -195,7 +198,12 @@ public class GameServerSocketMessageListener implements AutoRegister<GameServerS
 			e = event;
 			
 			try {
-				getHandler().getClass().getMethod("start").invoke(getHandler(), event.getMessage());
+				for (Method m : getHandler().getClass().getMethods()){
+					if (m.getName().equals("start")){
+						m.invoke(getHandler(), event.getMessage());
+						break;
+					}
+				}
 			} catch (Exception e){
 				System.out.println("Socket Handler " + name() + " was unable to pass!");
 				e.printStackTrace();

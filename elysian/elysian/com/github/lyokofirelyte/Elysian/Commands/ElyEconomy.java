@@ -13,7 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
@@ -31,7 +31,7 @@ public class ElyEconomy implements AutoRegister<ElyEconomy> {
 		 main = i;
 	 }
 	 
-	 @DivCommand(aliases = {"pay"}, desc = "Pay someone money!", help = "/pay <player> <amount>", player = true, min = 2)
+	 @GameCommand(aliases = {"pay"}, desc = "Pay someone money!", help = "/pay <player> <amount>", player = true, min = 2)
 	 public void onPay(Player p, String[] args){
 		 
 		 DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -67,7 +67,7 @@ public class ElyEconomy implements AutoRegister<ElyEconomy> {
 		 }
 	 }
 	 
-	 @DivCommand(aliases = {"balance", "bal"}, desc = "Ely Bal Command", help = "/balance <set, take, give, top> [player] [amount]", player = true, min = 0, max = 3)
+	 @GameCommand(aliases = {"balance", "bal"}, desc = "Ely Bal Command", help = "/balance <set, take, give, top> [player] [amount]", player = true, min = 0, max = 3)
 	 public void onBal(Player p, String[] args){
 		 
 		 if (args.length == 0){

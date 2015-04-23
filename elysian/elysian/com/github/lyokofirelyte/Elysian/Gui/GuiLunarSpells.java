@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Gui.DivGui;
 
 public class GuiLunarSpells extends DivGui {

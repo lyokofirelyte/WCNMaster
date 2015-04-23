@@ -1,10 +1,9 @@
-package com.github.lyokofirelyte.Elysian.api;
+package com.github.lyokofirelyte.Empyreal.Elysian;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
 
 public class ElyMarkkitItem {
 	Material material;

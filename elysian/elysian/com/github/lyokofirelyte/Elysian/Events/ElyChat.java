@@ -21,19 +21,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Elysian.api.ElyChannel;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyChannel;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatClickEventType;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatExtra;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatHoverEventType;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatMessage;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONManager.JSONClickType;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
+import com.github.lyokofirelyte.Empyreal.Listener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Utils.TitleExtractor;
 import com.google.common.collect.ImmutableMap;
@@ -64,7 +64,7 @@ public class ElyChat implements Listener, AutoRegister<ElyChat> {
 		return new String[]{s1, s2};
 	}
 	
-	@DivCommand(name = "PM", aliases = {"tell", "pm", "msg", "message", "t", "r"}, desc = "Private Message Command", help = "/tell <player> <message>", min = 1, player = false)
+	@GameCommand(name = "PM", aliases = {"tell", "pm", "msg", "message", "t", "r"}, desc = "Private Message Command", help = "/tell <player> <message>", min = 1, player = false)
 	public void onPrivateMessage(CommandSender cs, String[] args, String cmd){
 
 		DivinityStorageModule dp = cs instanceof Player ? main.api.getDivPlayer((Player) cs) : main.getDivSystem();
@@ -128,7 +128,7 @@ public class ElyChat implements Listener, AutoRegister<ElyChat> {
 		}
 	}
 	
-	@DivCommand(perm = "wa.staff.mod2", aliases = {"filter"}, desc = "Chat & Command Filter Command", help = "/filter <word> <replacement>. If it already has a filter it will be removed.", player = false, min = 2)
+	@GameCommand(perm = "wa.staff.mod2", aliases = {"filter"}, desc = "Chat & Command Filter Command", help = "/filter <word> <replacement>. If it already has a filter it will be removed.", player = false, min = 2)
 	public void onFilter(CommandSender cs, String[] args){
 		
 		DivinitySystem system = main.api.getDivSystem();
@@ -154,7 +154,7 @@ public class ElyChat implements Listener, AutoRegister<ElyChat> {
 		}
 	}
 	
-	@DivCommand(aliases = {"qc", "quickchat"}, desc = "QuickChat Command", help = "/qc <option>, /qc list", player = true)
+	@GameCommand(aliases = {"qc", "quickchat"}, desc = "QuickChat Command", help = "/qc <option>, /qc list", player = true)
 	public void onQC(Player p, String[] args){
 		
 		String msg = "";
@@ -296,6 +296,7 @@ public class ElyChat implements Listener, AutoRegister<ElyChat> {
 		if (!main.api.getDivPlayer(e.getPlayer()).getBool(DPI.MUTED)){
 			try{
 				main.api.sendToSocket("GameServer", Handler.GLOBAL_CHAT, "&7" + e.getPlayer().getDisplayName() + "&f: " + e.getMessage());
+				main.api.sendToSocket("GameServer", Handler.FORWARD_EXCLUDE, "GLOBAL_CHAT", "&7" + e.getPlayer().getDisplayName() + "&f: " + e.getMessage(), "wa");
 			}catch(Exception ex){}
 			
 			new Thread(new Runnable(){ public void run(){

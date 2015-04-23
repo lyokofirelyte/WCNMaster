@@ -38,14 +38,16 @@ import org.bukkit.util.Vector;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Commands.ElyProtect;
 import com.github.lyokofirelyte.Elysian.MMO.Magics.SpellTasks;
-import com.github.lyokofirelyte.Elysian.api.ElyChannel;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyChannel;
 import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
+import com.github.lyokofirelyte.Empyreal.Utils.Utils;
 
 public class ElyMobs implements Listener, AutoRegister<ElyMobs> {
 	
@@ -384,7 +386,7 @@ public class ElyMobs implements Listener, AutoRegister<ElyMobs> {
 		Random rand = new Random();
 		List<String> perms = dp.getList(DPI.PERMS);
 		
-		int mult = perms.contains("wa.rank.emperor") ? 3 : perms.contains("wa.rank.disctrictman") ? 2 : 1;
+		int mult = perms.contains("wa.rank.emperor") ? 3 : perms.contains("wa.rank.districtman") ? 2 : 1;
 		int randomMoneyAmount = rand.nextInt(120) + 7;
 		int randomNumber = rand.nextInt(4) + 1;
 		int superRandom = rand.nextInt(1000);
@@ -393,7 +395,22 @@ public class ElyMobs implements Listener, AutoRegister<ElyMobs> {
 		dp.set(DPI.MOB_MONEY, dp.getInt(DPI.MOB_MONEY) + (superRandom == 500 ? 1000 : 0));
 	}
 	
-	@DivCommand(aliases = {"exp", "xp"}, help = "/exp <take, store, send> <amount> <player (optional)>", desc = "Elysian EXP Storing System", player = true)
+	@GameCommand(aliases = { "payall" }, help = "/payall <amt>", desc = "Pay everyone money!", perm = "wa.staff.admin")
+	public void onPayAll(Player p, String[] args){
+		
+		if (Utils.isInteger(args[0])){
+			for (DivinityStorageModule m : main.api.getOnlineModules().values()){
+				if (m.getTable().equals("users")){
+					m.set(DPI.BALANCE, m.getInt(DPI.BALANCE) + Integer.parseInt(args[0]));
+				}
+			}
+			main.s(p, "Success!");
+		} else {
+			main.s(p, "&c&oThat's.. not... nevermind.");
+		}
+	}
+	
+	@GameCommand(aliases = {"exp", "xp"}, help = "/exp <take, store, send> <amount> <player (optional)>", desc = "Elysian EXP Storing System", player = true)
 	public void onExp(Player p, String[] args){
 		
 		DivinityPlayer dp = main.api.getDivPlayer(p);
@@ -477,7 +494,7 @@ public class ElyMobs implements Listener, AutoRegister<ElyMobs> {
 		}
 	}
 	
-	@DivCommand(aliases = {"duel", "pvp"}, help = "/pvp on, /pvp off", desc = "Elysian PVP System", player = true, min = 1)
+	@GameCommand(aliases = {"duel", "pvp"}, help = "/pvp on, /pvp off", desc = "Elysian PVP System", player = true, min = 1)
 	public void onDuel(Player p, String[] args){
 		
 		ElyProtect pro = (ElyProtect) main.api.getInstance(ElyProtect.class);

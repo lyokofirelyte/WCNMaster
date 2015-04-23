@@ -13,7 +13,7 @@ import lombok.Getter;
 import org.bukkit.command.CommandSender;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
@@ -90,7 +90,7 @@ public class ElyPerms implements AutoRegister<ElyPerms> {
 		 }
 	 }
 	 
-	 @DivCommand(aliases = {"perm"}, desc = "Modify Permissions and Groups", help = "/perm <add, groupadd, remove, groupremove, view, list> <player> <perm>, /perm view <player> all", player = false, min = 1)
+	 @GameCommand(aliases = {"perm"}, desc = "Modify Permissions and Groups", help = "/perm <add, groupadd, remove, groupremove, view, list> <player> <perm>, /perm view <player> all", player = false, min = 1)
 	 public void onPerms(CommandSender cs, String[] args){
 		 
 		 if (cs.isOp()){

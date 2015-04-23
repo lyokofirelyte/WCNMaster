@@ -20,7 +20,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
@@ -37,7 +37,7 @@ public class ElySpaceship implements Listener, AutoRegister<ElySpaceship> {
 	}
 
 	@SuppressWarnings({ "deprecation", "unchecked" })
-	@DivCommand(aliases = {"ss"}, perm = "wa.staff.admin", help = "/ss", desc = "SPAAAACCEEE (ship)")
+	@GameCommand(aliases = {"ss"}, perm = "wa.staff.admin", help = "/ss", desc = "SPAAAACCEEE (ship)")
 	public void onSS(final Player p, final String[] args){
 		
 		final DivinityPlayer dp = main.api.getDivPlayer(p);

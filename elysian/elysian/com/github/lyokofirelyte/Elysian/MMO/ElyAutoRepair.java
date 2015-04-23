@@ -23,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
@@ -83,12 +83,12 @@ public class ElyAutoRepair implements AutoRegister<ElyAutoRepair>, Listener {
 		}
 	}
 	
-	@DivCommand(perm = "wa.staff.admin", aliases = {"dur"}, desc = "Sets durability to 50 for debugging", help = "/dur", player = true)
+	@GameCommand(perm = "wa.staff.admin", aliases = {"dur"}, desc = "Sets durability to 50 for debugging", help = "/dur", player = true)
 	public void onDebug(Player p, String[] args){
 		p.getItemInHand().setDurability((short)(p.getItemInHand().getType().getMaxDurability() - 30));
 	}
 	
-	@DivCommand(perm = "wa.rank.dweller", aliases = {"repair", "rep"}, desc = "Auto-Repair Configuration", help = "/repair", player = true)
+	@GameCommand(perm = "wa.rank.dweller", aliases = {"repair", "rep"}, desc = "Auto-Repair Configuration", help = "/repair", player = true)
 	public void onRepair(Player p, String[] args){
 		
 		switch (p.getWorld().getName()){

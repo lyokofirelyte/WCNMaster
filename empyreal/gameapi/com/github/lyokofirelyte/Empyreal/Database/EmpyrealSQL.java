@@ -1,13 +1,18 @@
 package com.github.lyokofirelyte.Empyreal.Database;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import lombok.Getter;
@@ -16,43 +21,138 @@ import lombok.SneakyThrows;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.JSONMap;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketObject;
+import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Modules.DefaultPlayer;
 
-public class EmpyrealSQL {
+public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 
+	@Getter
+	private EmpyrealSQL type = this;
+	
 	private Empyreal main;
 	
 	@Getter @Setter
 	private Connection conn;
 	
-	static final String WRITE_OBJECT_SQL = "INSERT INTO java_objects(uuid, object_value) VALUES (?, ?)";
-	static final String READ_OBJECT_SQL = "SELECT object_value FROM java_objects WHERE id = ?";
-	
 	public EmpyrealSQL(Empyreal i){
 		main = i;
-		initDatabase("../wa.db");
+		new File("../db").mkdirs();
+		initDatabase("../db/" + i.getServerName() + ".db");
 	}
 	
 	@SneakyThrows
 	public void saveMapToDatabase(String table, JSONMap<String, Object> dp){
-		for (Object thing : dp.keySet()){
-			write((String) thing);
+		
+		if (!dp.containsKey("uuid")){
+			dp.set("uuid", dp.getStr("name"));
+		}
+		
+		if (dp.getStr("uuid").equals("none") && dp.getStr("name").equals("none")){
+			return;
+		}
+
+		String vals = "";
+		String val = "";
+		
+		Map<String, String> toChange = new HashMap<String, String>();
+		
+		for (String key : dp.keySet()){
+			if (!hasColumn(table, key)){
+				conn.createStatement().executeUpdate("alter table " + table + " add " + key + ";");
+			}
+			vals += vals.equals("") ? "?" : ", ?";
+			if (dp.getStr(key).equals("true") || dp.getStr(key).equals("false")){
+				toChange.put(key, dp.getStr(key) + "_BOOLEAN_");
+			}
+		}
+		
+		for (String thing : toChange.keySet()){
+			dp.set(thing, toChange.get(thing));
+		}
+		
+		ResultSet userCheck = conn.createStatement().executeQuery("select count(*) from " + table + " where uuid = '" + dp.getStr("uuid") + "';");
+		userCheck.next();
+		
+		ResultSet genCheck = conn.createStatement().executeQuery("select * from " + table + ";");
+		genCheck.next();
+		
+		ResultSetMetaData genMeta = genCheck.getMetaData();
+		int colAmt = new Integer(genMeta.getColumnCount());
+		List<String> colNames = new ArrayList<String>();
+		
+		for (int i = 1; i <= colAmt; i++){
+			colNames.add(genMeta.getColumnName(i));
+		}
+		
+		if (userCheck.getInt(1) == 0){
+			
+			List<String> keys = new ArrayList<String>();
+			
+			for (String col : colNames){
+				try {
+					if (!dp.containsKey(col)){
+						vals += ", ?";
+						dp.set(col, "none");
+					}
+					keys.add(col);
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+			
+			for (String key : keys){
+				val += val.equals("") ? key : ", " + key;
+			}
+			
+			PreparedStatement pst = conn.prepareStatement("insert into " + table + " (" + val + ") values (" + vals + ");");
+			
+			for (int i = 1; i <= keys.size(); i++){
+				pst.setObject(i, dp.get(keys.get(i-1)));
+			}
+			
+			System.out.println(pst.executeUpdate() + " @ " + dp.get("name"));
+			pst.close();
+			
+		} else {
+			
+			vals = "";
+			
+			for (String col : colNames){
+				vals += vals.equals("") ? col + " = ?" : ", " + col + " = ?";
+			}
+			
+			PreparedStatement pst = conn.prepareStatement("update " + table + " set " + vals + " where uuid = '" + dp.getStr("uuid") + "';");
+			
+			for (int i = 1; i <= colNames.size(); i++){
+				pst.setObject(i, dp.get(colNames.get(i-1)));
+			}
+			
+			pst.close();
 		}
 	}
 	
 	@SneakyThrows
 	public JSONMap<String, Object> getMapFromDatabase(String table, String uuid){
 		
-		JSONMap map = new JSONMap<String, Object>();
+		JSONMap<String, Object> map = new JSONMap<String, Object>();
 		ResultSet rs = getResult(table, "*", "uuid = '" + uuid + "'");
 		ResultSetMetaData rsm = rs.getMetaData();
-		int i = 1;
+		rs.next();
 		
-		while (rs.next()){
-			map.set(rsm.getColumnName(i), rs.getObject(i));
-			i++;
+		Object obj = null;
+		
+		for (int i = 1; i <= rsm.getColumnCount(); i++){
+			obj = rs.getObject(i);
+			if (obj instanceof String){
+				if (((String) obj).endsWith("_BOOLEAN_")){
+					System.out.println(((String) obj).replace("_BOOLEAN_", ""));
+					map.set(rsm.getColumnLabel(i), obj != null ? ((String) obj).replace("_BOOLEAN_", "") : "none");
+				} else {
+					map.set(rsm.getColumnLabel(i), obj != null ? obj : "none");
+				}
+			} else {
+				map.set(rsm.getColumnLabel(i), obj != null ? obj : "none");
+			}
 		}
 		
 		return map;
@@ -78,7 +178,6 @@ public class EmpyrealSQL {
 	public ResultSet getResult(String table, String value, String where){
 		Statement stat = conn.createStatement();
 		ResultSet set = where.equals("ALL") ? stat.executeQuery("select " + value + " from " + table + ";") : stat.executeQuery("select " + value + " from " + table + " where " + where + ";");
-		stat.close();
 		return set;
 	}
 	
@@ -88,13 +187,6 @@ public class EmpyrealSQL {
 		if (conn == null){
 	        Class.forName("org.sqlite.JDBC");
 	        conn = DriverManager.getConnection("jdbc:sqlite:" + pathToDatabase);
-		}
-		
-		if (main.getServerName().equals("GameServer")){
-	        write("create table if not exists users (uuid VARCHAR(255), name VARCHAR(255));");
-	        injectEnum(DPI.class, "users");
-	        injectEnum(DAI.class, "alliances", "NAME");
-	        injectEnum(Arrays.asList(DRI.class, DRF.class), "regions", "NAME");
 		}
 	}
 	
@@ -139,37 +231,42 @@ public class EmpyrealSQL {
 	
 	@SneakyThrows
 	public void injectData(String tableName, String column, String data, String where){
-		write("update " + tableName + " set " + column + "=" + data + " where " + where + ";");
-	}
-	
-	@SneakyThrows
-	public boolean hasTable(String tableName){
-		DatabaseMetaData md = conn.getMetaData();
-		ResultSet rs = md.getColumns(null, null, tableName, null);
-		return rs.next();
-	}
-	
-	@SneakyThrows
-	public boolean hasColumn(String tableName, String rowName){
-		DatabaseMetaData md = conn.getMetaData();
-		ResultSet rs = md.getColumns(null, null, tableName, rowName);
-		return rs.next();
-	}
-	
-	private boolean isGameServer(){
-		return main.getServerName().equals("GameServer");
-	}
-	
-	@SneakyThrows
-	public void write(String data){
-		
-		Statement stat = conn.createStatement();
-		
-		if (!isGameServer()){
-			main.sendToSocket("GameServer", Handler.SQL_WRITE, data);
+		if (!hasTable(tableName)){
+			write("create table if not exists " + tableName + " (name VARCHAR(1));");
+		}
+		if (!hasColumn(tableName, column)){
+			write("alter table " + tableName + " add " + column + " VARCHAR(255);");
 		} else {
-			stat = stat.isClosed() ? conn.createStatement() : stat;
+			write("update " + tableName + " set " + column + "=" + data + " where " + where + ";");
+		}
+	}
+	
+	public boolean hasTable(String tableName){
+		try {
+			DatabaseMetaData md = conn.getMetaData();
+			ResultSet rs = md.getColumns(null, null, tableName, null);
+			return rs.next();
+		} catch (Exception e){
+			return false;
+		}
+	}
+	
+	public boolean hasColumn(String tableName, String rowName){
+		try {
+			DatabaseMetaData md = conn.getMetaData();
+			ResultSet rs = md.getColumns(null, null, tableName, rowName);
+			return rs.next();
+		} catch (Exception e){
+			return false;
+		}
+	}
+	
+	public void write(String data){
+		try {
+			Statement stat = conn.createStatement();
 			stat.executeUpdate(data);
+		} catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 }

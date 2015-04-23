@@ -60,13 +60,13 @@ import com.github.lyokofirelyte.Elysian.MMO.Abilities.SuperBreaker;
 import com.github.lyokofirelyte.Elysian.MMO.Abilities.TreeFeller;
 import com.github.lyokofirelyte.Elysian.MMO.Magics.SpellEvents;
 import com.github.lyokofirelyte.Elysian.MMO.Magics.SpellTasks;
-import com.github.lyokofirelyte.Elysian.api.ElySkill;
 import com.github.lyokofirelyte.Empyreal.APIScheduler;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatExtra;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatHoverEventType;
@@ -482,7 +482,7 @@ public class ElyMMO extends THashMap<Material, MXP> implements Listener, AutoReg
 		}
 	}
 	
-	@DivCommand(name = "Stats", aliases = {"stats", "gstats"}, desc = "MMO Stat Viewer", help = "/stats <player> or /gstats <skill/total>", player = true, min = 1)
+	@GameCommand(name = "Stats", aliases = {"stats", "gstats"}, desc = "MMO Stat Viewer", help = "/stats <player> or /gstats <skill/total>", player = true, min = 1)
 	public void onStats(Player p, String[] args, String cmd){
 		
 		if (cmd.equals("gstats")){

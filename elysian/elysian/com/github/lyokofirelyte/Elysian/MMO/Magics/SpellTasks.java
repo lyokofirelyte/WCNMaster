@@ -16,7 +16,7 @@ import org.bukkit.entity.SmallFireball;
 
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Events.SkillExpGainEvent;
-import com.github.lyokofirelyte.Elysian.api.ElySkill;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElySkill;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.Empyreal.Utils.ParticleEffect;
 

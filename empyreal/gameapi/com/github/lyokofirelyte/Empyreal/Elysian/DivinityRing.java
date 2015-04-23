@@ -10,8 +10,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.Database.DRS;
 import com.github.lyokofirelyte.Empyreal.Database.EmpyrealSQL;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketObject;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
 
 public class DivinityRing extends DivinityStorageModule {
 	
@@ -71,12 +69,7 @@ public class DivinityRing extends DivinityStorageModule {
 	}
 	
 	public void save(){
-		if (!api.getServerName().equals("GameServer")){
-			SocketObject obj = new SocketObject(this, DivinityStorageModule.class, Handler.SAVE_OBJECT_TO_SQL, api.getServerName());
-			api.sendObjectToSocket("GameServer", obj);
-		} else {
-			api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("rings", this);
-		}
+		api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("rings", this);
 	}
 	
 	public void transfer(){

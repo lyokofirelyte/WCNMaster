@@ -8,11 +8,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import com.github.lyokofirelyte.Empyreal.Events.SocketMessageEvent;
+import com.github.lyokofirelyte.Empyreal.Listener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.github.lyokofirelyte.GameServer.GameServer;
-import com.github.lyokofirelyte.GameServer.Listener.GameServerSocketMessageListener.Handler;
 
 /**
  * Socket listener for when we can't use Bungee's plugin listener channel.
@@ -25,14 +26,16 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 	private BufferedReader in;
 	private PrintWriter out;
 	int port = 24000;
+	private boolean yes = false;
 	
 	@Getter
 	private InnerSignListener type = this;
 		
 	public InnerSignListener(GameServer i){
-		
 		main = i;
-		
+	}
+	
+	public void start(){
 		new Thread(new Runnable(){
 			public void run(){
 				try {
@@ -52,15 +55,11 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 		}).start();
 	}
 	
-	public InnerSignListener(GameServer main, Socket s){
-		this.main = main;
-		this.socket = s;
-	}
-		
+	@SneakyThrows	
 	public void run(){
 		
 		String serverName = "";
-			
+		
 		try {
 		    	
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -71,7 +70,6 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 			while ((inText = in.readLine()) != null){
 					
 				serverName = serverName.equals("") ? new String(inText) : serverName;
-					
 				if (Handler.containsValue(inText)){
 					new SocketMessageEvent(serverName, "GameServer", inText, in.readLine(), in).fire();
 				} else if (inText.equalsIgnoreCase("assign_socket")){
@@ -88,5 +86,10 @@ public class InnerSignListener implements AutoRegister<InnerSignListener>, Runna
 				socket.close();
 			}  catch (IOException e){}
 		}
+	}
+	
+	public InnerSignListener(GameServer main, Socket s){
+		this.main = main;
+		this.socket = s;
 	}
 }

@@ -1,13 +1,7 @@
 package com.github.lyokofirelyte.Empyreal.Database;
 
 public enum DAI {
-	
-	/**
-	 * The actual name of the alliance.
-	 * @dataType String
-	 */
-	NAME("NAME"),
-	
+
 	/**
 	 * The tier (starting at 0) of the alliance.
 	 * @dataType int

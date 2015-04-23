@@ -37,8 +37,8 @@ public class DivinityUtilsModule {
 		api = i;
 	}
 	
-	public static String h = "&3Elysian &7❅ &b";
-	private static String h2 = "&7❅ &b";
+	public static String h = "&3\u2744 &b";
+	private static String h2 = "&3\u2744  &b";
 	
 	public static List<String> AS(List<String> s){
 		

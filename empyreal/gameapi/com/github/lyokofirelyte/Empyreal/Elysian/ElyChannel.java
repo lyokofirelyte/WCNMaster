@@ -1,11 +1,10 @@
-package com.github.lyokofirelyte.Elysian.api;
+package com.github.lyokofirelyte.Empyreal.Elysian;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
-import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 
 public enum ElyChannel {
 

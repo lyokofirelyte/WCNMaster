@@ -12,8 +12,7 @@ public class CountdownEndEvent extends Event implements Cancellable {
 	@Getter @Setter
 	private boolean cancelled = false;
 	
-	@Getter @Setter
-	private HandlerList handlers;
+    private static final HandlerList handlers = new HandlerList();
 	
 	@Getter @Setter
 	private int id;
@@ -24,5 +23,14 @@ public class CountdownEndEvent extends Event implements Cancellable {
 	
 	public CountdownEndEvent(String integer){
 		setId(Integer.parseInt(integer));
+	}
+	
+	@Override
+	public HandlerList getHandlers(){
+		return handlers;
+	}
+	
+	public static HandlerList getHandlerList(){
+		return handlers;
 	}
 }

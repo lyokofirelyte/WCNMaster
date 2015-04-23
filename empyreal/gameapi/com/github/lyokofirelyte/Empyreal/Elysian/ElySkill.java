@@ -1,4 +1,4 @@
-package com.github.lyokofirelyte.Elysian.api;
+package com.github.lyokofirelyte.Empyreal.Elysian;
 
 public enum ElySkill {
 	

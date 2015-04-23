@@ -2,5 +2,5 @@ name: Elysian
 main: com.github.lyokofirelyte.Elysian.Elysian
 author: lyokofirelyte
 prefix: Elysian
-depend: [Spectral, Divinity, WorldEdit]
+depend: [Empyreal, WorldEdit]
 version: 1

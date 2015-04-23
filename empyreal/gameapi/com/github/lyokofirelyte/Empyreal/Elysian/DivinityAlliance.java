@@ -6,8 +6,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
 import com.github.lyokofirelyte.Empyreal.Database.EmpyrealSQL;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketMessageListener.Handler;
-import com.github.lyokofirelyte.Empyreal.Listener.SocketObject;
 
 public class DivinityAlliance extends DivinityStorageModule {
 	
@@ -19,13 +17,9 @@ public class DivinityAlliance extends DivinityStorageModule {
 		return api.getOnlineModules().containsKey("ALLIANCE_" + getName());
 	}
 	
+	@Override
 	public void save(){
-		if (!api.getServerName().equals("GameServer")){
-			SocketObject obj = new SocketObject(this, DivinityStorageModule.class, Handler.SAVE_OBJECT_TO_SQL, api.getServerName());
-			api.sendObjectToSocket("GameServer", obj);
-		} else {
-			api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("alliances", this);
-		}
+		api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("alliances", this);
 	}
 	
 	public void transfer(){

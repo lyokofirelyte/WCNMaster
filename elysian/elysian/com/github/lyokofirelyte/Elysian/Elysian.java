@@ -26,14 +26,16 @@ import com.github.lyokofirelyte.Elysian.Commands.ElyProxy;
 import com.github.lyokofirelyte.Elysian.Events.DivinityPluginMessageEvent;
 import com.github.lyokofirelyte.Elysian.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Gui.GuiCloset;
-import com.github.lyokofirelyte.Elysian.api.ElyTask;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
-import com.github.lyokofirelyte.Empyreal.Command.DivCommand;
+import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DAI;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Database.EmpyrealSQL;
+import com.github.lyokofirelyte.Empyreal.Elysian.DivinityAlliance;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinitySystem;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
+import com.github.lyokofirelyte.Empyreal.Elysian.ElyTask;
 import com.github.lyokofirelyte.Empyreal.JSON.JSONChatMessage;
 import com.github.lyokofirelyte.Empyreal.Modules.GameModule;
 import com.github.lyokofirelyte.Empyreal.Modules.GamePlayer;
@@ -68,7 +70,16 @@ public class Elysian extends JavaPlugin implements GameModule {
 	public void onEnable(){
 		
 		gameAPI = (Empyreal) Bukkit.getPluginManager().getPlugin("Empyreal");
+		api = gameAPI;
 		gameAPI.registerModule(this);
+		
+		EmpyrealSQL sql = api.getInstance(EmpyrealSQL.class).getType();
+		sql.write("create table if not exists users (uuid VARCHAR(255), name VARCHAR(255));");
+		sql.write("create table if not exists alliances (uuid VARCHAR(255), name VARCHAR(255));");
+		sql.write("create table if not exists rings (uuid VARCHAR(255), name VARCHAR(255));");
+		sql.write("create table if not exists regions (uuid VARCHAR(255), name VARCHAR(255));");
+		sql.write("create table if not exists system (uuid VARCHAR(255), name VARCHAR(255));");
+		
 		setup = new ElySetup(this);
 		setup.start();
 		getServer().getMessenger().registerIncomingPluginChannel(api, "BungeeCord", (ElyProxy) api.getInstance(ElyProxy.class));
@@ -81,12 +92,20 @@ public class Elysian extends JavaPlugin implements GameModule {
 	@Override
 	public void onDisable(){
 		
+		long currTime = new Long(System.currentTimeMillis());
+		int i = 1;
+		
 		for (DivinityStorageModule dp : api.getOnlineModules().values()){
-			dp.set(DPI.DIS_ENTITY, "none");
-			dp.set(DPI.IS_DIS, false);
+			if (dp.getTable().equals("users")){
+				dp.set(DPI.DIS_ENTITY, "none");
+				dp.set(DPI.IS_DIS, false);
+			}
 			dp.save();
+			System.out.println("SAVE [" + dp.getTable() + "] " + dp.getName() + " (" + i + "/" + api.getOnlineModules().size() + ")");
+			i++;
 		}
 		
+		System.out.println("Save Complete @ " + ((System.currentTimeMillis() - currTime)/1000) + " seconds");
 		Bukkit.getScheduler().cancelTasks(this);
 	}
 	
@@ -132,16 +151,22 @@ public class Elysian extends JavaPlugin implements GameModule {
 	}
 	
 	public String coloredAllianceName(String alliance){
-		String name = api.getDivAlliance(alliance).getStr(DAI.NAME);
+		String name = api.getDivAlliance(alliance).getName();
 		String p1 = api.getDivAlliance(alliance).getStr(DAI.COLOR_1);
 		String p2 = api.getDivAlliance(alliance).getStr(DAI.COLOR_2);
 		return p1 + name.substring(0, name.length()/2) + p2 + name.substring(name.length()/2);
 	}
 	
+	public String coloredAllianceName(DivinityAlliance alliance){
+		String p1 = alliance.getStr(DAI.COLOR_1);
+		String p2 = alliance.getStr(DAI.COLOR_2);
+		return p1 + alliance.getName().substring(0, alliance.getName().length()/2) + p2 + alliance.getName().substring(alliance.getName().length()/2);
+	}
+	
 	public String help(String alias, Object o){
 		for (Method method : o.getClass().getMethods()) {
-			if (method.getAnnotation(DivCommand.class) != null){
-				DivCommand anno = method.getAnnotation(DivCommand.class);
+			if (method.getAnnotation(GameCommand.class) != null){
+				GameCommand anno = method.getAnnotation(GameCommand.class);
 				if (anno.aliases()[0].equals(alias)){
 					return anno.help();
 				}
