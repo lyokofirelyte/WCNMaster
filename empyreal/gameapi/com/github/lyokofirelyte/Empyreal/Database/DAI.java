@@ -51,7 +51,25 @@ public enum DAI {
 	 * @dataType String
 	 * @outputExample 10 50 0
 	 */
-	CENTER("CENTER");
+	CENTER("CENTER"),
+	
+	/**
+	 * The url of the alliance that displays on the website
+	 * @dataType String
+	 */
+	BG_URL("BG_URL"),
+	
+	/**
+	 * The style of the alliance
+	 * @dataType String
+	 */
+	STYLE("STYLE"),
+	
+	/**
+	 * The url of the alliance header on their private alliance page
+	 * @dataType String
+	 */
+	HEADER_URL("HEADER_URL");
 
 	DAI(String info){
 		this.info = info;

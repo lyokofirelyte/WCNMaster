@@ -79,7 +79,8 @@ public class Elysian extends JavaPlugin implements GameModule {
 		sql.write("create table if not exists rings (uuid VARCHAR(255), name VARCHAR(255));");
 		sql.write("create table if not exists regions (uuid VARCHAR(255), name VARCHAR(255));");
 		sql.write("create table if not exists system (uuid VARCHAR(255), name VARCHAR(255));");
-		
+		sql.write("create table if not exists markkit (name VARCHAR(255));");
+
 		setup = new ElySetup(this);
 		setup.start();
 		getServer().getMessenger().registerIncomingPluginChannel(api, "BungeeCord", (ElyProxy) api.getInstance(ElyProxy.class));

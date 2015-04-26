@@ -1,76 +1,107 @@
 package com.github.lyokofirelyte.Empyreal.Elysian;
 
+import java.sql.ResultSet;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
+import com.github.lyokofirelyte.Empyreal.Database.EmpyrealSQL;
 
 public class ElyMarkkitItem {
+	
+	@Getter @Setter
 	Material material;
+	
+	@Getter @Setter
 	int damage;
+	
+	@Getter @Setter
+	int id;
+	
+	@Getter @Setter
+	String name;
+	
+	@Getter @Setter
 	public Empyreal api;
+	
+	@Getter @Setter
 	private DivinitySystem system;
 
 	public ElyMarkkitItem(Empyreal i, Material mat, int data){
-		material = mat;
-		damage = data;
-		api = i;
-		system = api.getDivSystem();
+		setMaterial(mat);
+		setDamage(data);
+		setId(mat.getId());
+		setApi(i);
+		setSystem(api.getDivSystem());
+		setName(getSignName());
 	}
 	
+	@SneakyThrows
 	public ElyMarkkitItem(Empyreal i, String signname){
-		api = i;
-		system = api.getDivSystem();
-		material = Material.getMaterial(system.getMarkkit().getInt("Items." + signname + ".ID"));
-		damage = system.getMarkkit().getInt("Items." + signname + ".Damage");
+		setApi(i);
+		setSystem(api.getDivSystem());
+		ResultSet id = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "id", "name = '" + signname + "'");
+		id.next();
+		setMaterial(Material.getMaterial(id.getInt(1)));
+		ResultSet dmg = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "damage", "name = '" + signname + "'");
+		dmg.next();
+		setDamage(dmg.getInt(1));
+		setId(Material.getMaterial(id.getInt(1)).getId());
+		setName(signname);
 	}
 	
-	public Material getMaterial(){
-		return material;
-	}
-	
-	public int getDurability(){
-		return damage;
-	}
-	
-	public void setMaterial(Material material){
-		this.material = material;
-	}
-	
-	public void setDurability(int durability){
-		this.damage = durability;
-	}
-	
-	public int getMaterialID(){
-		return material.getId();
-	}
-	
+	@SneakyThrows
 	public int getStackSellPrice(){
-		return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + "." + 64 + ".sellprice");
+		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "sellprice_64", "name='" + getName() + "'");
+		rs.next();
+		return rs.getInt(1);
 	}
 
+	@SneakyThrows
 	public int getStackBuyPrice(){
-		return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + "." + 64 + ".buyprice");
+		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "buyprice_64", "name='" + getName() + "'");
+		rs.next();
+		return rs.getInt(1);
 	}
 	
+	@SneakyThrows
 	public int getSellPrice(int i){
-		if(api.getDivSystem().getMarkkit().get("Items." + getSignName() + ".64") == null){
-			return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + "." + 1 + ".sellprice") * i;
+		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "sellprice_64", "name='" + getName() + "'");
+		rs.next();
+		rs.getInt(1);
+		if(rs.wasNull() || rs.getString(1).equals("none")){
+			rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "sellprice_1", "name='" + getName() + "'");
+			rs.next();
+			return rs.getInt(1) * i;
 		}else{
-			return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + "." + 64 + ".sellprice") * i / 64;
+			return rs.getInt(1) * i / 64;
 		}
 	}
 	
+	@SneakyThrows
 	public int getBuyPrice(int i){
-		try {
-			return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + "." + i + ".buyprice");
-		} catch (Exception e){
-			return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + "." + 64 + ".buyprice") * i / 64;
+		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "buyprice_64", "name='" + getName() + "'");
+		rs.next();
+		rs.getInt(1);
+		if(rs.wasNull() || rs.getString(1).equals("none")){
+			rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "buyprice_1", "name='" + getName() + "'");
+			rs.next();
+			return rs.getInt(1) * i;
+		}else{
+			return rs.getInt(1) * i / 64;
 		}
 	}
 	
+	@SneakyThrows
 	public int getInStock(){
-		return api.getDivSystem().getMarkkit().getInt("Items." + getSignName() + ".inStock");
+		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "instock", "name='" + getName() + "'");
+		rs.next();
+		return rs.getInt(1);	
 	}
 	
 	public int getAmountForPrice(int money){
@@ -78,25 +109,29 @@ public class ElyMarkkitItem {
 	}
 	
 	public void setInStock(int i){
-		api.getDivSystem().getMarkkit().set("Items." + getSignName() + ".inStock", i);
+		api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "instock", i + "", "name='" + getName() + "'");
 	}
+	
+	@SneakyThrows
 	public boolean isSellDoubled(){
-		return api.getDivSystem().getMarkkit().getBoolean("Items." + getSignName() + ".isSellDoubled");
+		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "isselldoubled", "name='" + getName() + "'");
+		rs.next();
+		String bool = rs.getString(1);
+		if(rs.wasNull()){
+			return false;
+		}
+		return bool.contains("true");		
 	}
 	
 	public void setSellDoubled(boolean doubled){
-		api.getDivSystem().getMarkkit().set("Items." + getSignName() + ".isSellDoubled", doubled);
+		api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "isselldoubled", ("'" + (doubled + "") + "_BOOLEAN_'"), "name='" + getName() + "'");
 	}
+	
+	@SneakyThrows
 	public String getSignName(){
-		 ConfigurationSection configSection = api.getDivSystem().getMarkkit().getConfigurationSection("Items");
-		 String text = "§fNot Found";
-		for (String path : configSection.getKeys(false)){
-			 if((Integer.parseInt(api.getDivSystem().getMarkkit().getString("Items." + path + ".ID")) == material.getId()) && (Integer.parseInt(api.getDivSystem().getMarkkit().getString("Items." + path + ".Damage")) == damage)){
-				 text = path;
-				 return text;
-			 }
-		 }
-		return text;
+		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "name", "id='" + getId() + "' and damage='" + getDamage() + "'");
+		rs.next();
+		return rs.getString(1);	
 	}
 }
 
