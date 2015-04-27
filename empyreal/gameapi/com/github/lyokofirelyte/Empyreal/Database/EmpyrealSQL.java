@@ -111,6 +111,7 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 			}
 			
 			System.out.println(pst.executeUpdate() + " @ " + dp.get("name"));
+			pst.clearParameters();
 			pst.close();
 			
 		} else {
@@ -126,7 +127,7 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 			for (int i = 1; i <= colNames.size(); i++){
 				pst.setObject(i, dp.get(colNames.get(i-1)));
 			}
-			
+			pst.clearParameters();
 			pst.close();
 		}
 	}

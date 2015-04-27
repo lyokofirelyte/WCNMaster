@@ -641,8 +641,10 @@ public class Empyreal extends JavaPlugin {
 			for (String key : yaml.getKeys(false)){
 				newPlayer.set(key, yaml.get(key));
 			}
-			Utils.bc("Welcome " + Bukkit.getPlayer(uuid).getName() + " to WA!");
-			Bukkit.getPlayer(uuid).setDisplayName("&7" + Bukkit.getPlayer(uuid).getName());
+			if(Bukkit.getOfflinePlayer(uuid).isOnline()){
+				Utils.bc("Welcome " + Bukkit.getPlayer(uuid).getName() + " to WA!");
+				Bukkit.getPlayer(uuid).setDisplayName("&7" + Bukkit.getPlayer(uuid).getName());
+			}
 		}
 		
 		getOnlineModules().put(uuid.toString(), newPlayer);

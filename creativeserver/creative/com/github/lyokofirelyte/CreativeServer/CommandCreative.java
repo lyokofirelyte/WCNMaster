@@ -37,7 +37,7 @@ public class CommandCreative implements AutoRegister<CommandCreative>, Listener 
 			gp.s("Sorry, only admins can use this command!");
 		}
 	}
-	
+
 	@GameCommand(min = 1, aliases = { "time" }, desc = "Set the time of yourself", help = "/time <#>", player = true)
 	public void onTimeSet(Player cs, GamePlayer<?> gp, String[] args){
 		if(Utils.isInteger(args[0])){

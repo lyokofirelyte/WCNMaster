@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -18,7 +19,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R1.command.ColouredConsoleSender;
 import org.bukkit.entity.Damageable;
@@ -94,6 +94,34 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		if (main.api.isOnline(args[0])){
 			main.api.getPlayer(args[0]).getInventory().addItem(i);
 		}
+	 }
+	 
+	 @GameCommand(perm = "wa.staff.mod", aliases = {"transferplayers"}, desc = "Put players in the database", help = "/transferplayers", player = true)
+	 public void onTransfer(CommandSender cs, String[] args){
+		 Player p  = (Player) cs;
+		 if(!p.getName().equals("msnijder30")){
+			 return;
+		 }
+		 new Thread(new Runnable(){
+				 public void run(){
+					 File folder = new File("./plugins/Divinity/users");
+					 for(File f : folder.listFiles()){
+						 YamlConfiguration yaml = YamlConfiguration.loadConfiguration(f);
+						 System.out.println(f.getName());
+						 DivinityPlayer dp = main.api.getDivPlayer(UUID.fromString(f.getName().replace(".yml", "")));
+						 JSONMap json = new JSONMap<String, Object>();
+						 System.out.println(Bukkit.getOfflinePlayer(dp.getUUID()).getName());
+						 json.put("name", Bukkit.getOfflinePlayer(dp.getUUID()).getName());
+						 json.put("uuid", f.getName().replace(".yml", ""));
+						 json.put("PERMS", yaml.getList("PERMS"));
+						 json.put("DISPLAY_NAME", yaml.getString("DISPLAY_NAME"));
+						 //dp.fill(json);
+						// dp.save();
+						 main.api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("users", json);
+					 }		 
+				 }
+		 }).start();
+
 	 }
 	 
 	 @GameCommand(perm = "wa.staff.mod", aliases = {"markkit"}, desc = "Lookup command", help = "/markkit <player> <page>", player = false, min = 1)
