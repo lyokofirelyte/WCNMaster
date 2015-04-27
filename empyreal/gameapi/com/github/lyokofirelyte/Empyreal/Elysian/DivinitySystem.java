@@ -66,11 +66,6 @@ public class DivinitySystem extends DivinityStorageModule {
 		api.cancelTask("effects" + name);
 	}
 	
-	@Override
-	public void save(){
-		api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("system", this);
-	}
-	
 	public void transfer(){
 		
 		YamlConfiguration yaml = YamlConfiguration.loadConfiguration(new File("../wa/Divinity/system/" + getName() + ".yml"));

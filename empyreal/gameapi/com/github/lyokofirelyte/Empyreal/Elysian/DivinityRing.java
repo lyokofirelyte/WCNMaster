@@ -68,10 +68,6 @@ public class DivinityRing extends DivinityStorageModule {
 		inOperation = b;
 	}
 	
-	public void save(){
-		api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("rings", this);
-	}
-	
 	public void transfer(){
 		
 		YamlConfiguration yaml = YamlConfiguration.loadConfiguration(new File("../wa/Divinity/rings/" + getName() + ".yml"));

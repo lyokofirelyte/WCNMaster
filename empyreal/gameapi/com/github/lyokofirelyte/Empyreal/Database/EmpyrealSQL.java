@@ -41,93 +41,170 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 	}
 	
 	@SneakyThrows
-	public void saveMapToDatabase(String table, JSONMap<String, Object> dp){
+	public void saveMapsToDatabase(List<JSONMap<String, Object>> dpd){
 		
-		if (!dp.containsKey("uuid")){
-			dp.set("uuid", dp.getStr("name"));
+		List<JSONMap<String, Object>> dp = new ArrayList<JSONMap<String, Object>>();
+		Map<String, PreparedStatement> insertStatements = new HashMap<String, PreparedStatement>();
+		Map<String, PreparedStatement> updateStatements = new HashMap<String, PreparedStatement>();
+		Map<String, List<String>> tableChecker = new HashMap<String, List<String>>();
+		Map<String, List<String>> updatedCols = new HashMap<String, List<String>>();
+		
+		System.out.println("Initializing database for batch save (" + dpd.size() + ")...");
+		
+		int amt = 1;
+		
+		for (JSONMap<String, Object> map : dpd){
+			if (!map.containsKey("uuid")){
+				map.put("uuid", map.getStr("name"));
+			}
+			if (map.getStr("uuid").equals("none") && map.getStr("name").equals("none")){
+				continue;
+			}
+			dp.add(map);
 		}
 		
-		if (dp.getStr("uuid").equals("none") && dp.getStr("name").equals("none")){
-			return;
-		}
+		for (JSONMap<String, Object> map : dp){
+			
+			Map<String, String> toChange = new HashMap<String, String>();
+			List<String> colNames = new ArrayList<String>();
+			String vals = "";
+			String val = "";
+			String updateVals = "";
+			
+			for (String key : map.keySet()){
+				if (key.equals("table") || (key.equals("name") && map.getStr("table").equals("alliances"))){
+					continue;
+				}
+				if (map.getStr(key).equals("true") || map.getStr(key).equals("false")){
+					toChange.put(key, map.getStr(key) + "_BOOLEAN_");
+				}
+			}
+			
+			for (String thing : toChange.keySet()){
+				map.put(thing, toChange.get(thing));
+			}
+			
+			if (!tableChecker.containsKey(map.getStr("table"))){
+				
+				ResultSet genCheck = conn.createStatement().executeQuery("select * from " + map.getStr("table") + ";");
+				genCheck.next();
+				
+				ResultSetMetaData genMeta = genCheck.getMetaData();
+				
+				int colAmt = new Integer(genMeta.getColumnCount());
+				
+				for (int i = 1; i <= colAmt; i++){
+					colNames.add(genMeta.getColumnName(i));
+				}
+				
+				genCheck.close();
+			
+			} else {
+				for (String thing : tableChecker.get(map.getStr("table"))){
+					colNames.add(thing);
+				}
+			}
 
-		String vals = "";
-		String val = "";
-		
-		Map<String, String> toChange = new HashMap<String, String>();
-		
-		for (String key : dp.keySet()){
-			if (!hasColumn(table, key)){
-				conn.createStatement().executeUpdate("alter table " + table + " add " + key + ";");
+			ResultSet userCheck = conn.createStatement().executeQuery("select count(*) from " + map.getStr("table") + " where uuid = '" + map.getStr("uuid") + "';");
+			userCheck.next();
+			
+			List<String> newKeys = new ArrayList<String>();
+			
+			for (String key : map.keySet()){
+				if (key.equals("table") || (key.equalsIgnoreCase("name") && map.getStr("table").equals("alliances"))){
+					continue;
+				}
+				if (!colNames.contains(key)){
+					newKeys.add(key);
+				}
+				vals += vals.equals("") ? "?" : ", ?";
 			}
-			vals += vals.equals("") ? "?" : ", ?";
-			if (dp.getStr(key).equals("true") || dp.getStr(key).equals("false")){
-				toChange.put(key, dp.getStr(key) + "_BOOLEAN_");
+			
+			if (newKeys.size() > 0){
+
+				for (String key : newKeys){
+					conn.createStatement().executeUpdate("alter table " + map.getStr("table") + " add " + key + ";");
+					colNames.add(key);
+				}
+
+				if (insertStatements.containsKey(map.getStr("table"))){
+					insertStatements.get(map.getStr("table")).executeBatch();
+					insertStatements.get(map.getStr("table")).close();
+					insertStatements.remove(map.getStr("table"));
+				}
+				
+				if (updateStatements.containsKey(map.getStr("table"))){
+					updateStatements.get(map.getStr("table")).executeBatch();
+					updateStatements.get(map.getStr("table")).close();
+					updateStatements.remove(map.getStr("table"));
+				}
+				
+				tableChecker.remove(map.getStr("table"));
 			}
-		}
-		
-		for (String thing : toChange.keySet()){
-			dp.set(thing, toChange.get(thing));
-		}
-		
-		ResultSet userCheck = conn.createStatement().executeQuery("select count(*) from " + table + " where uuid = '" + dp.getStr("uuid") + "';");
-		userCheck.next();
-		
-		ResultSet genCheck = conn.createStatement().executeQuery("select * from " + table + ";");
-		genCheck.next();
-		
-		ResultSetMetaData genMeta = genCheck.getMetaData();
-		int colAmt = new Integer(genMeta.getColumnCount());
-		List<String> colNames = new ArrayList<String>();
-		
-		for (int i = 1; i <= colAmt; i++){
-			colNames.add(genMeta.getColumnName(i));
-		}
-		
-		if (userCheck.getInt(1) == 0){
 			
 			List<String> keys = new ArrayList<String>();
 			
 			for (String col : colNames){
 				try {
-					if (!dp.containsKey(col)){
+					if (!map.containsKey(col)){
 						vals += ", ?";
-						dp.set(col, "none");
+						map.set(col, "none");
 					}
 					keys.add(col);
-				} catch (Exception e){
-					e.printStackTrace();
-				}
+				} catch (Exception e){}
 			}
 			
 			for (String key : keys){
 				val += val.equals("") ? key : ", " + key;
+				updateVals += updateVals.equals("") ? key + " = ?" : ", " + key + " = ?";
 			}
 			
-			PreparedStatement pst = conn.prepareStatement("insert into " + table + " (" + val + ") values (" + vals + ");");
-			
-			for (int i = 1; i <= keys.size(); i++){
-				pst.setObject(i, dp.get(keys.get(i-1)));
+			if (map.getStr("table").equals("alliances")){
+				vals += ", ?";
 			}
 			
-			System.out.println(pst.executeUpdate() + " @ " + dp.get("name"));
-			pst.close();
-			
-		} else {
-			
-			vals = "";
-			
-			for (String col : colNames){
-				vals += vals.equals("") ? col + " = ?" : ", " + col + " = ?";
+			if (userCheck.getInt(1) == 0){
+				
+				if (!insertStatements.containsKey(map.getStr("table"))){
+					insertStatements.put(map.getStr("table"), conn.prepareStatement("insert into " + map.getStr("table") + " (" + val + ") values (" + vals + ");"));
+				}
+				
+				for (int i = 1; i <= keys.size(); i++){
+					insertStatements.get(map.getStr("table")).setObject(i, map.get(keys.get(i-1)));
+				}
+				
+				insertStatements.get(map.getStr("table")).addBatch();
+				System.out.println("[INSERT] [" + map.getStr("table") + "] " + map.getStr("name") + " (" + amt + "/" + dp.size() + ")");
+				
+			} else {
+				
+				if (!updateStatements.containsKey(map.getStr("table"))){
+					updateStatements.put(map.getStr("table"), conn.prepareStatement("update " + map.getStr("table") + " set " + updateVals + " where uuid = ?;"));
+				}
+
+				for (int i = 1; i <= keys.size(); i++){
+					updateStatements.get(map.getStr("table")).setObject(i, map.get(keys.get(i-1)));
+				}
+				
+				updateStatements.get(map.getStr("table")).setObject(keys.size()+1, map.getStr("uuid"));
+				
+				updateStatements.get(map.getStr("table")).addBatch();
+				System.out.println("[UPDATE] [" + map.getStr("table") + "] " + map.getStr("name") + " (" + amt + "/" + dp.size() + ")");
 			}
 			
-			PreparedStatement pst = conn.prepareStatement("update " + table + " set " + vals + " where uuid = '" + dp.getStr("uuid") + "';");
-			
-			for (int i = 1; i <= colNames.size(); i++){
-				pst.setObject(i, dp.get(colNames.get(i-1)));
-			}
-			
-			pst.close();
+			amt++;
+			userCheck.close();
+			tableChecker.put(map.getStr("table"), colNames);
+		}
+		
+		for (String table : insertStatements.keySet()){
+			insertStatements.get(table).executeBatch();
+			insertStatements.get(table).close();
+		}
+		
+		for (String table : updateStatements.keySet()){
+			updateStatements.get(table).executeBatch();
+			updateStatements.get(table).close();
 		}
 	}
 	
@@ -143,13 +220,8 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 		
 		for (int i = 1; i <= rsm.getColumnCount(); i++){
 			obj = rs.getObject(i);
-			if (obj instanceof String){
-				if (((String) obj).endsWith("_BOOLEAN_")){
-					System.out.println(((String) obj).replace("_BOOLEAN_", ""));
-					map.set(rsm.getColumnLabel(i), obj != null ? ((String) obj).replace("_BOOLEAN_", "") : "none");
-				} else {
-					map.set(rsm.getColumnLabel(i), obj != null ? obj : "none");
-				}
+			if (obj != null && obj.toString().endsWith("_BOOLEAN_")){
+				map.set(rsm.getColumnLabel(i), obj != null ? obj.toString().replace("_BOOLEAN_", "") : "none");
 			} else {
 				map.set(rsm.getColumnLabel(i), obj != null ? obj : "none");
 			}

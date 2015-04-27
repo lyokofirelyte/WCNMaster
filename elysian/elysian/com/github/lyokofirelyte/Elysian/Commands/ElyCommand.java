@@ -126,6 +126,7 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 	
 	@GameCommand(aliases = {"transfer2"}, perm = "wa.staff.admin", desc = "Transfer", help = "/transfer", player = true)
 	public void onTransfer2(Player p, String[] args){
+		
 		for (File f : new File("./plugins/Divinity/regions").listFiles()){
 			if (f.getName().endsWith(".yml")){
 				YamlConfiguration yaml = YamlConfiguration.loadConfiguration(f);
@@ -140,6 +141,49 @@ public class ElyCommand implements AutoRegister<ElyCommand> {
 				main.s(p, "Saved " + f.getName() + " @ " + dp.size() + " objects.");
 			}
 		}
+		
+		for (File f : new File("./plugins/Divinity/alliances").listFiles()){
+			if (f.getName().endsWith(".yml")){
+				YamlConfiguration yaml = YamlConfiguration.loadConfiguration(f);
+				DivinityAlliance dp = new DivinityAlliance(f.getName().replace(".yml", ""), main.api);
+				JSONMap json = new JSONMap<String, Object>();
+				for (String key : yaml.getKeys(false)){
+					json.set(key, yaml.get(key));
+				}
+				dp.fill(json);
+				dp.save();
+				main.api.getOnlineModules().put("ALLIANCE_" + f.getName().replace(".yml", "").toLowerCase(), dp);
+				main.s(p, "Saved " + f.getName() + " @ " + dp.size() + " objects.");
+			}
+		}
+		
+		for (File f : new File("./plugins/Divinity/rings").listFiles()){
+			if (f.getName().endsWith(".yml")){
+				YamlConfiguration yaml = YamlConfiguration.loadConfiguration(f);
+				DivinityRing dp = new DivinityRing(f.getName().replace(".yml", ""), main.api);
+				JSONMap json = new JSONMap<String, Object>();
+				for (String key : yaml.getKeys(false)){
+					json.set(key, yaml.get(key));
+				}
+				dp.fill(json);
+				dp.save();
+				main.api.getOnlineModules().put("RING_" + f.getName().replace(".yml", ""), dp);
+				main.s(p, "Saved " + f.getName() + " @ " + dp.size() + " objects.");
+			}
+		}
+		
+		File f = new File("./plugins/Divinity/system/system.yml");
+		YamlConfiguration yaml = YamlConfiguration.loadConfiguration(f);
+		DivinitySystem dp = new DivinitySystem(main.api, f.getName().replace(".yml", ""));
+		JSONMap json = new JSONMap<String, Object>();
+		for (String key : yaml.getKeys(false)){
+			json.set(key, yaml.get(key));
+		}
+		dp.fill(json);
+		dp.save();
+		main.api.getOnlineModules().put("SYSTEM", dp);
+		main.setDivSystem(dp);
+		main.s(p, "Saved " + f.getName() + " @ " + dp.size() + " objects.");
 	}
 	
 	@GameCommand(aliases = {"dank"}, perm = "wa.member", desc = "Dank Command", help = "/dank", player = true)
