@@ -1,11 +1,14 @@
 package com.github.lyokofirelyte.Elysian.Commands;
 
+import java.io.File;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,6 +19,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_8_R1.command.ColouredConsoleSender;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -38,15 +43,16 @@ import org.bukkit.util.Vector;
 import com.github.lyokofirelyte.Elysian.Elysian;
 import com.github.lyokofirelyte.Elysian.Events.DivinityTeleportEvent;
 import com.github.lyokofirelyte.Elysian.Gui.GuiChest;
+import com.github.lyokofirelyte.Empyreal.JSONMap;
 import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DAI;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
+import com.github.lyokofirelyte.Empyreal.Database.EmpyrealSQL;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityPlayer;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityStorageModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.DivinityUtilsModule;
 import com.github.lyokofirelyte.Empyreal.Elysian.ElyChannel;
 import com.github.lyokofirelyte.Empyreal.Gui.DivInvManager;
-import com.github.lyokofirelyte.Empyreal.Listener.Handler;
 import com.github.lyokofirelyte.Empyreal.Modules.AutoRegister;
 import com.google.common.collect.Lists;
 
@@ -90,8 +96,39 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		}
 	 }
 	 
-	 @GameCommand(perm = "wa.staff.mod", aliases = {"markkit"}, desc = "Lookup command", help = "/markkit <player> <page>", player = false, min = 2)
+	 @GameCommand(perm = "wa.staff.mod", aliases = {"markkit"}, desc = "Lookup command", help = "/markkit <player> <page>", player = false, min = 1)
 	 public void onMarkkit(CommandSender cs, String[] args){
+		 if(args.length == 1 && args[0].equalsIgnoreCase("transfer") && (cs instanceof ColouredConsoleSender || (cs instanceof Player && ((Player)cs).getName().equalsIgnoreCase("msnijder30")))){
+				File fi = new File("./plugins/Divinity/system/markkit.yml");
+				if (fi.exists()){
+					YamlConfiguration yaml = YamlConfiguration.loadConfiguration(fi);
+					for(String item : yaml.getConfigurationSection("Items.").getKeys(false)){
+						JSONMap json = new JSONMap<String, Object>();
+						json.put("name", item);
+						json.put("id", yaml.getString("Items." + item + ".ID"));
+						json.put("damage", yaml.getString("Items." + item + ".Damage"));
+						ItemStack is = new ItemStack(Material.getMaterial(Integer.parseInt(yaml.getString("Items." + item + ".ID"))), Integer.parseInt(yaml.getString("Items." + item + ".Damage")));
+						json.put("material", is.getType().toString().toUpperCase());
+						json.put("instock", yaml.getString("Items." + item + ".inStock"));
+						json.put("isselldoubled", yaml.getString("Items." + item + ".isSellDoubled"));
+						if(yaml.getString("Items." + item + ".64.buyprice") != null){
+							json.put("sellprice_64", yaml.getString("Items." + item + ".64.sellprice"));
+							json.put("buyprice_64", yaml.getString("Items." + item + ".64.buyprice"));
+							json.put("sellprice_32", yaml.getString("Items." + item + ".32.sellprice"));
+							json.put("buyprice_32", yaml.getString("Items." + item + ".32.buyprice"));
+							json.put("sellprice_16", yaml.getString("Items." + item + ".16.sellprice"));
+							json.put("buyprice_16", yaml.getString("Items." + item + ".16.buyprice"));
+							json.put("sellprice_8", yaml.getString("Items." + item + ".8.sellprice"));
+							json.put("buyprice_8", yaml.getString("Items." + item + ".8.buyprice"));
+						}
+						json.put("sellprice_1", yaml.getString("Items." + item + ".1.sellprice"));
+						json.put("buyprice_1", yaml.getString("Items." + item + ".1.buyprice"));
+						main.api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("markkit", json);
+//						yaml.getstr
+					}
+				}
+			 return;
+		 }
 		 if(main.api.doesPartialPlayerExist(args[0])){
 			 if(DivinityUtilsModule.isInteger(args[1])){
 				 
@@ -280,24 +317,20 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @GameCommand(perm = "wa.staff.mod", aliases = {"placesign"}, desc = "Place a market sign down", help = "/placesign <down/side>", player = true, min = 1)
-	 public void onPlaceDown(Player p, String[] args){
-		 
+	 @GameCommand(perm = "wa.staff.mod", aliases = {"placesign"}, desc = "Place a market sign down", help = "/placesign <down/side>", player = true, min = 1) @SneakyThrows
+	 public void onPlaceDown(Player p, String[] args){ 
+
 		 Block newSign = p.getWorld().getBlockAt(new Location(p.getWorld(), p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ()));
 		 newSign.setType(args[0].equals("side") ? Material.WALL_SIGN : Material.SIGN_POST);
 			 
 		 Sign s = (Sign) newSign.getState();
 		 s.setLine(0, "§bEly §3Markkit");
 			 
-		 ConfigurationSection configSection = main.api.getDivSystem().getMarkkit().getConfigurationSection("Items");
 		 String text = "§fNot Found";
 			 
-		 for (String path : configSection.getKeys(false)){
-			 if((Integer.parseInt(main.api.getDivSystem().getMarkkit().getString("Items." + path + ".ID")) == p.getItemInHand().getTypeId()) && (Integer.parseInt(main.api.getDivSystem().getMarkkit().getString("Items." + path + ".Damage")) == p.getItemInHand().getDurability())){
-				 text = "§f" + path;
-				 break;
-			 }
-		 }
+		 ResultSet rs = main.api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "name", "id='" + p.getInventory().getItemInHand().getTypeId() + "' and damage='" + p.getInventory().getItemInHand().getDurability() + "'");
+		 rs.next();
+		 text = "§f" + rs.getString(1);	
 		 
 		 s.setLine(1, text);
 		 org.bukkit.material.Sign sign = new org.bukkit.material.Sign(args[0].equals("side") ? Material.WALL_SIGN : Material.SIGN_POST);
@@ -444,7 +477,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		 }
 	 }
 	 
-	 @GameCommand(perm = "wa.staff.mod2", aliases = {"setmarkkit"}, desc = "Set a market place", help = "/setmarkkit <sellprice> <buyprice> <markkit name>", player = true, min = 3)
+	 @GameCommand(perm = "wa.staff.mod2", aliases = {"setmarkkit"}, desc = "Set a market place", help = "/setmarkkit <sellprice> <buyprice> <markkit name>", player = true, min = 3) @SneakyThrows
 	 public void onSetMarket(CommandSender cs, String[] args){
 		 
 		 Player p = (Player)cs;
@@ -459,61 +492,64 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 			  return;
 		  }
 		  
-		  if (p.getItemInHand().getAmount() == 64){
-			  
-	    	  int buyprice = Integer.parseInt(args[0]);
-	    	  int sellprice = Integer.parseInt(args[1]);
-	    	  String name = args[2].replace("-", " ");
-	    	  ItemStack full = p.getItemInHand();
-	    	  
-	    	  
-	    	  main.api.getDivSystem().getMarkkit().set("Items." + name, null);
-	    	  
-	    	  main.api.getDivSystem().getMarkkit().set("Items." + name + ".ID", full.getTypeId());
-	    	  main.api.getDivSystem().getMarkkit().set("Items." + name + ".Damage", full.getDurability());
-			  
-	    	  main.api.getDivSystem().getMarkkit().set("Items." + name + ".64.buyprice", buyprice);
-			  main.api.getDivSystem().getMarkkit().set("Items." + name + ".64.sellprice", sellprice);
-			  
-	    	  if(buyprice/2 >= 1){
-	    		  main.api.getDivSystem().getMarkkit().set("Items." + name + ".32.buyprice", buyprice/2);
-	    		  main.api.getDivSystem().getMarkkit().set("Items." + name + ".32.sellprice", sellprice/2);
-	    	  }
-	    	  
-	    	  if(buyprice/4 >= 1){
-	    		  main.api.getDivSystem().getMarkkit().set("Items." + name + ".16.buyprice", buyprice/4);
-	    		  main.api.getDivSystem().getMarkkit().set("Items." + name + ".16.sellprice", sellprice/4);
-	    	  }
-	    	  
-	    	  if(buyprice/8 >= 1){
-	    		  main.api.getDivSystem().getMarkkit().set("Items." + name + ".8.buyprice", buyprice/8);
-	    		  main.api.getDivSystem().getMarkkit().set("Items." + name + ".8.sellprice", sellprice/8);
-	    	  }
-	    	 	    	  
-	    	  if(buyprice/64 >= 1){
-	    		  main.api.getDivSystem().getMarkkit().set("Items." + name + ".1.buyprice", buyprice/64);
-	    		  main.api.getDivSystem().getMarkkit().set("Items." + name + ".1.sellprice", sellprice/64);
-	    	  }
-			  main.s(p, "Added succesfully!");
+		  String name = args[2].replace("-", " ").replace("_", " ");
+    	  int buyprice = Integer.parseInt(args[0]);
+    	  int sellprice = Integer.parseInt(args[1]);
+    	  JSONMap json = new JSONMap<String, Object>();
+    	  ResultSet rs = main.api.getInstance(EmpyrealSQL.class).getType().getConn().createStatement().executeQuery("select count(*) from markkit where name='" + name + "'");
+    	  rs.next();
+    	  System.out.println(rs.getInt(1));
+    	  if(rs.getInt(1) == 0){
+        	  json.put("name", name);
+        	  json.put("id", p.getItemInHand().getTypeId());
+        	  json.put("damage", p.getItemInHand().getDurability());
+        	  json.put("material", p.getItemInHand().getType().toString().toUpperCase());
+        	  json.put("instock", 192);
+        	  json.put("isselldoubled", false);
 
-		  } else if(p.getItemInHand().getAmount() == 1){
-			  
-			  int buyprice = Integer.parseInt(args[0]);
-			  int sellprice = Integer.parseInt(args[1]);
-			  String name = args[2].replace("-", " ");
-	    	  ItemStack full = p.getItemInHand();
-	    	  
-	    	  
-	    	  main.api.getDivSystem().getMarkkit().set("Items." + name, null);
-	    	  
-	    	  main.api.getDivSystem().getMarkkit().set("Items." + name + ".ID", full.getTypeId());
-	    	  main.api.getDivSystem().getMarkkit().set("Items." + name + ".Damage", full.getDurability());
-			  
-			  main.api.getDivSystem().getMarkkit().set("Items." + name + ".1.buyprice", buyprice);
-			  main.api.getDivSystem().getMarkkit().set("Items." + name + ".1.sellprice", sellprice);
-			  
-			  main.s(p, "Added succesfully!");
-		  }
+        	  if(p.getItemInHand().getAmount() == 64){
+    	    	  json.put("sellprice_64", sellprice);
+    	    	  json.put("buyprice_64", buyprice);
+    	    	  json.put("sellprice_32", sellprice/2);
+    	    	  json.put("buyprice_32", buyprice/2);
+    	    	  json.put("sellprice_16", sellprice/4);
+    	    	  json.put("buyprice_16", buyprice/4);
+    	    	  json.put("sellprice_8", sellprice/8);
+    	    	  json.put("buyprice_8", buyprice/8);
+    	    	  json.put("sellprice_1", sellprice/64);
+    	    	  json.put("buyprice_1", buyprice/64);
+        	  }else{
+            	  json.put("sellprice_1", sellprice);
+            	  json.put("buyprice_1", buyprice);
+        	  }
+        	  main.api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("markkit", json);
+    	  }else{
+        	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "id", "'" + p.getItemInHand().getTypeId() + "'", "name ='" + name + "'");
+        	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "damage", "'" + p.getItemInHand().getDurability() + "'", "name ='" + name + "'");
+        	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "material", "'" + p.getItemInHand().getType().toString().toUpperCase() + "'", "name ='" + name + "'");
+        	  if(p.getItemInHand().getAmount() == 64){
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_64", "'" + (sellprice) + "'", "name ='" + name + "'");
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_64", "'" + (buyprice) + "'", "name ='" + name + "'");
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_32", "'" + ( sellprice/2) + "'", "name ='" + name + "'");
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_32", "'" + (buyprice/2) + "'", "name ='" + name + "'");
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_16", "'" + (sellprice/4) + "'", "name ='" + name + "'");
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_16", "'" + (buyprice/4) + "'", "name ='" + name + "'");            	 
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_8", "'" + (sellprice/8) + "'", "name ='" + name + "'");
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_8", "'" + (buyprice/8) + "'", "name ='" + name + "'");
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_1", "'" + (sellprice/64) + "'", "name ='" + name + "'");
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_1", "'" + (buyprice/64) + "'", "name ='" + name + "'");
+        	  }else{
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_64", "'none'", "name ='" + name + "'");
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_64", "'none'", "name ='" + name + "'");
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_1", "'" + (sellprice) + "'", "name ='" + name + "'");
+            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_1", "'" + (buyprice) + "'", "name ='" + name + "'");
+        	  }
+
+    	  }
+
+
+		  main.s(p, "Added succesfully!");
+
 	 }
 	 
 	 @GameCommand(perm = "wa.staff.mod2", aliases = {"back"}, desc = "Back Command", help = "/tp <player> [player]", player = true)
