@@ -103,7 +103,8 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 				if (fi.exists()){
 					YamlConfiguration yaml = YamlConfiguration.loadConfiguration(fi);
 					for(String item : yaml.getConfigurationSection("Items.").getKeys(false)){
-						JSONMap json = new JSONMap<String, Object>();
+						JSONMap<String, Object> json = new JSONMap<String, Object>();
+						json.put("table", "markkit");
 						json.put("name", item);
 						json.put("id", yaml.getString("Items." + item + ".ID"));
 						json.put("damage", yaml.getString("Items." + item + ".Damage"));
@@ -123,7 +124,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 						}
 						json.put("sellprice_1", yaml.getString("Items." + item + ".1.sellprice"));
 						json.put("buyprice_1", yaml.getString("Items." + item + ".1.buyprice"));
-						main.api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("markkit", json);
+						main.api.getInstance(EmpyrealSQL.class).getType().saveMapsToDatabase(Arrays.asList(json));
 //						yaml.getstr
 					}
 				}
@@ -495,61 +496,36 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
 		  String name = args[2].replace("-", " ").replace("_", " ");
     	  int buyprice = Integer.parseInt(args[0]);
     	  int sellprice = Integer.parseInt(args[1]);
-    	  JSONMap json = new JSONMap<String, Object>();
-    	  ResultSet rs = main.api.getInstance(EmpyrealSQL.class).getType().getConn().createStatement().executeQuery("select count(*) from markkit where name='" + name + "'");
-    	  rs.next();
-    	  System.out.println(rs.getInt(1));
-    	  if(rs.getInt(1) == 0){
-        	  json.put("name", name);
-        	  json.put("id", p.getItemInHand().getTypeId());
-        	  json.put("damage", p.getItemInHand().getDurability());
-        	  json.put("material", p.getItemInHand().getType().toString().toUpperCase());
-        	  json.put("instock", 192);
-        	  json.put("isselldoubled", false);
+    	  JSONMap<String, Object> json = new JSONMap<String, Object>();
+    	  //ResultSet rs = main.api.getInstance(EmpyrealSQL.class).getType().getConn().createStatement().executeQuery("select count(*) from markkit where name='" + name + "'");
+    	  //rs.next();
+    	  //System.out.println(rs.getInt(1));
+    	  
+    	  json.put("name", name);
+    	  json.put("id", p.getItemInHand().getTypeId());
+    	  json.put("damage", p.getItemInHand().getDurability());
+    	  json.put("material", p.getItemInHand().getType().toString().toUpperCase());
+    	  json.put("instock", 192);
+    	  json.put("isselldoubled", false);
 
-        	  if(p.getItemInHand().getAmount() == 64){
-    	    	  json.put("sellprice_64", sellprice);
-    	    	  json.put("buyprice_64", buyprice);
-    	    	  json.put("sellprice_32", sellprice/2);
-    	    	  json.put("buyprice_32", buyprice/2);
-    	    	  json.put("sellprice_16", sellprice/4);
-    	    	  json.put("buyprice_16", buyprice/4);
-    	    	  json.put("sellprice_8", sellprice/8);
-    	    	  json.put("buyprice_8", buyprice/8);
-    	    	  json.put("sellprice_1", sellprice/64);
-    	    	  json.put("buyprice_1", buyprice/64);
-        	  }else{
-            	  json.put("sellprice_1", sellprice);
-            	  json.put("buyprice_1", buyprice);
-        	  }
-        	  main.api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("markkit", json);
+    	  if(p.getItemInHand().getAmount() == 64){
+	    	  json.put("sellprice_64", sellprice);
+	    	  json.put("buyprice_64", buyprice);
+	    	  json.put("sellprice_32", sellprice/2);
+	    	  json.put("buyprice_32", buyprice/2);
+	    	  json.put("sellprice_16", sellprice/4);
+	    	  json.put("buyprice_16", buyprice/4);
+	    	  json.put("sellprice_8", sellprice/8);
+	    	  json.put("buyprice_8", buyprice/8);
+	    	  json.put("sellprice_1", sellprice/64);
+	    	  json.put("buyprice_1", buyprice/64);
     	  }else{
-        	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "id", "'" + p.getItemInHand().getTypeId() + "'", "name ='" + name + "'");
-        	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "damage", "'" + p.getItemInHand().getDurability() + "'", "name ='" + name + "'");
-        	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "material", "'" + p.getItemInHand().getType().toString().toUpperCase() + "'", "name ='" + name + "'");
-        	  if(p.getItemInHand().getAmount() == 64){
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_64", "'" + (sellprice) + "'", "name ='" + name + "'");
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_64", "'" + (buyprice) + "'", "name ='" + name + "'");
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_32", "'" + ( sellprice/2) + "'", "name ='" + name + "'");
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_32", "'" + (buyprice/2) + "'", "name ='" + name + "'");
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_16", "'" + (sellprice/4) + "'", "name ='" + name + "'");
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_16", "'" + (buyprice/4) + "'", "name ='" + name + "'");            	 
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_8", "'" + (sellprice/8) + "'", "name ='" + name + "'");
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_8", "'" + (buyprice/8) + "'", "name ='" + name + "'");
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_1", "'" + (sellprice/64) + "'", "name ='" + name + "'");
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_1", "'" + (buyprice/64) + "'", "name ='" + name + "'");
-        	  }else{
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_64", "'none'", "name ='" + name + "'");
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_64", "'none'", "name ='" + name + "'");
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "sellprice_1", "'" + (sellprice) + "'", "name ='" + name + "'");
-            	  main.api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "buyprice_1", "'" + (buyprice) + "'", "name ='" + name + "'");
-        	  }
-
+    		  json.put("sellprice_1", sellprice);
+    		  json.put("buyprice_1", buyprice);
     	  }
-
-
-		  main.s(p, "Added succesfully!");
-
+        	  
+        main.api.getInstance(EmpyrealSQL.class).getType().saveMapsToDatabase(new ArrayList<JSONMap<String, Object>>(Arrays.asList(json)));
+        main.s(p, "Added succesfully!");
 	 }
 	 
 	 @GameCommand(perm = "wa.staff.mod2", aliases = {"back"}, desc = "Back Command", help = "/tp <player> [player]", player = true)

@@ -40,6 +40,11 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 		initDatabase("../db/" + i.getServerName() + ".db");
 	}
 	
+	/**
+	 * Saves an list of JSONMaps to the database very quickly. <br />
+	 * Automatically adjusts for new rows and incomplete data sets. <br />
+	 * This groups prep statements by tables & batches them at the end.
+	 */
 	@SneakyThrows
 	public void saveMapsToDatabase(List<JSONMap<String, Object>> dpd){
 		
@@ -53,6 +58,10 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 		
 		int amt = 1;
 		
+		/**
+		 * Insuring the "uuid" value is present. If not, we will take "name". <br />
+		 * If no uuid and no name, we skip the map - it won't work with the database.
+		 */
 		for (JSONMap<String, Object> map : dpd){
 			if (!map.containsKey("uuid")){
 				map.put("uuid", map.getStr("name"));
@@ -63,6 +72,9 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 			dp.add(map);
 		}
 		
+		/**
+		 * Iterate through each map in the list. Each map is an individual entry filled with values.
+		 */
 		for (JSONMap<String, Object> map : dp){
 			
 			Map<String, String> toChange = new HashMap<String, String>();
@@ -71,6 +83,9 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 			String val = "";
 			String updateVals = "";
 			
+			/**
+			 * SQLite does not support booleans - so we need to make them obvious strings first.
+			 */
 			for (String key : map.keySet()){
 				if (key.equals("table") || (key.equals("name") && map.getStr("table").equals("alliances"))){
 					continue;
@@ -80,10 +95,17 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 				}
 			}
 			
+			/**
+			 * We change the booleans here because of concurrent modification exceptions.
+			 */
 			for (String thing : toChange.keySet()){
 				map.put(thing, toChange.get(thing));
 			}
 			
+			/**
+			 * The table checker holds the column names so we only have to ask the database <br />
+			 * how many columns there are ONCE per table. This saves time - about 3 seconds per entry...
+			 */
 			if (!tableChecker.containsKey(map.getStr("table"))){
 				
 				ResultSet genCheck = conn.createStatement().executeQuery("select * from " + map.getStr("table") + ";");
@@ -99,12 +121,13 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 				
 				genCheck.close();
 			
-			} else {
+			} else { // Otherwise, we'll just use what we already have.
 				for (String thing : tableChecker.get(map.getStr("table"))){
 					colNames.add(thing);
 				}
 			}
 
+			/** This is used to see if we should use INSERT or UPDATE */
 			ResultSet userCheck = conn.createStatement().executeQuery("select count(*) from " + map.getStr("table") + " where uuid = '" + map.getStr("uuid") + "';");
 			userCheck.next();
 			
@@ -114,12 +137,16 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 				if (key.equals("table") || (key.equalsIgnoreCase("name") && map.getStr("table").equals("alliances"))){
 					continue;
 				}
+				// The column names we added earlier are what's in the table - so if this is true, then it's a NEW key.
 				if (!colNames.contains(key)){
 					newKeys.add(key);
 				}
 				vals += vals.equals("") ? "?" : ", ?";
 			}
 			
+			/**
+			 * We need to add all of the new keys manually now - since the database has no columns for them.
+			 */
 			if (newKeys.size() > 0){
 
 				for (String key : newKeys){
@@ -127,6 +154,10 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 					colNames.add(key);
 				}
 
+				/**
+				 * Now the value amounts won't match the prep statements we made before.
+				 * I guess we'll have to execute them and wipe them!
+				 */
 				if (insertStatements.containsKey(map.getStr("table"))){
 					insertStatements.get(map.getStr("table")).executeBatch();
 					insertStatements.get(map.getStr("table")).close();
@@ -139,11 +170,20 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 					updateStatements.remove(map.getStr("table"));
 				}
 				
+				/**
+				 * Since we executed our prep statements, we'll need to make new ones for the rest of the entries.
+				 * This will make the next rotation parse the columns again and re-fill our colNames.
+				 */
 				tableChecker.remove(map.getStr("table"));
 			}
 			
 			List<String> keys = new ArrayList<String>();
 			
+			/**
+			 * Sometimes we will get a bad value or a NULL, so we'll try/catch
+			 * and see if all of the columns are safe. Then, transfer the safe ones
+			 * to the keys list.
+			 */
 			for (String col : colNames){
 				try {
 					if (!map.containsKey(col)){
@@ -154,15 +194,24 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 				} catch (Exception e){}
 			}
 			
+			/**
+			 * Here we create our set values and the placeholders for the UPDATE statement.
+			 */
 			for (String key : keys){
 				val += val.equals("") ? key : ", " + key;
 				updateVals += updateVals.equals("") ? key + " = ?" : ", " + key + " = ?";
 			}
 			
+			/**
+			 * Fuck the alliances table. >.>
+			 */
 			if (map.getStr("table").equals("alliances")){
 				vals += ", ?";
 			}
 			
+			/**
+			 * This will be true if the user does not exist yet. We will INSERT.
+			 */
 			if (userCheck.getInt(1) == 0){
 				
 				if (!insertStatements.containsKey(map.getStr("table"))){
@@ -197,9 +246,16 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 			tableChecker.put(map.getStr("table"), colNames);
 		}
 		
+		
+		/**
+		 * Now, all of the above work didn't actually touch the database unless new keys were added
+		 * This will execute each table's batch - so if we have 5 tables it'll hit the database
+		 * 5 times... instead of hitting it once per user/alliance/etc.
+		 * We save like 8 minutes doing this.
+		 */
 		for (String table : insertStatements.keySet()){
 			insertStatements.get(table).executeBatch();
-			insertStatements.get(table).close();
+			insertStatements.get(table).close(); // Close out of memory right away.
 		}
 		
 		for (String table : updateStatements.keySet()){
@@ -228,22 +284,6 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 		}
 		
 		return map;
-	}
-	
-	@SneakyThrows
-	public DefaultPlayer createPlayerFromDatabase(String uuid){
-
-		DefaultPlayer dms = new DefaultPlayer(UUID.fromString(uuid), main);
-		ResultSet rs = getResult("users", "*", "uuid = '" + uuid + "'");
-		ResultSetMetaData rsm = rs.getMetaData();
-		int i = 1;
-			
-		while (rs.next()){
-			dms.set(rsm.getColumnName(i), rs.getString(i));
-			i++;
-		}
-		
-		return dms;
 	}
 	
 	@SneakyThrows
@@ -276,43 +316,7 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 			write("alter table " + tableName + " add " + columnName + " VARCHAR(255);");
 		}
 	}
-	
-	public void injectEnum(Class<? extends Enum<?>> e, String tableName, String... extras){
-		injectEnum((List) Arrays.asList(e), tableName, extras);
-	}
-	
-	@SneakyThrows
-	public void injectEnum(List<Class<? extends Enum<?>>> e, String tableName, String... extras){
-		
-		write("create table if not exists " + tableName + " (TEMP VARCHAR(1));");
 
-        for (String extra : extras){
-        	if (!hasColumn(tableName, extra)){
-        		addColumn(tableName, extra);
-        	}
-        }
-        
-        for (Class<? extends Enum<?>> clazz : e){
-	        for (Enum<?> i : clazz.getEnumConstants()){
-	            if (!hasColumn(tableName, i.toString())){
-	            	addColumn(tableName, i.toString());
-	            }
-	        }
-        }
-	}
-	
-	@SneakyThrows
-	public void injectData(String tableName, String column, String data, String where){
-		if (!hasTable(tableName)){
-			write("create table if not exists " + tableName + " (name VARCHAR(1));");
-		}
-		if (!hasColumn(tableName, column)){
-			write("alter table " + tableName + " add " + column + " VARCHAR(255);");
-		} else {
-			write("update " + tableName + " set " + column + "=" + data + " where " + where + ";");
-		}
-	}
-	
 	public boolean hasTable(String tableName){
 		try {
 			DatabaseMetaData md = conn.getMetaData();
@@ -333,6 +337,10 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 		}
 	}
 	
+	/**
+	 * Touches the database each time. Use very rarely.
+	 * Alternative: Prep statements w/ batch updates.
+	 */
 	public void write(String data){
 		try {
 			Statement stat = conn.createStatement();
