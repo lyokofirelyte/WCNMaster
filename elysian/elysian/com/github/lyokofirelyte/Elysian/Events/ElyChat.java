@@ -297,6 +297,8 @@ public class ElyChat implements Listener, AutoRegister<ElyChat> {
 			try{
 				main.api.sendToSocket("GameServer", Handler.GLOBAL_CHAT, "&7" + e.getPlayer().getDisplayName() + "&f: " + e.getMessage());
 				main.api.sendToSocket("GameServer", Handler.FORWARD_EXCLUDE, "GLOBAL_CHAT", "&7" + e.getPlayer().getDisplayName() + "&f: " + e.getMessage(), "wa");
+				Bukkit.getConsoleSender().sendMessage(main.AS("&7" + e.getPlayer().getDisplayName() + "&f: &f" + e.getMessage()));
+
 			}catch(Exception ex){}
 			
 			new Thread(new Runnable(){ public void run(){
@@ -379,15 +381,17 @@ public class ElyChat implements Listener, AutoRegister<ElyChat> {
 	}
 	
 	private String filter(String msg){
-
-		msg = msg.replace("place", "pLace").replace("&k", "");
-
-    	for (String filter : main.api.getDivSystem().getList(DPI.FILTER)){
-    		if (ChatColor.stripColor(DivinityUtilsModule.AS(msg.toLowerCase())).contains(filter.split(" % ")[0].toLowerCase())){
-    			msg = msg.replace(filter.split(" % ")[0], filter.split(" % ")[1]);
-    		}
-    	}
-    	
+		try{
+			msg = msg.replace("place", "pLace").replace("&k", "");
+	
+	    	for (String filter : main.api.getDivSystem().getList(DPI.FILTER)){
+	    		if (ChatColor.stripColor(DivinityUtilsModule.AS(msg.toLowerCase())).contains(filter.split(" % ")[0].toLowerCase())){
+	    			msg = msg.replace(filter.split(" % ")[0], filter.split(" % ")[1]);
+	    		}
+	    	}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		return msg;
 	}
 	

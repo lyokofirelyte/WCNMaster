@@ -106,10 +106,6 @@ public class DivinityPlayer extends DivinityStorageModule implements GamePlayer<
 		}
 	}
 	
-	@Override
-	public void save(){
-		api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("users", this);
-	}
 	
 	public void transfer(){
 		

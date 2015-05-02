@@ -31,12 +31,15 @@ public class ElyMarkkitItem {
 	
 	@Getter @Setter
 	private DivinitySystem system;
+	
+	private EmpyrealSQL sql;
 
 	public ElyMarkkitItem(Empyreal i, Material mat, int data){
 		setMaterial(mat);
 		setDamage(data);
 		setId(mat.getId());
 		setApi(i);
+		sql = api.getInstance(EmpyrealSQL.class).getType();
 		setSystem(api.getDivSystem());
 		setName(getSignName());
 	}
@@ -44,11 +47,12 @@ public class ElyMarkkitItem {
 	@SneakyThrows
 	public ElyMarkkitItem(Empyreal i, String signname){
 		setApi(i);
+		sql = api.getInstance(EmpyrealSQL.class).getType();
 		setSystem(api.getDivSystem());
-		ResultSet id = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "id", "name = '" + signname + "'");
+		ResultSet id = sql.getResult("markkit", "id", "name = '" + signname + "'");
 		id.next();
 		setMaterial(Material.getMaterial(id.getInt(1)));
-		ResultSet dmg = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "damage", "name = '" + signname + "'");
+		ResultSet dmg = sql.getResult("markkit", "damage", "name = '" + signname + "'");
 		dmg.next();
 		setDamage(dmg.getInt(1));
 		setId(Material.getMaterial(id.getInt(1)).getId());
@@ -57,25 +61,25 @@ public class ElyMarkkitItem {
 	
 	@SneakyThrows
 	public int getStackSellPrice(){
-		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "sellprice_64", "name='" + getName() + "'");
+		ResultSet rs = sql.getResult("markkit", "sellprice_64", "name='" + getName() + "'");
 		rs.next();
 		return rs.getInt(1);
 	}
 
 	@SneakyThrows
 	public int getStackBuyPrice(){
-		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "buyprice_64", "name='" + getName() + "'");
+		ResultSet rs = sql.getResult("markkit", "buyprice_64", "name='" + getName() + "'");
 		rs.next();
 		return rs.getInt(1);
 	}
 	
 	@SneakyThrows
 	public int getSellPrice(int i){
-		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "sellprice_64", "name='" + getName() + "'");
+		ResultSet rs = sql.getResult("markkit", "sellprice_64", "name='" + getName() + "'");
 		rs.next();
 		rs.getInt(1);
 		if(rs.wasNull() || rs.getString(1).equals("none")){
-			rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "sellprice_1", "name='" + getName() + "'");
+			rs = sql.getResult("markkit", "sellprice_1", "name='" + getName() + "'");
 			rs.next();
 			return rs.getInt(1) * i;
 		}else{
@@ -85,11 +89,11 @@ public class ElyMarkkitItem {
 	
 	@SneakyThrows
 	public int getBuyPrice(int i){
-		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "buyprice_64", "name='" + getName() + "'");
+		ResultSet rs = sql.getResult("markkit", "buyprice_64", "name='" + getName() + "'");
 		rs.next();
 		rs.getInt(1);
 		if(rs.wasNull() || rs.getString(1).equals("none")){
-			rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "buyprice_1", "name='" + getName() + "'");
+			rs = sql.getResult("markkit", "buyprice_1", "name='" + getName() + "'");
 			rs.next();
 			return rs.getInt(1) * i;
 		}else{
@@ -99,7 +103,7 @@ public class ElyMarkkitItem {
 	
 	@SneakyThrows
 	public int getInStock(){
-		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "instock", "name='" + getName() + "'");
+		ResultSet rs = sql.getResult("markkit", "instock", "name='" + getName() + "'");
 		rs.next();
 		return rs.getInt(1);	
 	}
@@ -109,12 +113,12 @@ public class ElyMarkkitItem {
 	}
 	
 	public void setInStock(int i){
-		api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "instock", i + "", "name='" + getName() + "'");
+		//sql.injectData("markkit", "instock", i + "", "name='" + getName() + "'");
 	}
 	
 	@SneakyThrows
 	public boolean isSellDoubled(){
-		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "isselldoubled", "name='" + getName() + "'");
+		ResultSet rs = sql.getResult("markkit", "isselldoubled", "name='" + getName() + "'");
 		rs.next();
 		String bool = rs.getString(1);
 		if(rs.wasNull()){
@@ -124,12 +128,12 @@ public class ElyMarkkitItem {
 	}
 	
 	public void setSellDoubled(boolean doubled){
-		api.getInstance(EmpyrealSQL.class).getType().injectData("markkit", "isselldoubled", ("'" + (doubled + "") + "_BOOLEAN_'"), "name='" + getName() + "'");
+		//sql.injectData("markkit", "isselldoubled", ("'" + (doubled + "") + "_BOOLEAN_'"), "name='" + getName() + "'");
 	}
 	
 	@SneakyThrows
 	public String getSignName(){
-		ResultSet rs = api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "name", "id='" + getId() + "' and damage='" + getDamage() + "'");
+		ResultSet rs = sql.getResult("markkit", "name", "id='" + getId() + "' and damage='" + getDamage() + "'");
 		rs.next();
 		return rs.getString(1);	
 	}

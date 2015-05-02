@@ -27,6 +27,7 @@ import com.github.lyokofirelyte.Elysian.Events.DivinityPluginMessageEvent;
 import com.github.lyokofirelyte.Elysian.Events.ScoreboardUpdateEvent;
 import com.github.lyokofirelyte.Elysian.Gui.GuiCloset;
 import com.github.lyokofirelyte.Empyreal.Empyreal;
+import com.github.lyokofirelyte.Empyreal.JSONMap;
 import com.github.lyokofirelyte.Empyreal.Command.GameCommand;
 import com.github.lyokofirelyte.Empyreal.Database.DAI;
 import com.github.lyokofirelyte.Empyreal.Database.DPI;
@@ -94,17 +95,18 @@ public class Elysian extends JavaPlugin implements GameModule {
 	public void onDisable(){
 		
 		long currTime = new Long(System.currentTimeMillis());
-		int i = 1;
+		
+		List<JSONMap<String, Object>> list = new ArrayList<JSONMap<String, Object>>();
 		
 		for (DivinityStorageModule dp : api.getOnlineModules().values()){
 			if (dp.getTable().equals("users")){
 				dp.set(DPI.DIS_ENTITY, "none");
 				dp.set(DPI.IS_DIS, false);
 			}
-			dp.save();
-			System.out.println("SAVE [" + dp.getTable() + "] " + dp.getName() + " (" + i + "/" + api.getOnlineModules().size() + ")");
-			i++;
+			list.add(dp);
 		}
+		
+		api.getInstance(EmpyrealSQL.class).getType().saveMapsToDatabase(list);
 		
 		System.out.println("Save Complete @ " + ((System.currentTimeMillis() - currTime)/1000) + " seconds");
 		Bukkit.getScheduler().cancelTasks(this);

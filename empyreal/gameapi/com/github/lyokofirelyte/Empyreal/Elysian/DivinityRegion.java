@@ -98,11 +98,6 @@ public class DivinityRegion extends DivinityStorageModule {
 		return getList(DRI.PERMS);
 	}
 	
-	@Override
-	public void save(){
-		api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("regions", this);
-	}
-	
 	public void transfer(){
 		
 		YamlConfiguration yaml = YamlConfiguration.loadConfiguration(new File("../wa/Divinity/regions/" + getName() + ".yml"));

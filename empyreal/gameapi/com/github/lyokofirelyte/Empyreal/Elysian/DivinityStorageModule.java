@@ -20,11 +20,15 @@ public class DivinityStorageModule extends JSONMap<String, Object> {
 	@Getter @Setter
 	public UUID uuid;
 	
-	@Getter @Setter
+	@Setter
 	private String name;
 	
 	@Getter @Setter
 	private String table;
+	
+	public String getName(){
+		return getStr("name");
+	}
 	
 	public DivinityStorageModule(UUID u, Empyreal i, String table){
 		api = i;
@@ -33,6 +37,7 @@ public class DivinityStorageModule extends JSONMap<String, Object> {
 		setTable(table);
 		set("uuid", u.toString());
 		set("name", name);
+		set("table", table);
 	}
 
 	public DivinityStorageModule(String n, Empyreal i, String table){
@@ -44,6 +49,7 @@ public class DivinityStorageModule extends JSONMap<String, Object> {
 		setTable(table);
 		set("name", n);
 		set("uuid", uuid != null ? uuid.toString() : n);
+		set("table", table);
 	}
 	
 	public void fill(JSONMap<String, Object> obj){

@@ -17,11 +17,6 @@ public class DivinityAlliance extends DivinityStorageModule {
 		return api.getOnlineModules().containsKey("ALLIANCE_" + getName());
 	}
 	
-	@Override
-	public void save(){
-		api.getInstance(EmpyrealSQL.class).getType().saveMapToDatabase("alliances", this);
-	}
-	
 	public void transfer(){
 		
 		YamlConfiguration yaml = YamlConfiguration.loadConfiguration(new File("../wa/Divinity/alliances/" + getName() + ".yml"));

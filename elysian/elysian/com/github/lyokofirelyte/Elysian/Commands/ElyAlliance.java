@@ -112,6 +112,42 @@ public class ElyAlliance implements AutoRegister<ElyAlliance> {
 
 		 	break;
 		 	
+		 	case "-setbg":
+				if(!main.api.perms(p, "wa.staff.mod", false)) return;
+		 		if(args.length == 3){
+		 			if(doesAllianceExist(args[1])){
+		 				main.api.getDivAlliance(args[1]).set(DAI.BG_URL, args[2]);
+		 				dp.s("Picture updated!");
+		 			}else{
+		 				dp.err("That alliance does not exist!");
+		 			}
+		 		}
+		 	break;
+		 	
+		 	case "-setstyle":
+		 		if(args.length >= 3){
+		 			if(doesAllianceExist(args[1])){
+	 					if(!main.api.perms(p, "wa.staff.mod", false)) return;
+		 				main.api.getDivAlliance(args[1]).set(DAI.STYLE, DivinityUtilsModule.createString(args, 3));
+		 				dp.s("Updated desc!");
+		 			}else{
+		 				dp.err("That alliance does not exist!");
+		 			}
+		 		}
+		 	break;
+		 	
+		 	case "-setbanner":
+		 		if(args.length >= 3){
+		 			if(doesAllianceExist(args[1])){
+	 					if(!main.api.perms(p, "wa.staff.mod", false)) return;
+		 				main.api.getDivAlliance(args[1]).set(DAI.HEADER_URL, args[2]);
+		 				dp.s("Updated desc!");
+		 			}else{
+		 				dp.err("That alliance does not exist!");
+		 			}
+		 		}
+		 		break;
+		 		
 		 	case "-desc":
 		 		
 		 		if (args.length >= 3){
