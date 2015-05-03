@@ -38,22 +38,56 @@ public class CommandCreative implements AutoRegister<CommandCreative>, Listener 
 		}
 	}
 
-	@GameCommand(min = 1, aliases = { "time" }, desc = "Set the time of yourself", help = "/time <#>", player = true)
+	@GameCommand(perm = "emp.member", aliases = { "s", "spawn" }, desc = "The spawn command", help = "/s", player = true)
+	public void onSpawn(Player cs, GamePlayer<?> gp, String[] args){
+		cs.teleport(cs.getWorld().getSpawnLocation());
+	}
+	
+	@GameCommand(perm = "emp.member", aliases = { "time" }, desc = "Set the time of yourself", help = "/time <#>", player = true)
 	public void onTimeSet(Player cs, GamePlayer<?> gp, String[] args){
-		if(Utils.isInteger(args[0])){
+		if(args.length == 0){
+				gp.s("/time 0 (sets the time to dawn)");
+				gp.s("/time 6000 (sets the time to midday)");
+				gp.s("/time 12000 (sets the time to dusk)");
+				gp.s("/time 18000 (sets the time to midnight");
+				gp.s("Your player time is: &6" + cs.getPlayerTime());
+			return;
+		}
+		if(Utils.isInteger(args[0]) && args.length == 1){
 			cs.setPlayerTime(Integer.parseInt(args[0]), false);
+			gp.s("Time set to " + args[0]);
 		}else{
 			gp.s("That is not a number!");
 		}
 	}
 	
-	@GameCommand(aliases = { "tp", "teleport" }, desc = "Teleport Command", help = "/tp <player>", player = true)
+	@GameCommand(perm = "emp.member", aliases = { "tp", "teleport" }, desc = "Teleport Command", help = "/tp <player>", player = true)
 	public void onTP(Player cs, GamePlayer<?> gp, String[] args){
-		
-		if (Bukkit.getPlayer(args[0]) != null){
-			cs.teleport(Bukkit.getPlayer(args[0]));
-		} else {
-			gp.s("&c&oThat player isn't online!");
+		if(args.length == 2 && (cs.isOp() || gp.getPerms().contains("gameserver.staff"))){
+			if(Bukkit.getPlayer(args[0]) != null && Bukkit.getPlayer(args[1]) != null){
+				Bukkit.getPlayer(args[0]).teleport(Bukkit.getPlayer(args[1]));
+				gp.s("Teleported " + Bukkit.getPlayer(args[0]).getDisplayName() + " to " + Bukkit.getPlayer(args[1]).getDisplayName());
+			}
+		}else if(args.length == 1){
+			if (Bukkit.getPlayer(args[0]) != null){
+				cs.teleport(Bukkit.getPlayer(args[0]));
+			} else {
+				gp.s("&c&oThat player isn't online!");
+			}	
+		}
+
+	}
+	
+	@GameCommand(aliases = { "tphere" }, desc = "Teleport Command", help = "/tphere <player>", player = true)
+	public void onTPHere(Player cs, GamePlayer<?> gp, String[] args){
+		if(cs.isOp() || gp.getPerms().contains("gameserver.staff")){
+			if (Bukkit.getPlayer(args[0]) != null){
+				Bukkit.getPlayer(args[0]).teleport(cs);
+			} else {
+				gp.s("&c&oThat player isn't online!");
+			}
+		}else{
+			gp.s("&c&oNo permissions!");
 		}
 	}
 	
@@ -93,7 +127,9 @@ public class CommandCreative implements AutoRegister<CommandCreative>, Listener 
 			
 			String[] blockedCommands = new String[]{
 				"//schematic",
-				"//limit"
+				"//limit",
+				"/stop",
+				"/op",
 			};
 			
 			for (String cmd : blockedCommands){

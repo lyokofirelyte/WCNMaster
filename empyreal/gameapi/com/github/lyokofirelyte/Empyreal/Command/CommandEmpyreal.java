@@ -55,7 +55,7 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 		}
 	}
 	
-	@GameCommand(aliases = { "creative" }, help = "/creative", desc = "Creative Command", player = true)
+	@GameCommand(aliases = { "creative" }, perm = "emp.member", help = "/creative", desc = "Creative Command", player = true)
 	public void onCreative(Player p, String[] args){
 		if (!main.getServerName().equals("Creative")){
 			main.sendToServer(p.getName(), "Creative");
@@ -64,7 +64,7 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 		}
 	}
 	
-	@GameCommand(aliases = { "game", "games" }, help = "/game", desc = "Game Command", player = true)
+	@GameCommand(aliases = { "game", "games" }, perm = "emp.member", help = "/game", desc = "Game Command", player = true)
 	public void onGameServer(Player p, String[] args){
 		if (!main.getServerName().equals("GameServer")){
 			main.sendToServer(p.getName(), "GameServer");
@@ -73,7 +73,7 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 		}
 	}
 	
-	@GameCommand(aliases = { "wa" }, help = "/wa", desc = "WA Command", player = true)
+	@GameCommand(aliases = { "wa" }, perm = "emp.member", help = "/wa", desc = "WA Command", player = true)
 	public void onWA(Player p, String[] args){
 		if (!main.getServerName().equals("wa")){
 			main.sendToServer(p.getName(), "wa");
@@ -125,7 +125,7 @@ public class CommandEmpyreal implements AutoRegister<CommandEmpyreal> {
 		gp.s("Default world spawn set.");
 	}
 	
-	@GameCommand(aliases = { "o" }, help = "/o <msg>", desc = "Staff Chat", player = true, perm = "wa.staff.intern")
+	@GameCommand(aliases = { "o" }, help = "/o <msg>", desc = "Staff Chat", player = true, perm = "emp.member")
 	public void onO(Player p, GamePlayer<?> gp, String[] args){
 		
 		if (p.isOp() || gp.getPerms().contains("gameserver.staff") || gp.getPerms().contains("wa.staff.intern")){
