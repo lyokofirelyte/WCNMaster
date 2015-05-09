@@ -7,14 +7,14 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 
 import com.github.lyokofirelyte.Empyreal.Empyreal;
+import com.github.lyokofirelyte.Empyreal.JSONMap;
 import com.github.lyokofirelyte.Empyreal.Database.EmpyrealSQL;
 
 public class ElyMarkkitItem {
 	
-	@Getter @Setter
+	@Getter
 	Material material;
 	
 	@Getter @Setter
@@ -35,13 +35,10 @@ public class ElyMarkkitItem {
 	private EmpyrealSQL sql;
 
 	public ElyMarkkitItem(Empyreal i, Material mat, int data){
-		setMaterial(mat);
-		setDamage(data);
-		setId(mat.getId());
 		setApi(i);
 		sql = api.getInstance(EmpyrealSQL.class).getType();
 		setSystem(api.getDivSystem());
-		setName(getSignName());
+		setMaterial(mat, data);
 	}
 	
 	@SneakyThrows
@@ -51,11 +48,9 @@ public class ElyMarkkitItem {
 		setSystem(api.getDivSystem());
 		ResultSet id = sql.getResult("markkit", "id", "name = '" + signname + "'");
 		id.next();
-		setMaterial(Material.getMaterial(id.getInt(1)));
-		ResultSet dmg = sql.getResult("markkit", "damage", "name = '" + signname + "'");
-		dmg.next();
-		setDamage(dmg.getInt(1));
-		setId(Material.getMaterial(id.getInt(1)).getId());
+		ResultSet data = sql.getResult("markkit", "damage", "name = '" + signname + "'");
+		data.next();
+		setMaterial(Material.getMaterial(id.getInt(1)), data.getInt(1));
 		setName(signname);
 	}
 	
@@ -71,6 +66,18 @@ public class ElyMarkkitItem {
 		ResultSet rs = sql.getResult("markkit", "buyprice_64", "name='" + getName() + "'");
 		rs.next();
 		return rs.getInt(1);
+	}
+	
+	public boolean setMaterial(Material mat, int data){
+		material = mat;
+		setId(mat.getId());
+		setDamage(data);
+		String name = getSignName();
+		if(name == "none"){
+			return false;
+		}
+		setName(name);
+		return true;
 	}
 	
 	@SneakyThrows
@@ -133,9 +140,25 @@ public class ElyMarkkitItem {
 	
 	@SneakyThrows
 	public String getSignName(){
-		ResultSet rs = sql.getResult("markkit", "name", "id='" + getId() + "' and damage='" + getDamage() + "'");
-		rs.next();
-		return rs.getString(1);	
+//		System.out.println(getId() + " " + getDamage());
+		if(doesItemExist(getId())){
+			ResultSet rs = sql.getResult("markkit", "name", "id='" + getId() + "' and damage='" + getDamage() + "'");
+			rs.next();
+			//System.out.println(rs.getString(1));
+			return rs.getString(1);
+		}
+		return "none";
+	}
+	
+	@SneakyThrows
+	public boolean doesItemExist(int id){
+		ResultSet itemCheck = sql.getResult("markkit", "count(*)", "id='" + id + "'");
+		itemCheck.next();
+		if(itemCheck.getInt(1) == 0){
+			return false;
+		}else{
+			return true;
+		}
 	}
 }
 

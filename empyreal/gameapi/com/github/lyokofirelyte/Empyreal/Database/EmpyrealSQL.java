@@ -76,7 +76,7 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 		 * Iterate through each map in the list. Each map is an individual entry filled with values.
 		 */
 		for (JSONMap<String, Object> map : dp){
-			
+			if(map.getStr("table").equals("regions")) continue;
 			Map<String, String> toChange = new HashMap<String, String>();
 			List<String> colNames = new ArrayList<String>();
 			String vals = "";
@@ -223,7 +223,7 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 				}
 				
 				insertStatements.get(map.getStr("table")).addBatch();
-				System.out.println("[INSERT] [" + map.getStr("table") + "] " + map.getStr("name") + " (" + amt + "/" + dp.size() + ")");
+//				System.out.println("[INSERT] [" + map.getStr("table") + "] " + map.getStr("name") + " (" + amt + "/" + dp.size() + ")");
 				
 			} else {
 				
@@ -238,7 +238,7 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 				updateStatements.get(map.getStr("table")).setObject(keys.size()+1, map.getStr("uuid"));
 				
 				updateStatements.get(map.getStr("table")).addBatch();
-				System.out.println("[UPDATE] [" + map.getStr("table") + "] " + map.getStr("name") + " (" + amt + "/" + dp.size() + ")");
+//				System.out.println("[UPDATE] [" + map.getStr("table") + "] " + map.getStr("name") + " (" + amt + "/" + dp.size() + ")");
 			}
 			
 			amt++;
@@ -349,4 +349,5 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 			e.printStackTrace();
 		}
 	}
+
 }

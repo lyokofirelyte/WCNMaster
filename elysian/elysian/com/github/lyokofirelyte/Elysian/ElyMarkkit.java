@@ -67,7 +67,11 @@ public class ElyMarkkit implements Listener, AutoRegister<ElyMarkkit> {
 	public void onSignChange(SignChangeEvent e) {
 			
 		Player p = e.getPlayer();
-			
+		String line = e.getLine(0).toLowerCase();
+		if(line.contains("&3markkit") || line.contains("§3markkit")){
+			e.setCancelled(true);
+			return;
+		}
 		if (main.api.perms(p, "wa.staff.mod2", true) && e.getLine(0).equalsIgnoreCase("markkit") && e.getLine(1) != null && !e.getLine(1).equals("")){
 			e.setLine(0, main.AS("&dWC &5Markkit"));
 			e.setLine(1, main.AS("&f" + e.getLine(1)));
@@ -553,10 +557,9 @@ public class ElyMarkkit implements Listener, AutoRegister<ElyMarkkit> {
 		
 		@SneakyThrows
 		public void loadMarkkitInventory(Player p, ElyMarkkitItem im, String name){
-			ResultSet rs = main.api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "sellprice_64", "name='" + name + "'");
+			ResultSet rs = main.api.getInstance(EmpyrealSQL.class).getType().getResult("markkit", "count(*)", "name='" + name + "'");
 			rs.next();
-			rs.getInt(1);
-			if(rs.wasNull()){
+			if(rs.getInt(1) == 0){
 				//This is not working
 				main.s(p, "Cannot find this markkit, please contact staff.");
 				return;

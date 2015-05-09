@@ -529,7 +529,7 @@ public class ElyStaff implements Listener, AutoRegister<ElyStaff> {
     	  //ResultSet rs = main.api.getInstance(EmpyrealSQL.class).getType().getConn().createStatement().executeQuery("select count(*) from markkit where name='" + name + "'");
     	  //rs.next();
     	  //System.out.println(rs.getInt(1));
-    	  
+    	  json.put("table", "markkit");
     	  json.put("name", name);
     	  json.put("id", p.getItemInHand().getTypeId());
     	  json.put("damage", p.getItemInHand().getDurability());

@@ -64,12 +64,14 @@ public class ElyCrate implements AutoRegister<ElyCrate>, Listener {
 		}
 		
 		for(Material m : Material.values()){
-			item.setMaterial(m);
+			if(m == Material.AIR) continue;
+			if(!item.setMaterial(m, 0)) continue;
+//			System.out.println(m + " " + item.getSellPrice(1));
 			if(item.getSellPrice(1) >= 4){
 				
 				for(int i :  new int[]{256, 512, 1024, 2048}){
 					if(item.getAmountForPrice(i) != 0 && item.getAmountForPrice(i) <= 64){
-						System.out.println("Adding " + item.getAmountForPrice(i) + " " + m);
+//						System.out.println("Adding " + item.getAmountForPrice(i) + " " + m);
 						prices.get(i).put(m, item.getAmountForPrice(i));
 					}
 				}
