@@ -53,7 +53,6 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 		Map<String, PreparedStatement> updateStatements = new HashMap<String, PreparedStatement>();
 		Map<String, List<String>> tableChecker = new HashMap<String, List<String>>();
 		Map<String, List<String>> updatedCols = new HashMap<String, List<String>>();
-		
 		System.out.println("Initializing database for batch save (" + dpd.size() + ")...");
 		
 		int amt = 1;
@@ -71,12 +70,13 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 			}
 			dp.add(map);
 		}
-		
+
 		/**
 		 * Iterate through each map in the list. Each map is an individual entry filled with values.
 		 */
 		for (JSONMap<String, Object> map : dp){
-			if(map.getStr("table").equals("regions")) continue;
+//			if(map.getStr("table").equals("regions")) continue;
+
 			Map<String, String> toChange = new HashMap<String, String>();
 			List<String> colNames = new ArrayList<String>();
 			String vals = "";
@@ -94,14 +94,14 @@ public class EmpyrealSQL implements AutoRegister<EmpyrealSQL> {
 					toChange.put(key, map.getStr(key) + "_BOOLEAN_");
 				}
 			}
-			
+			//normal here
 			/**
 			 * We change the booleans here because of concurrent modification exceptions.
 			 */
 			for (String thing : toChange.keySet()){
 				map.put(thing, toChange.get(thing));
 			}
-			
+
 			/**
 			 * The table checker holds the column names so we only have to ask the database <br />
 			 * how many columns there are ONCE per table. This saves time - about 3 seconds per entry...

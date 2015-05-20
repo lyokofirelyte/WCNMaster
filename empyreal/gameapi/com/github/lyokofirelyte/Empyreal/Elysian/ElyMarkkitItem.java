@@ -74,9 +74,11 @@ public class ElyMarkkitItem {
 		setDamage(data);
 		String name = getSignName();
 		if(name == "none"){
+			System.out.println(false);
 			return false;
 		}
 		setName(name);
+		System.out.println(true);
 		return true;
 	}
 	
@@ -120,6 +122,7 @@ public class ElyMarkkitItem {
 	}
 	
 	public void setInStock(int i){
+		sql.write("update markkit set instock = '" + i + "' where name = '" + getName() +  "'");
 		//sql.injectData("markkit", "instock", i + "", "name='" + getName() + "'");
 	}
 	
@@ -135,19 +138,24 @@ public class ElyMarkkitItem {
 	}
 	
 	public void setSellDoubled(boolean doubled){
+		sql.write("update markkit set isselldoubled = '" + doubled + "' where name = '" + getName() +  "'");
 		//sql.injectData("markkit", "isselldoubled", ("'" + (doubled + "") + "_BOOLEAN_'"), "name='" + getName() + "'");
 	}
 	
 	@SneakyThrows
 	public String getSignName(){
-//		System.out.println(getId() + " " + getDamage());
-		if(doesItemExist(getId())){
-			ResultSet rs = sql.getResult("markkit", "name", "id='" + getId() + "' and damage='" + getDamage() + "'");
-			rs.next();
-			//System.out.println(rs.getString(1));
-			return rs.getString(1);
+		try{
+	//		System.out.println(getId() + " " + getDamage());
+			if(doesItemExist(getId())){
+				ResultSet rs = sql.getResult("markkit", "name", "id='" + getId() + "' and damage='" + getDamage() + "'");
+				rs.next();
+				//System.out.println(rs.getString(1));
+				return rs.getString(1);
+			}
+			return "none";
+		}catch(Exception e){
+			return "none";
 		}
-		return "none";
 	}
 	
 	@SneakyThrows
